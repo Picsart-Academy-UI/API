@@ -1,15 +1,19 @@
-require('dotenv').config();
+const path = require('path');
+
+require('dotenv').config({ path:  path.resolve(__dirname, '../.env')});
 
 const express = require('express');
 const cors = require('cors');
 
-const { router } = require('./src/routes');
+const { router } = require('./routes');
 
 const app = express();
 
 //Middlewares
 app.use(express.json());
+
 app.use(cors());
+
 app.use(process.env.API_VERSION, router);
 
 const PORT = process.env.PORT || 6788;
