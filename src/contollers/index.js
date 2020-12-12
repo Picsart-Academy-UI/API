@@ -1,1 +1,1 @@
-exports.signIn = require('./signIn');
+exports.signIn = require('./sign-in');
