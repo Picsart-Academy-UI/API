@@ -1,1 +1,1 @@
-exports.asyncHandler = require('./asyncHandler');
+exports.asyncHandler = require('./async-handler');
