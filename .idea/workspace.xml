@@ -2,8 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94623ec3-9431-489f-9e15-a110fa72992a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/contollers/invite.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/contollers/verify.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/invite.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/verify.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/mailer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/util.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/sign-in.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/sign-in.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/async-handler.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/router.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/router.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/sign-in.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/sign-in.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +45,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="settings.nodejs" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -49,6 +64,7 @@
       <workItem from="1607621038051" duration="11000" />
       <workItem from="1607621142599" duration="2497000" />
       <workItem from="1607782998429" duration="199000" />
+      <workItem from="1607783200664" duration="19765000" />
     </task>
     <servers />
   </component>
@@ -60,5 +76,9 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="229" y="86" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1607621234559" />
+    <state x="385" y="217" width="670" height="676" key="search.everywhere.popup" timestamp="1607852902764">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="385" y="217" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1607852902764" />
   </component>
 </project>

@@ -1,6 +1,5 @@
-const { asyncHandler } = require('../middlewares');
+module.exports = async (req, res, next) => {
 
-module.exports = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (email && password) {
@@ -12,4 +11,4 @@ module.exports = asyncHandler(async (req, res) => {
 
   // TODO: create Error handlers
   return res.status(404).json(err);
-});
+};
