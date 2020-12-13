@@ -8,5 +8,16 @@
   "parserOptions": {
     "ecmaVersion": 12
   },
-  "rules": {}
+  "rules": {
+    "camelcase": ["error", {
+      "properties": "never",
+      "ignoreDestructuring": true
+    }],
+    "prefer-destructuring": ["error", {
+      "object": true,
+       "array": false
+    }],
+    // TODO: Discuss "no-unused-vars" cases with Nairi
+    "no-unused-vars": "off"
+  }
 }

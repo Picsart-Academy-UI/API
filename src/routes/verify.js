@@ -1,8 +1,6 @@
 const router = require('express').Router();
-const {verify} = require('../contollers');
+const { verify } = require('../contollers');
 
-
-router.post('/verify',verify );
-
+router.post('/verify', verify);
 
 module.exports = router;
