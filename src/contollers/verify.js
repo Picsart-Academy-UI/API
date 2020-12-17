@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const UserModel = require('picsart-booking-db-models').User;
+const UserModel = require('booking-db').User;
 
 function createUser(userDetails, requestedEmail) {
   const {
