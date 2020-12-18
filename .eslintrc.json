@@ -9,10 +9,7 @@
     "ecmaVersion": 12
   },
   "rules": {
-    "camelcase": ["error", {
-      "properties": "never",
-      "ignoreDestructuring": true
-    }],
+    "camelcase": "off",
     "prefer-destructuring": ["error", {
       "object": true,
        "array": false
