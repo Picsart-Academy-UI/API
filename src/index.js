@@ -1,6 +1,6 @@
 const path = require('path');
 
-require('dotenv').config({ path: path.resolve(__dirname, '../.env.example') });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const DB = require('booking-db').dbConnection;
 
@@ -28,3 +28,5 @@ DB(process.env.MONGO_URI).then(async (conn) => {
     console.log(`App is running on port ${PORT}`);
   });
 });
+
+module.exports = app;
