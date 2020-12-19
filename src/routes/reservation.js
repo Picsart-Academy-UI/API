@@ -12,3 +12,5 @@ router
   .put('/:reservation_id', update)
   .delete('/:reservation_id', deleteOne)
   .delete('/:reservation_id', deleteAll);
+
+module.exports = router;

@@ -18,8 +18,8 @@ router.use('/auth', inviteRouter);
 
 router.use('/auth', verifyRouter);
 
-router.use('/:user_id/teams', teamRouter);
+router.use('/teams', teamRouter);
 
-router.use('/:user_id/reservation', reservationRouter);
+router.use('/reservation', reservationRouter);
 
 module.exports = router;
