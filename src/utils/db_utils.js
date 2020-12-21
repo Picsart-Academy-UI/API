@@ -11,9 +11,21 @@ exports.find_one_user = function (parameter){
 
 exports.create_user = async function(user){
 
-    const createdUser = await UserModel.create(user);
+    let createdUser;
+    let mailResponse;
 
-    const mailResponse = await mailer(user.email);
+    try{
+
+        createdUser = await UserModel.create(user);
+
+        mailResponse = await mailer(user.email);
+
+    }catch (err){
+
+        throw err;
+
+    }
+
 
     return createdUser;
 }

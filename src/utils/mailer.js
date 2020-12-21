@@ -6,6 +6,7 @@ const user = process.env.MAIL_USER;
 const pass = process.env.MAIL_PASSWORD;
 // eslint-disable-next-line
 
+
 module.exports = (email) => {
   const transporter = nodemailer.createTransport({
     host, port, secure: true, auth: { user, pass },
@@ -13,12 +14,11 @@ module.exports = (email) => {
 
   // TODO: add the dynamic message;
 
-  // send mail with defined transport object
   return transporter.sendMail({
     from: process.env.MAIL_USER,
     to: email, // list of receivers
     subject: 'Invitation to join the Picsart booking', // Subject line
-    text: 'Welcome', // plain text body
+    text: 'Hello world?', // plain text body
     html: '<b>Hello world?</b>', // html body
   });
 };

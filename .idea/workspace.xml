@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94623ec3-9431-489f-9e15-a110fa72992a" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/src/middlewares/admin-auth.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/utils/db_utils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -19,30 +20,51 @@
       <change beforePath="$PROJECT_DIR$/src/routes/verify.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/mailer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/mailer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/util.js" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/router.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/router.js" afterDir="false" />
+>>>>>>> 27649c19d49fa81ec91a4b0f7fdc1ce0de0d0b41
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1lTVOdyOWKZ5ZQCh6goqpewfJKT" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="javascript.nodejs.core.library.configured.version" value="14.12.0" />
-    <property name="javascript.nodejs.core.library.typings.version" value="14.14.12" />
+    <property name="javascript.nodejs.core.library.configured.version" value="10.19.0" />
+    <property name="javascript.nodejs.core.library.typings.version" value="10.17.49" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../NodeTesting/node-crud-api" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.standard" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="JavaScript.Libraries" />
@@ -51,6 +73,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
@@ -75,17 +98,23 @@
       <workItem from="1607621038051" duration="11000" />
       <workItem from="1607621142599" duration="2497000" />
       <workItem from="1607782998429" duration="199000" />
+<<<<<<< HEAD
       <workItem from="1607783200664" duration="23170000" />
       <workItem from="1607932416931" duration="4072000" />
       <workItem from="1608118561737" duration="3957000" />
       <workItem from="1608216137597" duration="12515000" />
       <workItem from="1608295137759" duration="4624000" />
+=======
+      <workItem from="1607783200664" duration="19765000" />
+      <workItem from="1608227575436" duration="7398000" />
+>>>>>>> 27649c19d49fa81ec91a4b0f7fdc1ce0de0d0b41
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+<<<<<<< HEAD
   <component name="WindowStateProjectService">
     <state width="1419" height="236" key="GridCell.Tab.0.bottom" timestamp="1608268682788">
       <screen x="0" y="25" width="1440" height="816" />
@@ -156,4 +185,6 @@
     </state>
     <state x="385" y="217" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1608551374186" />
   </component>
+=======
+>>>>>>> 27649c19d49fa81ec91a4b0f7fdc1ce0de0d0b41
 </project>
