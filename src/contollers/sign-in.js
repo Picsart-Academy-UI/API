@@ -31,7 +31,7 @@ module.exports = async (req, res, next) => {
 
     const updated_user = await update_user(email,user_to_be_updated )
 
-    const token = await jwt.sign({ ...updated_user }, process.env.JWT_SECRET);
+    const token = await jwt.sign({...updated_user}, process.env.JWT_SECRET);
 
     return res.status(202).json({
       success: true,
