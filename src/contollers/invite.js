@@ -34,6 +34,7 @@ module.exports = async (req, res, next) => {
       msg: 'The user has successfully been initialized!',
     });
   } catch (err) {
+    console.log(err, 'ERROR');
     return next(new Error('Server error'));
   }
 };
