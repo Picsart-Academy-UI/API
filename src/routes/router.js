@@ -10,6 +10,8 @@ const teamRouter = require('./team');
 
 const reservationRouter = require('./reservation');
 
+const usersRouter = require('./users');
+
 router.use('/auth', signInRouter);
 
 router.use('/auth', inviteRouter);
@@ -17,5 +19,7 @@ router.use('/auth', inviteRouter);
 router.use('/teams', teamRouter);
 
 router.use('/reservation', reservationRouter);
+
+router.use('/users', usersRouter);
 
 module.exports = router;
