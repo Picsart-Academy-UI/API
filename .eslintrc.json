@@ -10,11 +10,12 @@
   },
   "rules": {
     "camelcase": "off",
+    "no-underscore-dangle": "off",
+    "comma-dangle": "off",
     "prefer-destructuring": ["error", {
       "object": true,
        "array": false
     }],
-    // TODO: Discuss "no-unused-vars" cases with Nairi
     "no-unused-vars": "off"
   }
 }

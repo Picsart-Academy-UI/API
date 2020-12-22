@@ -1,4 +1,4 @@
-const UserModel = require('picsart-booking-db-models').User;
+const UserModel = require('booking-db').User;
 const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res, next) => {
@@ -12,7 +12,8 @@ module.exports = async (req, res, next) => {
   }
   try {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    // TODO: ask if we need additional validation for admins like checking if the _id actually exists in the database;
+    // TODO: ask if we need additional validation for admins
+    // like checking if the _id actually exists in the database;
     const admin = await UserModel.findById(decoded._id);
     if (admin && admin.isAdmin) {
       req.admin = admin;
@@ -24,6 +25,6 @@ module.exports = async (req, res, next) => {
       msg: 'Not Authorized',
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };

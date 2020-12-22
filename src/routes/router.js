@@ -6,8 +6,6 @@ const signInRouter = require('./sign-in');
 
 const inviteRouter = require('./invite');
 
-
-
 const teamRouter = require('./team');
 
 const reservationRouter = require('./reservation');

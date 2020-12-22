@@ -6,7 +6,6 @@ const user = process.env.MAIL_USER;
 const pass = process.env.MAIL_PASSWORD;
 // eslint-disable-next-line
 
-
 module.exports = (email) => {
   const transporter = nodemailer.createTransport({
     host, port, secure: true, auth: { user, pass },

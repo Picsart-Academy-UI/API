@@ -1,31 +1,25 @@
-const {User: UserModel} = require('booking-db');
-const mailer = require('../utils/mailer');
+const { User: UserModel } = require('booking-db');
+const mailer = require('./mailer');
 
-exports.update_user = function (email, user_to_be_updated){
-    return UserModel.findOneAndUpdate({email}, user_to_be_updated, {new : true});
-}
+exports.update_user = (email, user_to_be_updated) => UserModel.findOneAndUpdate(
+  { email },
+  user_to_be_updated,
+  { new: true },
+);
+exports.find_one_user = (parameter) => UserModel.findOne({ [parameter]: parameter });
 
-exports.find_one_user = function (parameter){
-    return UserModel.findOne({[parameter]: parameter})
-}
+exports.create_user = async (user) => {
+  let createdUser;
+  let mailResponse;
 
-exports.create_user = async function(user){
+  try {
+    createdUser = await UserModel.create(user);
 
-    let createdUser;
-    let mailResponse;
+    mailResponse = await mailer(user.email);
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 
-    try{
-
-        createdUser = await UserModel.create(user);
-
-        mailResponse = await mailer(user.email);
-
-    }catch (err){
-
-        throw err;
-
-    }
-
-
-    return createdUser;
-}
+  return createdUser;
+};
