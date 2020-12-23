@@ -4,7 +4,7 @@ pipeline {
      stages {
         stage("Build") {
             steps {
-              sh  "/root/scripts/build.sh"
+              sh  "sudo /root/scripts/build.sh"
             }
         }
         stage("Lint") {
@@ -17,7 +17,7 @@ pipeline {
                 branch 'master' 
             }
             steps { 
-                sh "/root/scripts/deploy.sh"
+                sh "sudo /root/scripts/deploy.sh"
             }
         }
     }
