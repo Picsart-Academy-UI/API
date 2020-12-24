@@ -23,11 +23,7 @@
   },
   "homepage": "https://github.com/Picsart-Academy-UI/API#readme",
   "dependencies": {
-<<<<<<< Updated upstream
     "booking-db": "^1.0.7",
-=======
-    "booking-db": "^1.0.6",
->>>>>>> Stashed changes
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

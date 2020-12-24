@@ -6,7 +6,7 @@ exports.update_user = (email, user_to_be_updated) => UserModel.findOneAndUpdate(
   user_to_be_updated,
   { new: true },
 );
-exports.find_one_user = (email) => UserModel.findOne({email});
+exports.find_one_user = (email) => UserModel.findOne({ email });
 
 exports.create_user = async (user) => {
   let createdUser;
