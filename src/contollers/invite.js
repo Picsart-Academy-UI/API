@@ -4,13 +4,14 @@ const { create_user } = require('../utils/db_utils');
 
 module.exports = async (req, res, next) => {
   const { email, _isAdmin, team_id } = req.body;
-
+  const { authorization } = req.headers;
   // checking to see if the email input is valid
 
   if (!emailRegexp.test(email)) {
     return next(new Error('wrong input email'));
   }
 
+  // TODO: make code sync with DB models
   try {
     const user = await find_one_user(email);
 
@@ -33,6 +34,7 @@ module.exports = async (req, res, next) => {
       msg: 'The user has successfully been initialized!',
     });
   } catch (err) {
+    console.log(err, 'ERROR');
     return next(new Error('Server error'));
   }
 };

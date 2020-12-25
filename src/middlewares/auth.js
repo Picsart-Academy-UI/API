@@ -12,11 +12,9 @@ module.exports = async (req, res, next) => {
   }
   try {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    // TODO: ask if we need additional validation for admins
-    // like checking if the _id actually exists in the database;
-    const admin = await UserModel.findById(decoded._id);
-    if (admin && admin.isAdmin) {
-      req.admin = admin;
+    const user = await UserModel.findById(decoded._id);
+    if (user) {
+      req.user = user;
       return next();
     }
     // TODO change all the errors to next new specifiedClassError();
