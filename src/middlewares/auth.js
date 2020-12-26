@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
   }
   try {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    const user = await UserModel.findById(decoded._id);
+    const user = await UserModel.findById(decoded._id).exec();
     if (user) {
       req.user = user;
       return next();

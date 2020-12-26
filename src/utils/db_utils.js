@@ -5,8 +5,8 @@ exports.update_user = (email, user_to_be_updated) => UserModel.findOneAndUpdate(
   { email },
   user_to_be_updated,
   { new: true },
-);
-exports.find_one_user = (email) => UserModel.findOne({ email });
+).exec();
+exports.find_one_user = (email) => UserModel.findOne({ email }).exec();
 
 exports.create_user = async (user) => {
   let createdUser;
@@ -17,7 +17,6 @@ exports.create_user = async (user) => {
 
     mailResponse = await mailer(user.email);
   } catch (err) {
-    console.log(err);
     throw err;
   }
 

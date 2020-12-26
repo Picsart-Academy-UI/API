@@ -1,12 +1,15 @@
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
+const User_model = require('booking-db').User;
 
-const { find_one_user } = require('../utils/db_utils');
 const { update_user } = require('../utils/db_utils');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 module.exports = async (req, res, next) => {
+  let token;
+  let requested_user;
+
   const { token: idToken } = req.body;
 
   try {
@@ -21,21 +24,25 @@ module.exports = async (req, res, next) => {
       email, given_name: first_name, family_name: last_name, photo_url,
     } = payload;
 
-    const user = await find_one_user(email);
+    const user = await User_model.findOne({ email }).exec();
 
     if (!user) {
       return next(new Error('Not invited'));
     }
 
-    const user_to_be_updated = { first_name, last_name, photo_url };
-
-    const updated_user = await update_user(email, user_to_be_updated);
-
-    const token = await jwt.sign({ ...updated_user }, process.env.JWT_SECRET);
+    if (!user.accepted) {
+      const user_to_be_updated = { first_name, last_name, photo_url };
+      requested_user = await update_user(email, user_to_be_updated);
+      token = await jwt.sign({ ...requested_user }, process.env.JWT_SECRET);
+    } else {
+      requested_user = user;
+      token = await jwt.sign({ ...user }, process.env.JWT_SECRET);
+    }
 
     return res.status(202).json({
       success: true,
-      token
+      token,
+      user: requested_user
     });
   } catch (err) {
     // TODO: create Error handlers
