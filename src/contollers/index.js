@@ -3,3 +3,4 @@ exports.invite = require('./invite');
 exports.team = require('./team');
 exports.reservation = require('./reservation');
 exports.users = require('./users');
+exports.notifications = require('./notifications');

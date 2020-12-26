@@ -12,6 +12,8 @@ const reservationRouter = require('./reservation');
 
 const usersRouter = require('./users');
 
+const notificationsRouter = require('./notifications');
+
 router.use('/auth', signInRouter);
 
 router.use('/auth', inviteRouter);
@@ -21,5 +23,7 @@ router.use('/teams', teamRouter);
 router.use('/reservation', reservationRouter);
 
 router.use('/users', usersRouter);
+
+router.use('/notifications', notificationsRouter);
 
 module.exports = router;
