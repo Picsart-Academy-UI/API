@@ -12,6 +12,7 @@ exports.create_user = async (user) => {
   let createdUser;
   let mailResponse;
 
+  // eslint-disable-next-line no-useless-catch
   try {
     createdUser = await UserModel.create(user);
 

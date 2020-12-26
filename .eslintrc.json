@@ -9,6 +9,9 @@
     "ecmaVersion": 12
   },
   "rules": {
+    "consistent-return": "off",
+    "padded-blocks": "off",
+    "no-trailing-spaces": "off",
     "import/prefer-default-export": "off",
     "camelcase": "off",
     "no-underscore-dangle": "off",

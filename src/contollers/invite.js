@@ -1,4 +1,4 @@
-const User_model = require('booking-db').User
+const User_model = require('booking-db').User;
 
 const { emailRegexp } = require('../utils/util');
 const { create_user } = require('../utils/db_utils');

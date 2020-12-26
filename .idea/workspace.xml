@@ -4,6 +4,13 @@
     <list default="true" id="94623ec3-9431-489f-9e15-a110fa72992a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.eslintrc.json" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintrc.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/invite.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/invite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/db_utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/db_utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/util.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +85,24 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="583" y="360" key="#ESLint" timestamp="1608983620055">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="583" y="360" key="#ESLint/0.0.1440.900@0.0.1440.900" timestamp="1608983620055" />
+    <state x="229" y="100" key="SettingsEditor" timestamp="1608903045883">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="229" y="100" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1608903045883" />
+    <state x="521" y="368" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1608966858673">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="521" y="368" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1608966858673" />
+    <state x="385" y="217" width="670" height="676" key="search.everywhere.popup" timestamp="1608967148428">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="385" y="217" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1608967148428" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
