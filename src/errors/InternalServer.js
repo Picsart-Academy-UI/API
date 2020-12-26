@@ -1,6 +1,6 @@
 const { HttpError } = require('./HttpError');
 
-export class InternalServer extends HttpError {
+class InternalServer extends HttpError {
   constructor(error) {
     super(error.message);
     this.name = this.constructor.name;
@@ -8,3 +8,5 @@ export class InternalServer extends HttpError {
     HttpError.captureStackTrace(this, this.constructor);
   }
 }
+
+module.exports = { InternalServer };

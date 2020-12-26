@@ -1,7 +1,9 @@
-module.exports.NotFound = require('./NotFound');
-module.exports.Forbidden = require('./Forbidden');
-module.exports.BadRequest = require('./BadRequest');
-module.exports.Unauthorized = require('./Unauthorized');
-module.exports.NotAcceptable = require('./NotAcceptable');
-module.exports.InternalServer = require('./InternalServer');
-module.exports.MethodNotAllowed = require('./MethodNotAllowed');
+exports.NotFound = require('./NotFound');
+exports.Forbidden = require('./Forbidden');
+exports.BadRequest = require('./BadRequest');
+exports.Unauthorized = require('./Unauthorized');
+exports.NotAcceptable = require('./NotAcceptable');
+exports.InternalServer = require('./InternalServer');
+exports.MethodNotAllowed = require('./MethodNotAllowed');
+
+exports.MongooseError = require('booking-db').MongooseError;

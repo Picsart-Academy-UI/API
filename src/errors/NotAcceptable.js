@@ -1,6 +1,6 @@
 const { HttpError } = require('./HttpError');
 
-export class MethodNotAllowed extends HttpError {
+class NotAcceptable extends HttpError {
   constructor(error) {
     super(error.message);
     this.name = this.constructor.name;
@@ -8,3 +8,5 @@ export class MethodNotAllowed extends HttpError {
     HttpError.captureStackTrace(this, this.constructor);
   }
 }
+
+module.exports = { NotAcceptable };
