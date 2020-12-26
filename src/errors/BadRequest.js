@@ -1,10 +1,13 @@
 const { HttpError } = require('./HttpError');
 
-export class BadRequest extends HttpError {
-  constructor(error) {
-    super(error.message);
+class BadRequest extends HttpError {
+  constructor(message) {
+    super();
     this.name = this.constructor.name;
     this.statusCode = 400;
+    this.message = message;
     HttpError.captureStackTrace(this, this.constructor);
   }
 }
+
+module.exports = { BadRequest };

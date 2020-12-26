@@ -1,4 +1,4 @@
-export class HttpError extends Error {
+class HttpError extends Error {
   constructor(httpCode, message) {
     super(message);
     this.name = this.constructor.name;
@@ -10,3 +10,4 @@ export class HttpError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
+module.exports = { HttpError };

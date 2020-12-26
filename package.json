@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Picsart-Academy-UI/API#readme",
   "dependencies": {
-    "booking-db": "^1.0.7",
+    "booking-db": "^1.1.1",
     "cors": "^2.8.5",
     "db_picsart": "^1.0.0",
     "dotenv": "^8.2.0",
