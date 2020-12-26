@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
     token = authorization.split(' ')[1];
   }
   if (!token) {
-    return next(new Error('Not authorized'));
+    return next();
   }
   try {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
