@@ -29,7 +29,7 @@ module.exports = async (req, res, next) => {
       });
     }
 
-    const user_properties = { email, is_admin, team_id, position, first_name, last_name, birthdate };
+    const user_properties = {email, is_admin, team_id, position, first_name, last_name, birthdate};
 
     const created_user = await UserModel.create(user_properties);
 
