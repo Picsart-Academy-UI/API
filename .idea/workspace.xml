@@ -4,12 +4,18 @@
     <list default="true" id="94623ec3-9431-489f-9e15-a110fa72992a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.eslintrc.json" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintrc.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/contollers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/contollers/invite.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/invite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/reservation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/reservation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/sign-in.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/sign-in.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contollers/team.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/team.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/contollers/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/contollers/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/auth-admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/auth-admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/auth.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/db_utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/db_utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/db_utils.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/util.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,8 +45,8 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="javascript.nodejs.core.library.configured.version" value="10.19.0" />
-    <property name="javascript.nodejs.core.library.typings.version" value="10.17.49" />
+    <property name="javascript.nodejs.core.library.configured.version" value="14.12.0" />
+    <property name="javascript.nodejs.core.library.typings.version" value="14.14.16" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
@@ -80,6 +86,8 @@
       <workItem from="1608524857210" duration="747000" />
       <workItem from="1608686027113" duration="10578000" />
       <workItem from="1608750295758" duration="686000" />
+      <workItem from="1609066805549" duration="9569000" />
+      <workItem from="1609147609977" duration="8001000" />
     </task>
     <servers />
   </component>
@@ -99,6 +107,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="521" y="368" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1608966858673" />
+    <state x="421" y="219" width="597" height="490" key="find.popup" timestamp="1609152904758">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="421" y="219" width="597" height="490" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1609152904758" />
     <state x="385" y="217" width="670" height="676" key="search.everywhere.popup" timestamp="1608967148428">
       <screen x="0" y="0" width="1440" height="900" />
     </state>

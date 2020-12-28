@@ -1,5 +1,6 @@
 module.exports = async (req, res, next) => {
-  if (req.use.is_admin) {
+  const { user } = req;
+  if (user && user.is_admin) {
     return next();
   }
   return next(new Error('Unauthorized'));

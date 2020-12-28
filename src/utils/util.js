@@ -38,7 +38,7 @@ function formatQuery(query) {
   return query;
 }
 
-exports.build_query = (query) => {
+exports.buildQuery = (query) => {
   const result = { ...query };
   excluded_fields.forEach((field) => delete result[field]);
   return formatQuery(result);

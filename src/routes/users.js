@@ -1,17 +1,16 @@
 const router = require('express').Router();
 
-const {
-  getUsers, getAllUsers, getUser, updateUser, deleteUser, getMe
-} = require('../contollers');
+const { getUsers, getAllUsers, getUser, updateUser, deleteUser, getMe } = require('../contollers');
 
 router.get('/', getUsers);
 
 router.get('/all', getAllUsers);
 
-router.get('/:user_id', getUser)
-  .put('/:user_id', updateUser)
-  .delete('/:user_id', deleteUser);
-
 router.get('/me', getMe);
+
+router.route('/:user_id')
+  .get(getUser)
+  .put(updateUser)
+  .delete(deleteUser);
 
 module.exports = router;

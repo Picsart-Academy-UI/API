@@ -9,6 +9,7 @@
     "ecmaVersion": 12
   },
   "rules": {
+    "object-curly-newline": "off",
     "consistent-return": "off",
     "padded-blocks": "off",
     "no-trailing-spaces": "off",

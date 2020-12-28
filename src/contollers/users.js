@@ -1,8 +1,8 @@
-const UserModel = require('booking-db').User;
+const UserModel = require('db_picsart').User;
 
 const { getPagination } = require('../utils/util');
 
-const { build_query } = require('../utils/util');
+const { buildQuery } = require('../utils/util');
 
 // @desc  get users from the same team
 // @route GET /api/v1/users
@@ -19,7 +19,7 @@ exports.getUsers = async (req, res, next) => {
       users
     });
   } catch (err) {
-    next(new Error());
+    return next(new Error());
   }
 };
 
@@ -28,7 +28,7 @@ exports.getUsers = async (req, res, next) => {
 // @access Private (Admin)
 
 exports.getAllUsers = async (req, res, next) => {
-  const queryObject = build_query(req.query);
+  const queryObject = buildQuery(req.query);
   try {
     let query = UserModel.find(queryObject);
     const count = await UserModel.countDocuments();
@@ -44,9 +44,7 @@ exports.getAllUsers = async (req, res, next) => {
       query = query.sort(sort_by);
     }
     // Pagination Logic
-    const {
-      page, limit, start_index, end_index
-    } = getPagination(req.query.page, req.query.limit);
+    const { page, limit, start_index, end_index } = getPagination(req.query.page, req.query.limit);
     query = query.skip(start_index).limit(limit);
     const pagination = {};
     if (end_index < count) {
@@ -56,11 +54,14 @@ exports.getAllUsers = async (req, res, next) => {
       pagination.prev_page = page - 1;
     }
     const users = await query;
-    res.status(200).json({
-      users,
-      count,
-      pagination,
-    });
+    if (users.length) {
+      return res.status(200).json({
+        users,
+        count,
+        pagination,
+      });
+    }
+    return next(new Error('something went wrong'));
   } catch (err) {
     return next(new Error('Internal server error'));
   }
@@ -74,11 +75,14 @@ exports.getUser = async (req, res, next) => {
   const { user_id } = req.params;
   try {
     const found_user = await UserModel.findById(user_id).exec();
-    res.status(200).json({
-      user: found_user
-    });
+    if (found_user) {
+      return res.status(200).json({
+        user: found_user
+      });
+    }
+    return next(new Error('Bad request'));
   } catch (err) {
-    next(new Error('Internal server error'));
+    return next(new Error('Internal server error'));
   }
 };
 
@@ -88,21 +92,19 @@ exports.getUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   const { user_id } = req.params;
-  const {
-    email, first_name, last_name, team_id
-  } = req.body;
+  const { email, first_name, last_name, team_id, is_admin } = req.body;
   try {
-    const updated_user = await UserModel.findByIdAndUpdate(user_id, {
-      email,
-      first_name,
-      last_name,
-      team_id
-    }, { new: true }).exec();
-    res.status(204).json({
-      user: updated_user
-    });
+    const updated_user = await UserModel.findByIdAndUpdate(user_id,
+      { email, first_name, last_name, team_id, is_admin },
+      { new: true, runValidators: true }).exec();
+    if (updated_user) {
+      return res.status(200).json({
+        user: updated_user
+      });
+    }
+    return next(new Error('bad request'));
   } catch (err) {
-    next(new Error('internal server error'));
+    return next(new Error('internal server error'));
   }
 };
 
@@ -114,11 +116,14 @@ exports.deleteUser = async (req, res, next) => {
   const { user_id } = req.params;
   try {
     const deleted_user = await UserModel.findByIdAndDelete(user_id).exec();
-    res.status(200).json({
-      msg: 'User has successfully deleted'
-    });
+    if (deleted_user) {
+      return res.status(200).json({
+        msg: 'User has successfully deleted'
+      });
+    }
+    return next(new Error('bad request'));
   } catch (err) {
-    next(new Error('Internal server error'));
+    return next(new Error('Internal server error'));
   }
 };
 
@@ -130,13 +135,10 @@ exports.getMe = async (req, res, next) => {
   const { _id } = req.user;
   try {
     const found_user = await UserModel.findById(_id).exec();
-    res.status(200).json({
+    return res.status(200).json({
       user: found_user
     });
   } catch (err) {
-    next(new Error('Internal server error'));
+    return next(new Error('Internal server error'));
   }
 };
-// eslint-disable-next-line max-len
-// TODO : when the format of an object Id is correct but there is no user in the DB the mongoose does not throw an error solve this one
-//

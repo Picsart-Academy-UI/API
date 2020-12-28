@@ -1,11 +1,10 @@
-const { Team } = require('booking-db');
+const { Team } = require('db_picsart');
 
 exports.create = async (req, res, next) => {
   const team = new Team({
     name: req.body.name,
     members_count: req.body.members_count,
   });
-
   try {
     await team.save();
     res.status(201).json(team);
