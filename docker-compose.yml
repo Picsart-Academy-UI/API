@@ -1,15 +1,14 @@
 version: '3'
-services:
+services: 
   api:
     container_name: api
     restart: always
     build: .
-    ports:
-      - '3001:3001'
-    links:
-      - mongo
+    ports: 
+      - '80:3001'
+    links: 
   mongo:
     container_name: mongo
     image: mongo
-    ports:
+    ports: 
       - '27017:27017'
