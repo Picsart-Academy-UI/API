@@ -6,4 +6,4 @@ exports.NotAcceptable = require('./NotAcceptable');
 exports.InternalServer = require('./InternalServer');
 exports.MethodNotAllowed = require('./MethodNotAllowed');
 
-exports.MongooseError = require('booking-db').MongooseError;
+// exports.MongooseError = require('booking-db').MongooseError;

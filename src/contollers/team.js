@@ -1,5 +1,5 @@
-const { Team } = require('booking-db');
-const { NotFound, MongooseError, BadRequest } = require('../errors');
+const { Team } = require('db_picsart');
+// const { NotFound, MongooseError, BadRequest } = require('../errors');
 
 exports.create = async (req, res, next) => {
   const { name } = req.body;
