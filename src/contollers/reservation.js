@@ -1,4 +1,4 @@
-const { Reservation } = require('booking-db');
+const { Reservation } = require('db_picsart');
 const filter_queries = require('../utils/filter-queries');
 
 exports.create = async (req, res, next) => {

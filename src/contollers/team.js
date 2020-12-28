@@ -11,6 +11,7 @@ exports.create = async (req, res, next) => {
   }
 
   const team = new Team({ name });
+
   try {
     await team.save();
     return res.status(201).json(team);
