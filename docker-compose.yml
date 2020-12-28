@@ -7,7 +7,6 @@ services:
     ports: 
       - '80:3001'
     links: 
-      - mongo
   mongo:
     container_name: mongo
     image: mongo
