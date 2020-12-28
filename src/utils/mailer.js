@@ -4,11 +4,7 @@ const host = process.env.SMTP_HOST;
 const port = Number(process.env.SMTP_PORT);
 const user = process.env.MAIL_USER;
 const pass = process.env.MAIL_PASSWORD;
-
-console.log(host,
-  port,
-  user,
-  pass);
+// eslint-disable-next-line
 
 module.exports = (email) => {
   const transporter = nodemailer.createTransport({
@@ -17,7 +13,6 @@ module.exports = (email) => {
 
   // TODO: add the dynamic message;
 
-  // send mail with defined transport object
   return transporter.sendMail({
     from: process.env.MAIL_USER,
     to: email, // list of receivers

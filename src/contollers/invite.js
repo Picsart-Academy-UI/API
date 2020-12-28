@@ -1,39 +1,38 @@
-const emailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-// TODO: the regexp should be the same regexp from DB model user field email;
-const jwt = require('jsonwebtoken');
-const mailer = require('../utils/mailer');
-
-let dbUserModel;
+const { find_one_user } = require('../utils/db_utils');
+const { emailRegexp } = require('../utils/util');
+const { create_user } = require('../utils/db_utils');
 
 module.exports = async (req, res, next) => {
-  const { email } = req.body;
+  const { email, _isAdmin, team_id } = req.body;
 
-  if (!emailRegExp.test(email)) {
-    return next(new Error('invalid input email'));
+  // checking to see if the email input is valid
+
+  if (!emailRegexp.test(email)) {
+    return next(new Error('wrong input email'));
   }
 
   try {
-    let userExists;
-    // TODO: uncomment the line below after DB models are ready
-    // const userExists = await dbUserModel.findOne({email});
+    const user = await find_one_user(email);
 
-    if (!userExists) {
-      const token = await jwt.sign({
-        email,
-      }, process.env.JWT_SECRET, { expiresIn: '2h' });
-      const info = await mailer(email);
-      return res.status(200).json({
-        success: true,
-        token,
-      });
+    if (user) {
+      if (user.accepted) {
+        return next(new Error('User has already accepted the invitation'));
+      }
+
+      // TODO just resent the invitation ?
+
+      return next('Invitation has been resend');
     }
 
-    return res.status(400).json({
-      success: false,
-      msg: 'User has already been registered',
+    const user_properties = { email, _isAdmin, team_id };
+
+    const created_user = await create_user(user_properties);
+
+    return res.status(201).json({
+      success: true,
+      msg: 'The user has successfully been initialized!',
     });
   } catch (err) {
-    console.log(err);
-    return next(new Error('internal server error'));
+    return next(new Error('Server error'));
   }
 };
