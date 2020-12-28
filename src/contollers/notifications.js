@@ -20,6 +20,9 @@ exports.subscribe = (req, res) => {
   subscription = req.body;
   // TODO: figure out bad request cases for subscription
 
+  // UGLY: sending back the subscription object back for now ... just because :D
+  res.status(201).json(JSON.stringify(subscription));
+
   // creating payload
   const payload = JSON.stringify({
     title: 'Picsart Booking Service',
@@ -29,7 +32,4 @@ exports.subscribe = (req, res) => {
 
   webpush.sendNotification(subscription, payload)
     .catch((err) => console.log(err));
-
-  // UGLY: sending back the subscription object back for now ... just because :D
-  res.status(201).json(JSON.stringify(subscription));
 };
