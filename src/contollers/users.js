@@ -44,24 +44,15 @@ exports.getAllUsers = async (req, res, next) => {
       query = query.sort(sort_by);
     }
     // Pagination Logic
-    const { page, limit, start_index, end_index } = getPagination(req.query.page, req.query.limit);
+    const { pagination, limit, start_index }=getPagination(req.query.page, req.query.limit, count);
     query = query.skip(start_index).limit(limit);
-    const pagination = {};
-    if (end_index < count) {
-      pagination.next_page = page + 1;
-    }
-    if (start_index > 0) {
-      pagination.prev_page = page - 1;
-    }
     const users = await query;
-    if (users.length) {
-      return res.status(200).json({
-        users,
-        count,
-        pagination,
-      });
-    }
-    return next(new Error('something went wrong'));
+    return res.status(200).json({
+      users,
+      count,
+      pagination,
+    });
+
   } catch (err) {
     return next(new Error('Internal server error'));
   }
