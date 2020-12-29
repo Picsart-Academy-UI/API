@@ -6,6 +6,8 @@ const app = require('../../src/');
 const { unloadUsers, loadAdmin } = require('../_mocks');
 
 describe('Test POST /auth/invite', () => {
+  this.timeout(2000)
+
   before(async function() {
     this.timeout(5000);
   
@@ -55,7 +57,21 @@ describe('Test POST /auth/invite', () => {
       });
   });
 
-  after(async () => {
+  it('test ctrl', async () => {
+    const req = {}
+
+    const res = {
+      json,
+    }
+
+    await userCreateController(req, res);
+
+    jsonFnCall
+
+  })
+
+  after(async function() {
+
     await unloadUsers();
   });
 });

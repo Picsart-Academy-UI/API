@@ -1,39 +1,44 @@
-const emailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-// TODO: the regexp should be the same regexp from DB model user field email;
-const jwt = require('jsonwebtoken');
+const UserModel = require('booking-db').User;
+
+const { emailRegexp } = require('../utils/util');
 const mailer = require('../utils/mailer');
 
-let dbUserModel;
+// @desc  Admin invites the user
+// @route /api/v1/auth/invite
+// @access Private (Amin)
 
 module.exports = async (req, res, next) => {
-  const { email } = req.body;
 
-  if (!emailRegExp.test(email)) {
-    return next(new Error('invalid input email'));
+  const { email, is_admin, team_id, position, first_name, last_name, birthdate } = req.body;
+
+  if (!emailRegexp.test(email)) {
+    return next(new Error('wrong input email'));
   }
-
+  
   try {
-    let userExists;
-    // TODO: uncomment the line below after DB models are ready
-    // const userExists = await dbUserModel.findOne({email});
+    const user = await UserModel.findOne({ email }).exec();
+    if (user) {
+      if (user.accepted) {
+        return next(new Error('User has already accepted the invitation'));
+      }
+      await mailer(email);
 
-    if (!userExists) {
-      const token = await jwt.sign({
-        email,
-      }, process.env.JWT_SECRET, { expiresIn: '2h' });
-      const info = await mailer(email);
-      return res.status(200).json({
+      return res.status(208).json({
         success: true,
-        token,
+        msg: 'The invitation has successfully been resend'
       });
     }
 
-    return res.status(400).json({
-      success: false,
-      msg: 'User has already been registered',
+    const user_properties = {email, is_admin, team_id, position, first_name, last_name, birthdate};
+
+    const created_user = await UserModel.create(user_properties);
+
+    await mailer(email);
+
+    return res.status(201).json({
+      user: created_user,
     });
   } catch (err) {
-    console.log(err);
-    return next(new Error('internal server error'));
+    return next(new Error('Server error'));
   }
 };

@@ -1,60 +1,88 @@
 const { Team } = require('booking-db');
+// const { NotFound, MongooseError, BadRequest } = require('../errors');
+
+// @desc  create a team
+// @route POST -> /api/vi/teams
+// @access  Private (Admin)
 
 exports.create = async (req, res, next) => {
-  const team = new Team({
-    name: req.body.name,
-    members_count: req.body.members_count,
-  });
-
+  const { name } = req.body;
+  const team = new Team({ name });
   try {
     await team.save();
-    res.status(201).json(team);
+    return res.status(201).json(team);
   } catch (e) {
-    console.error(e);
+    return next(e);
   }
 };
+
+// @desc  get all teams
+// @route GET -> /api/vi/teams
+// @access  Private (Admin)
 
 exports.getAll = async (req, res, next) => {
   try {
     const teams = await Team.find();
-    res.status(200).json(teams);
+    return res.status(200).json(teams);
   } catch (e) {
-    console.error(e);
+    return next(e);
   }
 };
 
-exports.getById = async (req, res, next) => {
+// @desc  get one team
+// @route GET -> /api/vi/teams/:team_id
+// @access  Private (Admin)
+
+exports.getOne = async (req, res, next) => {
+  const { team_id } = req.params;
+  if (!team_id) {
+    return res.status(400).json({
+      message: 'Please provide a team id.'
+    });
+  }
   try {
-    const team = await Team.findById(req.params.team_id).lean();
-    res.status(200).json(team);
+    const team = await Team.findById(team_id);
+    return res.status(200).json(team);
   } catch (e) {
-    console.error(e);
+    return next(e);
   }
 };
+
+// @desc  update a team
+// @route PUT -> /api/vi/teams/:team_id
+// @access  Private (Admin)
 
 exports.update = async (req, res, next) => {
-  const updated = {
-    name: req.body.name,
-    members_count: req.body.members_count,
-  };
+  const { name } = req.body;
+  const { team_id } = req.params;
+  const updated = { name };
 
   try {
-    const team = await Team.findOneAndUpdate(
-      { _id: req.params.team_id },
-      { $set: updated },
-      { new: true },
+    const team = await Team.findByIdAndUpdate(
+      team_id,
+      updated,
+      { new: true, runValidators: true },
     );
-    res.status(200).json(team);
+    return res.status(200).json(team);
   } catch (e) {
-    console.error(e);
+    next(new Error('errror'));
+    // if (e instanceof MongooseError) {
+    //   return next(new MongooseError(e.message));
+    // }
+    // return next(new NotFound());
   }
 };
 
-exports.delete = async (req, res) => {
+// @desc  delete a team
+// @route DELETE -> /api/vi/teams/:team_id
+// @access  Private (Admin)
+
+exports.deleteOne = async (req, res) => {
+  const { team_id } = req.params;
   try {
-    await Team.deleteOne({ _id: req.params.team_id });
+    await Team.findByIdAndDelete(team_id);
     res.status(200).json({
-      message: 'Team deleted.',
+      message: 'Team was deleted.',
     });
   } catch (e) {
     console.error(e);
