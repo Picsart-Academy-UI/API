@@ -2,16 +2,22 @@ exports.emailRegexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"
 
 // Pagination
 
-exports.getPagination = (givenPage, givenLimit) => {
+exports.getPagination = (givenPage, givenLimit, count) => {
   const page = parseInt(givenPage, 10) || 1;
   const limit = parseInt(givenLimit, 10) || 100;
   const start_index = (page - 1) * limit;
   const end_index = page * limit;
+  const pagination = {};
+  if (end_index < count) {
+    pagination.next_page = page + 1;
+  }
+  if (start_index > 0) {
+    pagination.prev_page = page - 1;
+  }
   return {
-    page,
+    pagination,
     limit,
-    start_index,
-    end_index
+    start_index
   };
 };
 
@@ -19,27 +25,32 @@ exports.getPagination = (givenPage, givenLimit) => {
 
 const excluded_fields = ['select', 'sort', 'page', 'limit'];
 
-const regexp = /\b(gt|gte|lt|lte|in)\b/g;
+function checkMatching(property) {
+  return (property === 'lt' || property === 'lte'
+    || property === 'gt' || property === 'gte'
+    || property === 'in' || false);
+}
 
 function formatQuery(query) {
-  Object.keys(query).forEach((objKey) => {
-    const assumedAsObject = query[objKey];
-    if (typeof assumedAsObject === 'object') {
-      Object.keys(assumedAsObject).forEach((key) => {
-        const isMatch = regexp.test(key);
-        if (isMatch) {
-          const replacedValue = assumedAsObject[key];
-          delete assumedAsObject[key];
-          assumedAsObject[`$${key}`] = replacedValue;
-        }
-      });
-    }
-  });
+  Object.keys(query)
+    .forEach((objKey) => {
+      const assumedAsObject = query[objKey];
+      if (typeof assumedAsObject === 'object') {
+        Object.keys(assumedAsObject)
+          .forEach((key) => {
+            if (checkMatching(key)) {
+              const value = assumedAsObject[key];
+              delete assumedAsObject[key];
+              assumedAsObject[`$${key}`] = value;
+            }
+          });
+      }
+    });
   return query;
 }
 
 exports.buildQuery = (query) => {
-  const result = { ...query };
+  const result = {...query};
   excluded_fields.forEach((field) => delete result[field]);
   return formatQuery(result);
 };

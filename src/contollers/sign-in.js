@@ -37,7 +37,13 @@ module.exports = async (req, res, next) => {
     } else {
       requested_user = user;
     }
-    const token = await jwt.sign({ ...requested_user }, process.env.JWT_SECRET);
+    const token = await jwt.sign({
+      _id: requested_user._id,
+      email: requested_user.email,
+      team_id: requested_user.team_id,
+      is_admin: requested_user.is_admin
+    }, process.env.JWT_SECRET);
+
     return res.status(202).json({
       token,
       user: requested_user
