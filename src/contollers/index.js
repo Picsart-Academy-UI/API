@@ -1,4 +1,4 @@
-exports.signin = require('./sign-in');
+exports.signin = require('../../src2/auth/auth-signin-controller');
 exports.invite = require('./invite');
 exports.team = require('./team');
 exports.reservation = require('./reservation');

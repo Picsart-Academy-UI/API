@@ -1,5 +1,5 @@
 const { Reservation } = require('db_picsart');
-const filter_queries = require('../utils/filter-queries');
+const filter_queries = require('../../src/utils/filter-queries');
 
 exports.create = async (req, res, next) => {
   const {

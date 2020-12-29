@@ -1,8 +1,8 @@
 const UserModel = require('db_picsart').User;
 
-const { getPagination } = require('../utils/util');
+const { getPagination } = require('../../src2/_common/utils/util');
 
-const { buildQuery } = require('../utils/util');
+const { buildQuery } = require('../../src2/_common/utils/util');
 
 // @desc  get users from the same team
 // @route GET /api/v1/users

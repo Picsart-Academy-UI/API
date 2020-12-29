@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { reservation } = require('../contollers');
+const { reservation } = require('../../src/contollers');
 
 const {
   get, getOne, create, update, deleteOne, deleteAll,
