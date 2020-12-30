@@ -24,7 +24,6 @@ module.exports = async (req, res, next) => {
       await mailer(email);
 
       return res.status(208).json({
-        success: true,
         msg: 'The invitation has successfully been resend'
       });
     }

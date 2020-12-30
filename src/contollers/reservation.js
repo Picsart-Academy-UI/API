@@ -1,5 +1,4 @@
 const { Reservation } = require('db_picsart');
-const filter_queries = require('../utils/filter-queries');
 
 exports.create = async (req, res, next) => {
   const {
@@ -62,7 +61,7 @@ exports.update = async (req, res, next) => {
 };
 
 exports.get = async (req, res, next) => {
-  const queries = filter_queries(req.query);
+  const queries = req.query;
 
   try {
     const reservations = await Reservation.find(queries);

@@ -31,7 +31,7 @@ exports.getAllUsers = async (req, res, next) => {
   const queryObject = buildQuery(req.query);
   try {
     let query = UserModel.find(queryObject);
-    const count = await UserModel.countDocuments();
+    const count = await UserModel.countDocuments(queryObject);
     // dynamic select of fields
     const { select, sort } = req.query;
     if (select) {
@@ -44,7 +44,8 @@ exports.getAllUsers = async (req, res, next) => {
       query = query.sort(sort_by);
     }
     // Pagination Logic
-    const { pagination, limit, start_index }=getPagination(req.query.page, req.query.limit, count);
+    // eslint-disable-next-line max-len
+    const { pagination, limit, start_index } = getPagination(req.query.page, req.query.limit, count);
     query = query.skip(start_index).limit(limit);
     const users = await query;
     return res.status(200).json({
