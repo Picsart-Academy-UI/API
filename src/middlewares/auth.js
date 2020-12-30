@@ -1,4 +1,4 @@
-const UserModel = require('booking-db').User;
+const UserModel = require('db_picsart').User;
 const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res, next) => {
@@ -12,16 +12,12 @@ module.exports = async (req, res, next) => {
   }
   try {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    const user = await UserModel.findById(decoded._id);
+    const user = await UserModel.findById(decoded._id).exec();
     if (user) {
       req.user = user;
       return next();
     }
-    // TODO change all the errors to next new specifiedClassError();
-    return res.status(400).json({
-      success: false,
-      msg: 'Not Authorized',
-    });
+    return next(new Error('unauthorized'));
   } catch (err) {
     return next(err);
   }

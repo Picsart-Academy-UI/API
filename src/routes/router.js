@@ -1,28 +1,23 @@
 const express = require('express');
 
+const authenticate = require('../middlewares/auth');
+const authenticateAdmin = require('../middlewares/auth-admin');
+
 const router = express.Router();
 
-const signInRouter = require('./sign-in');
-
-const inviteRouter = require('./invite');
-
+const authRouter = require('./auth');
 const teamRouter = require('./team');
-
 const reservationRouter = require('./reservation');
-
 const usersRouter = require('./users');
-
 const notificationsRouter = require('./notifications');
 
-router.use('/auth', signInRouter);
+router.use(authRouter);
 
-router.use('/auth', inviteRouter);
+router.use('/teams', authenticate, teamRouter);
 
-router.use('/teams', teamRouter);
+router.use('/reservation', authenticate, reservationRouter);
 
-router.use('/reservation', reservationRouter);
-
-router.use('/users', usersRouter);
+router.use('/users', authenticate, usersRouter);
 
 router.use('/notifications', notificationsRouter);
 
