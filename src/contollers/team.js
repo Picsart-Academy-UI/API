@@ -1,4 +1,5 @@
 const { Team } = require('db_picsart');
+const {buildQuery, getPagination} = require('../utils/util');
 // const { NotFound, MongooseError, BadRequest } = require('../errors');
 
 // @desc  create a team
@@ -8,6 +9,9 @@ const { Team } = require('db_picsart');
 exports.create = async (req, res, next) => {
   const { name } = req.body;
   const team = new Team({ name });
+  if (!name){
+    return next(new Error(''));
+  }
   try {
     await team.save();
     return res.status(201).json(team);
@@ -21,8 +25,37 @@ exports.create = async (req, res, next) => {
 // @access  Private (Admin)
 
 exports.getAll = async (req, res, next) => {
+  const queryObject = buildQuery(req.query);
   try {
-    const teams = await Team.find();
+    let query = Team.find(queryObject);
+    const count = await Team.countDocuments();
+    const {sort, select} = req.query;
+    // sorting
+    if (sort) {
+      const sort_by = sort.split(',').join(' ');
+      query = query.sort(sort_by);
+    }
+    // selecting
+    if (select) {
+      const fields = select.split(',').join(' ');
+      query = query.select(fields);
+    }
+    // Pagination Logic
+    // eslint-disable-next-line max-len
+    const { pagination, limit, start_index } = getPagination(req.query.page, req.query.limit, count);
+    query = query.skip(start_index).limit(limit);
+    const teams = await query;
+    return res.status(200).json({
+      teams,
+      count,
+      pagination,
+    });
+
+  } catch (err) {
+    next(new Error('error'));
+  }
+  try {
+    const teams = await Team.find({});
     return res.status(200).json(teams);
   } catch (e) {
     return next(e);
