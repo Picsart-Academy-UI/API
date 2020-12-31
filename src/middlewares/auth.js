@@ -1,4 +1,4 @@
-const UserModel = require('db_picsart').User;
+const UserModel = require('booking-db').User;
 const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res, next) => {
