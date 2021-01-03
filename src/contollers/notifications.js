@@ -1,5 +1,5 @@
 const webpush = require('web-push');
-const { User: UserModel } = require('db_picsart');
+const { User: UserModel } = require('booking-db');
 
 const {
   WEBPUSH_MAILTO,
@@ -24,10 +24,10 @@ exports.subscribe = async (req, res) => {
   // const { push_subscriptions } = user;
   // const subs = [...push_subscriptions, subscription];
 
-  const updated_user = await UserModel.findByIdAndUpdate(user_id, 
-    { 
+  const updated_user = await UserModel.findByIdAndUpdate(user_id,
+    {
       $push: {
-        push_subscriptions:{$each: subscription}
+        push_subscriptions: { $each: subscription }
       }
     },
     { new: true }).exec();
@@ -56,7 +56,7 @@ exports.subscribe = async (req, res) => {
 
 exports.another_one = (req, res) => {
   const { user_id } = req.params;
-  
+
   const user = UserModel.findById(user_id).exec();
   const { push_subscriptions } = user;
 
