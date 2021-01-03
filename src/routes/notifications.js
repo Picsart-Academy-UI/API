@@ -2,9 +2,8 @@ const router = require('express').Router();
 
 const { notifications } = require('../contollers');
 
-const { subscribe, another_one } = notifications;
+const { subscribe } = notifications;
 
-router.post('/subscribe', subscribe);
-router.post('/anotherOne', another_one);
+router.post('/subscribe/:user_id', subscribe);
 
 module.exports = router;

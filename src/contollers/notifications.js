@@ -1,4 +1,5 @@
 const webpush = require('web-push');
+const { User: UserModel } = require('db_picsart');
 
 const {
   WEBPUSH_MAILTO,
@@ -8,7 +9,6 @@ const {
 
 // TODO: add subscription to the User model after update of schema
 // And get rid of this variable (or open a github issue, so I'll change it)
-const subscriptions = [];
 
 webpush.setVapidDetails(
   `mailto:${WEBPUSH_MAILTO}`,
@@ -17,20 +17,29 @@ webpush.setVapidDetails(
 );
 
 // eslint-disable-next-line
-exports.subscribe = (req, res) => {
+exports.subscribe = async (req, res) => {
+  const { user_id } = req.params;
   const subscription = req.body;
+  // const user = await UserModel.findById(user_id).lean().exec();
+  // const { push_subscriptions } = user;
+  // const subs = [...push_subscriptions, subscription];
 
-  if (!subscription || !subscription.endpoint) {
-    return res.status(400).json('Subscription must have an endpoint.');
-  }
+  const updated_user = await UserModel.findByIdAndUpdate(user_id, 
+    { 
+      $push: {
+        push_subscriptions:{$each: subscription}
+      }
+    },
+    { new: true }).exec();
 
-  if (subscriptions.find((sub) => sub.endpoint === subscription.endpoint)) {
-    return res.status(400).json('Subscribtion with givven endpoint already exists');
-  }
+  console.log(updated_user);
+  // if (!subscription || !subscription.endpoint) {
+  //   return res.status(400).json('Subscription must have an endpoint.');
+  // }
 
-  subscriptions.push(subscription);
-
-  console.log(subscriptions);
+  // if (subs.find((sub) => sub.endpoint === subscription.endpoint)) {
+  //   return res.status(400).json('Subscribtion with givven endpoint already exists');
+  // }
   // UGLY: sending back the subscription object back for now ... just because :D
   res.status(201).json(JSON.stringify(subscription));
 
@@ -41,13 +50,16 @@ exports.subscribe = (req, res) => {
     icon: 'https://seeklogo.com/images/P/picsart-icon-logo-EE8CEAAED8-seeklogo.com.png'
   });
 
-  subscriptions.forEach((sub) => {
-    webpush.sendNotification(sub, payload)
-      .catch((err) => console.log(err));
-  });
+  webpush.sendNotification(subscription, payload)
+    .catch((err) => console.log(err));
 };
 
 exports.another_one = (req, res) => {
+  const { user_id } = req.params;
+  
+  const user = UserModel.findById(user_id).exec();
+  const { push_subscriptions } = user;
+
   res.status(201).json({});
 
   const payload = JSON.stringify({
@@ -56,7 +68,7 @@ exports.another_one = (req, res) => {
     icon: 'https://www.dictionary.com/e/wp-content/uploads/2018/04/another-one.jpg'
   });
 
-  subscriptions.forEach((sub) => {
+  push_subscriptions.forEach((sub) => {
     webpush.sendNotification(sub, payload)
       .catch((err) => console.log(err));
   });
