@@ -9,7 +9,7 @@ const {buildQuery, getPagination} = require('../utils/util');
 exports.create = async (req, res, next) => {
   const { name } = req.body;
   const team = new Team({ name });
-  if (!name){
+  if (!name) {
     return next(new Error(''));
   }
   try {
