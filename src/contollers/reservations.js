@@ -26,7 +26,8 @@ exports.update = asyncHandler(async (req, res, next) => {
 
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queries = filter_queries(req.query);
-  const reservations = await Reservation.find();
+
+  const reservations = await Reservation.find(queries);
   return res.status(200).json({data: reservations});
 });
 
