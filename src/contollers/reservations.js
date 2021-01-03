@@ -1,5 +1,4 @@
 const { Reservation } = require('booking-db');
-const filter_queries = require('../utils/filter-queries');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
@@ -25,9 +24,7 @@ exports.update = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const queries = filter_queries(req.query);
-
-  const reservations = await Reservation.find(queries);
+  const reservations = await Reservation.find();
   return res.status(200).json({data: reservations});
 });
 

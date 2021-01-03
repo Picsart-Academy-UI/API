@@ -1,4 +1,4 @@
-exports.signIn = require('./sign-in');
+exports.signin = require('./sign-in');
 exports.invite = require('./invite');
 exports.teams = require('./teams');
 exports.chairs = require('./chairs');
@@ -11,3 +11,4 @@ exports.getUser = require('./users').getUser;
 exports.getMe = require('./users').getMe;
 exports.updateUser = require('./users').updateUser;
 exports.deleteUser = require('./users').deleteUser;
+exports.notifications = require('./notifications');
