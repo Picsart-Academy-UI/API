@@ -28,7 +28,7 @@ exports.getAll = async (req, res, next) => {
   const queryObject = buildQuery(req.query);
   try {
     let query = Team.find(queryObject);
-    const count = await Team.countDocuments();
+    const count = await Team.countDocuments(queryObject);
     const {sort, select} = req.query;
     // sorting
     if (sort) {
@@ -53,12 +53,6 @@ exports.getAll = async (req, res, next) => {
 
   } catch (err) {
     next(new Error('error'));
-  }
-  try {
-    const teams = await Team.find({});
-    return res.status(200).json(teams);
-  } catch (e) {
-    return next(e);
   }
 };
 

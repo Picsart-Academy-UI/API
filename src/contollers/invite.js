@@ -9,7 +9,7 @@ const mailer = require('../utils/mailer');
 
 module.exports = async (req, res, next) => {
 
-  const { email, is_admin, team_id, position, first_name, last_name, birthdate } = req.body;
+  const { email, is_admin, team_id, position, first_name, last_name, birthdate, phone_number } = req.body;
 
   if (!emailRegexp.test(email)) {
     return next(new Error('wrong input email'));
@@ -28,7 +28,7 @@ module.exports = async (req, res, next) => {
       });
     }
 
-    const user_properties = {email, is_admin, team_id, position, first_name, last_name, birthdate};
+    const user_properties = {email, is_admin, team_id, position, first_name, last_name, birthdate, phone_number};
 
     const created_user = await UserModel.create(user_properties);
 
@@ -41,4 +41,3 @@ module.exports = async (req, res, next) => {
     return next(new Error('Server error'));
   }
 };
-
