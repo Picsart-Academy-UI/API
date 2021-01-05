@@ -1,8 +1,8 @@
-const {User: UserModel} = require('booking-db');
+const { User: UserModel } = require('booking-db');
 
 const mailer = require('../utils/mailer');
-const {ErrorResponse} = require('../utils/errorResponse');
-const {asyncHandler} = require('../middlewares/asyncHandler');
+const { ErrorResponse } = require('../utils/errorResponse');
+const { asyncHandler } = require('../middlewares/asyncHandler');
 
 // @desc  Admin invites the user
 // @route /api/v1/auth/invite
@@ -23,10 +23,9 @@ module.exports = asyncHandler(async (req, res, next) => {
     }
     await mailer(email);
 
-    return res.status(208)
-      .json({
-        message: 'The invitation has successfully been resend'
-      });
+    return res.status(208).json({
+      message: 'The invitation has successfully been resend'
+    });
   }
 
   const user_properties = {
@@ -44,8 +43,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 
   await mailer(email);
 
-  return res.status(201)
-    .json({
-      user: created_user,
-    });
+  return res.status(201).json({
+    data: created_user,
+  });
 });

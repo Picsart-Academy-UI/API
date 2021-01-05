@@ -8,7 +8,6 @@ router
   .get('/', getAll)
   .get('/:position_id', getOne)
   .put('/:position_id', update)
-  .delete('/:position_id', deleteOne)
-  .delete('/', deleteAll);
+  .delete('/:position_id', deleteOne);
 
 module.exports = router;
