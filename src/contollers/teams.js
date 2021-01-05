@@ -1,7 +1,7 @@
 const { Team } = require('booking-db');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const { buildQuery,getPagination } = require('../utils/util');
+const { buildQuery, getPagination } = require('../utils/util');
 
 exports.create = asyncHandler(async (req, res, next) => {
   const team = await Team.create(req.body);
