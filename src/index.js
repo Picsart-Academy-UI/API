@@ -34,3 +34,5 @@ DB(process.env.MONGO_URI).then(async (conn) => {
     console.log(`App is running on port ${PORT}`);
   });
 });
+
+module.exports = app;
