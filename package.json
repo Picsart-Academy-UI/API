@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/Picsart-Academy-UI/API#readme",
   "dependencies": {
-    "booking-db": "^1.2.2",
+    "booking-db": "^1.2.8",
     "cors": "^2.8.5",
     "db_picsart": "^1.0.1",
     "dotenv": "^8.2.0",
@@ -30,7 +30,7 @@
     "web-push": "^3.4.4"
   },
   "devDependencies": {
-    "eslint": "^7.16.0",
+    "eslint": "^7.17.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.6"
