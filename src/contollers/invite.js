@@ -24,8 +24,8 @@ module.exports = asyncHandler(async (req, res, next) => {
     await mailer(email);
 
     return res.status(208).json({
-        message: 'The invitation has successfully been resend'
-      });
+      message: 'The invitation has successfully been resend'
+    });
   }
 
   const user_properties = {
@@ -44,6 +44,6 @@ module.exports = asyncHandler(async (req, res, next) => {
   await mailer(email);
 
   return res.status(201).json({
-      data: created_user,
-    });
+    data: created_user,
+  });
 });

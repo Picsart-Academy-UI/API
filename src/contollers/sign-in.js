@@ -43,7 +43,7 @@ module.exports = asyncHandler(async (req, res, next) => {
     is_admin: requested_user.is_admin
   }, process.env.JWT_SECRET);
   return res.status(202).json({
-      data: requested_user,
-      token
-    });
+    data: requested_user,
+    token
+  });
 });
