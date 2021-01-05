@@ -2,7 +2,7 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 
-const { dbConnection: DB } = require('booking-db');
+const { connectDB: DB } = require('booking-db');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
@@ -34,3 +34,5 @@ DB(process.env.MONGO_URI).then(async (conn) => {
     console.log(`App is running on port ${PORT}`);
   });
 });
+
+module.exports = app;
