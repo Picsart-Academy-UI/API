@@ -54,3 +54,16 @@ exports.buildQuery = (query) => {
   excluded_fields.forEach((field) => delete result[field]);
   return formatQuery(result);
 };
+
+// excluding undefined fields
+
+exports.excludeUndefinedFields = (obj) => {
+  let toBeReturned = {};
+  Object.keys(obj).forEach((p) => {
+    if (typeof obj[p] === 'undefined') {
+      return;
+    }
+    toBeReturned = {...toBeReturned, [p]: obj[p]};
+  });
+  return toBeReturned;
+};
