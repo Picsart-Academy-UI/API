@@ -1,4 +1,13 @@
-exports.signIn = require('./sign-in');
+exports.signin = require('./sign-in');
 exports.invite = require('./invite');
-exports.team = require('./team');
-exports.reservation = require('./reservation');
+exports.teams = require('./teams');
+exports.chairs = require('./chairs');
+exports.tables = require('./tables');
+exports.positions = require('./positions');
+exports.reservations = require('./reservations');
+exports.getUsers = require('./users').getUsers;
+exports.getAllUsers = require('./users').getAllUsers;
+exports.getUser = require('./users').getUser;
+exports.getMe = require('./users').getMe;
+exports.updateUser = require('./users').updateUser;
+exports.deleteUser = require('./users').deleteUser;
