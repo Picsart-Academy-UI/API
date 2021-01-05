@@ -2,7 +2,7 @@ const { describe, it } = require('mocha');
 const { expect } = require('chai');
 const request = require('supertest');
 
-const app = require('../index');
+const app = require('../src');
 
 function hasMessageKey(res) {
   if (!('msg' in res.body)) throw new Error('Missing "msg" key');

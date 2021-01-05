@@ -2,7 +2,7 @@ const { before } = require('mocha');
 
 const connect = require('booking-db').dbConnection;
 
-const DB_URI = 'mongodb+srv://cluster0.j6zug.mongodb.net/<dbname>';
+const DB_URI = 'mongodb+srv://armen:chairs123@chairs-app-test.qduod.mongodb.net/chairs?retryWrites=true&w=majority';
 
 before('Connect to Database', (done) => {
   connect(DB_URI)
