@@ -20,8 +20,9 @@
     "comma-dangle": "off",
     "prefer-destructuring": ["error", {
       "object": true,
-       "array": false
+      "array": false
     }],
     "no-unused-vars": "off"
   }
 }
+
