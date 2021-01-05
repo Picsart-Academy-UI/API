@@ -1,38 +1,51 @@
-const { find_one_user } = require('../utils/db_utils');
-const { emailRegexp } = require('../utils/util');
-const { create_user } = require('../utils/db_utils');
+const {User: UserModel} = require('booking-db');
 
-module.exports = async (req, res, next) => {
-  const { email, _isAdmin, team_id } = req.body;
+const mailer = require('../utils/mailer');
+const {ErrorResponse} = require('../utils/errorResponse');
+const {asyncHandler} = require('../middlewares/asyncHandler');
 
-  // checking to see if the email input is valid
+// @desc  Admin invites the user
+// @route /api/v1/auth/invite
+// @access Private (Amin)
 
-  if (!emailRegexp.test(email)) {
-    return next(new Error('wrong input email'));
-  }
+module.exports = asyncHandler(async (req, res, next) => {
 
-  try {
-    const user = await find_one_user(email);
+  const {
+    email, is_admin, team_id,
+    position_id, first_name, last_name, birthdate, phone
+  } = req.body;
 
-    if (user) {
-      if (user.accepted) {
-        return next(new Error('User has already accepted the invitation'));
-      }
-
-      // TODO just resent the invitation ?
-
-      return next('Invitation has been resend');
+  const user = await UserModel.findOne({email})
+    .exec();
+  if (user) {
+    if (user.accepted) {
+      return next(new ErrorResponse('User has already accepted the invitation', 409));
     }
+    await mailer(email);
 
-    const user_properties = { email, _isAdmin, team_id };
-
-    const created_user = await create_user(user_properties);
-
-    return res.status(201).json({
-      success: true,
-      msg: 'The user has successfully been initialized!',
-    });
-  } catch (err) {
-    return next(new Error('Server error'));
+    return res.status(208)
+      .json({
+        message: 'The invitation has successfully been resend'
+      });
   }
-};
+
+  const user_properties = {
+    email,
+    is_admin,
+    team_id,
+    position_id,
+    first_name,
+    last_name,
+    birthdate,
+    phone
+  };
+
+  const created_user = await UserModel.create(user_properties);
+
+  await mailer(email);
+
+  return res.status(201)
+    .json({
+      user: created_user,
+    });
+});
