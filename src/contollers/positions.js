@@ -52,10 +52,3 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     message: 'Positions was deleted.',
   });
 });
-
-exports.deleteAll = asyncHandler(async (req, res, next) => {
-  await Position.deleteMany();
-  return res.status(200).json({
-    message: 'All positions were deleted',
-  });
-});

@@ -1,7 +1,6 @@
-const UserModel = require('booking-db').User;
+const { User: UserModel } = require('booking-db');
 
 const mailer = require('../utils/mailer');
-const { emailRegexp } = require('../utils/util');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
@@ -11,13 +10,13 @@ const { asyncHandler } = require('../middlewares/asyncHandler');
 
 module.exports = asyncHandler(async (req, res, next) => {
 
-  const { email, is_admin, team_id, position, first_name, last_name, birthdate } = req.body;
+  const {
+    email, is_admin, team_id,
+    position_id, first_name, last_name, birthdate, phone
+  } = req.body;
 
-  if (!emailRegexp.test(email)) {
-    return next(new ErrorResponse('Wrong input email', 415));
-  }
-
-  const user = await UserModel.findOne({ email }).exec();
+  const user = await UserModel.findOne({email})
+    .exec();
   if (user) {
     if (user.accepted) {
       return next(new ErrorResponse('User has already accepted the invitation', 409));
@@ -25,17 +24,26 @@ module.exports = asyncHandler(async (req, res, next) => {
     await mailer(email);
 
     return res.status(208).json({
-      message: 'The invitation has successfully been resend'
-    });
+        message: 'The invitation has successfully been resend'
+      });
   }
 
-  const user_properties = {email, is_admin, team_id, position, first_name, last_name, birthdate};
+  const user_properties = {
+    email,
+    is_admin,
+    team_id,
+    position_id,
+    first_name,
+    last_name,
+    birthdate,
+    phone
+  };
 
   const created_user = await UserModel.create(user_properties);
 
   await mailer(email);
 
   return res.status(201).json({
-    user: created_user,
-  });
+      data: created_user,
+    });
 });

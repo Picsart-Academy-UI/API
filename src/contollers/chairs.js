@@ -9,7 +9,7 @@ exports.create = asyncHandler(async (req, res, next) => {
 
 exports.getAll = asyncHandler(async (req, res, next) => {
   const chairs = await Chair.find();
-  return res.status(200).json(chairs);
+  return res.status(200).json({data: chairs});
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
@@ -50,12 +50,5 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
   await Chair.deleteOne({ _id: req.params.chair_id });
   res.status(200).json({
     message: 'Chair was deleted.',
-  });
-});
-
-exports.deleteAll = asyncHandler(async (req, res, next) => {
-  await Chair.deleteMany();
-  return res.status(200).json({
-    message: 'All chairs were deleted',
   });
 });
