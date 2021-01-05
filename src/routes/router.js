@@ -19,7 +19,6 @@ const positionRouter = require('./positions');
 
 const reservationRouter = require('./reservations');
 
-
 router.use(authRouter);
 
 router.use('/teams', authenticate, teamRouter);
