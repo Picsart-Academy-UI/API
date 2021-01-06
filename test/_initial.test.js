@@ -14,13 +14,9 @@ const { DB_URI } = require('./_mocks/data');
 let team = {};
 let user = {};
 
-before('Connect to Database and create user', async function () {
+before('Connect to Database and create mock data', async function () {
   this.timeout(5000);
   await connect(DB_URI);
-  this.armen = 'Nersisyan';
-});
-
-describe('Creating mock data', () => {
   it('should create new a team for testing', async () => {
     team = await createTeam();
   });
@@ -35,7 +31,7 @@ describe('Creating mock data', () => {
     expect(user).to.contain.property('email');
     expect(user).to.contain.property('team_id');
     expect(user).to.contain.property('is_admin');
-    generateToken(user);
+    this.token = await generateToken(user);
   });
 });
 

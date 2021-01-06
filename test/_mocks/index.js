@@ -31,17 +31,10 @@ async function generateToken(user = admin) {
   }, JWT_SECRET_KEY);
 }
 
-async function decodeToken(token) {
-  const decoded = await jwt.verify(token, JWT_SECRET_KEY);
-  console.log('decoded', decoded);
-  return decoded;
-}
-
 module.exports = {
   createTeam,
   deleteTeam,
   deleteUser,
   createAdmin,
-  decodeToken,
   generateToken,
 };
