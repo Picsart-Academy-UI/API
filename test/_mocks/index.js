@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { User, Team } = require('booking-db');
-const { admin, team, JWT_SECRET_KEY } = require('./data');
+const { admin, user, team, JWT_SECRET_KEY } = require('./data');
+
+async function createUser(team_id) {
+  const createdUser = await User.create({ ...user, team_id });
+  return createdUser;
+}
 
 async function createAdmin(team_id) {
   const createdUser = await User.create({ ...admin, team_id });
@@ -31,10 +36,17 @@ async function generateToken(user = admin) {
   }, JWT_SECRET_KEY);
 }
 
+async function decodeToken(token) {
+  const decoded = await jwt.verify(token, JWT_SECRET_KEY);
+  return decoded;
+}
+
 module.exports = {
   createTeam,
+  createUser,
   deleteTeam,
   deleteUser,
   createAdmin,
+  decodeToken,
   generateToken,
 };
