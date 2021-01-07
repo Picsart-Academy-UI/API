@@ -54,4 +54,3 @@ after("Clean up", async function () {
   expect(nonAdminUser).to.contain.property("_id");
   await deleteUser(nonAdminUser._id);
 });
-

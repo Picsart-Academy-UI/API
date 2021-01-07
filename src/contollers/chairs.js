@@ -45,7 +45,7 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     ));
   }
   await Chair.deleteOne({ _id: req.params.chair_id });
-  res.status(200).json({
+  return res.status(200).json({
     message: 'Chair was deleted.',
   });
 });

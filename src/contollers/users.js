@@ -27,26 +27,13 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  let query = await UserModel.find(queryObject);
+  const initialQuery = UserModel.find(queryObject);
   const count = await UserModel.countDocuments(queryObject);
-  // dynamic select of fields
-  const {select, sort} = req.query;
-  if (select) {
-    const fields = select.split(',').join(' ');
-    query = query.select(fields);
-  }
-  // sorting
-  if (sort) {
-    const sort_by = sort.split(',')
-      .join(' ');
-    query = query.sort(sort_by);
-  }
-  // Pagination Logic
+  // Pagination Logic & dynamic select of fields
   // eslint-disable-next-line max-len
-  const { pagination, limit, start_index } = getPagination(
-    req.query.page, req.query.limit, count
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
   );
-  query = query.skip(start_index).limit(limit);
   const users = await query;
   return res.status(200).json({
     data: users,

@@ -12,7 +12,7 @@ const errorHandler = (err, req, res, next) => {
 
   // JSONWEBTOKEN error
   if (err.name === 'JsonWebTokenError') {
-    const message = 'Unauthorized';
+    const message = 'Invalid token';
     error = new ErrorResponse(message, 401);
   }
 
