@@ -1,87 +1,80 @@
-const { Team } = require('booking-db');
+const { User: UserModel } = require('booking-db');
+
+const mailer = require('../utils/mailer');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const { buildQuery, getPagination } = require('../utils/util');
+const {checkUserProperties} = require('../utils/util');
 
-exports.create = asyncHandler(async (req, res, next) => {
-  const team = await Team.create(req.body);
-  return res.status(201).json({data: team});
-});
+// @desc  Admin invites the user
+// @route /api/v1/auth/invite
+// @access Private (Admin)
 
-// @desc  get all teams
-// @route GET -> /api/vi/teams
-// @access  Private (Admin)
-exports.getAll = asyncHandler(async (req, res, next) => {
-  const queryObject = buildQuery(req.query);
-  let query = Team.find(queryObject);
-  const count = await Team.countDocuments(queryObject);
-  const {sort, select} = req.query;
-  // sorting
-  if (sort) {
-    const sort_by = sort.split(',').join(' ');
-    query = query.sort(sort_by);
+module.exports = asyncHandler(async (req, res, next) => {
+
+  const {body} = req;
+
+  const {
+    email, is_admin, team_id,
+    position_id, first_name, last_name, birthdate, phone
+  } = body;
+
+  const user_properties = {
+    email,
+    is_admin,
+    team_id,
+    position_id,
+    first_name,
+    last_name,
+    birthdate,
+    phone
+  };
+
+  const user = await UserModel.findOne({email})
+    .lean()
+    .exec();
+  if (user) {
+    if (user.accepted) {
+      return next(new ErrorResponse('User has already accepted the invitation', 409));
+    }
+
+    const updated_user = await UserModel.findOneAndUpdate({_id: user._id}, {
+      email,
+      is_admin,
+      team_id,
+      position_id,
+      first_name,
+      last_name,
+      birthdate,
+      phone
+    }, {new: true, runValidators: true}).lean().exec();
+
+    try {
+      await mailer(email);
+    } catch (err) {
+      return res.status(207).json({
+        data: updated_user,
+        message: 'Due to some issues the invitation has not been sent, please try again'
+      });
+    }
+    return res.status(208).json({
+      data: updated_user
+    });
   }
-  // selecting
-  if (select) {
-    const fields = select.split(',').join(' ');
-    query = query.select(fields);
-  }
-  // Pagination Logic
-  // eslint-disable-next-line max-len
-  const { pagination, limit, start_index } = getPagination(req.query.page, req.query.limit, count);
-  query = query.skip(start_index).limit(limit);
-  const teams = await query;
-  return res.status(200).json({
-    teams,
-    count,
-    pagination,
-  });
-});
 
-exports.getOne = asyncHandler(async (req, res, next) => {
-  const team = await Team.findById(req.params.team_id);
-  if (!team) {
-    return next(new ErrorResponse(
-      `Team not found with id of ${req.params.team_id}`,
-      404
-    ));
-  }
-  return res.status(200).json({data: team});
-});
+  const created_user = await UserModel.create(user_properties);
 
-exports.update = asyncHandler(async (req, res, next) => {
-  const team = await Team.findOneAndUpdate(
-    { _id: req.params.team_id },
-    { $set: req.body },
-    { new: true },
-    { runValidators: true }
-  );
-  if (!team) {
-    return next(new ErrorResponse(
-      `Team not found with id of ${req.params.team_id}`,
-      404
-    ));
-  }
-  return res.status(200).json({data: team});
-});
+  try {
 
-exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const team = await Team.findById(req.params.team_id);
-  if (!team) {
-    return next(new ErrorResponse(
-      `Team not found with id of ${req.params.team_id}`,
-      404
-    ));
-  }
-  await Team.deleteOne({ _id: req.params.team_id });
-  res.status(200).json({
-    message: 'Teams was deleted.',
-  });
-});
+    await mailer(email);
 
-exports.deleteAll = asyncHandler(async (req, res, next) => {
-  await Team.deleteMany();
-  return res.status(200).json({
-    message: 'All teams were deleted',
+  } catch (err) {
+    return res.status(207).json({
+      data: created_user.toJSON(),
+      message: 'Due to some issues the invitation has not been sent, please try again'
+    });
+  }
+
+  return res.status(201).json({
+    data: created_user.toJSON(),
   });
 });

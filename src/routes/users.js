@@ -2,7 +2,9 @@ const router = require('express').Router();
 
 const adminAuth = require('../middlewares/auth-admin');
 
-const { getUsers, getAllUsers, getUser, updateUser, deleteUser, getMe } = require('../contollers');
+const {
+  getUsers, getAllUsers, getUser, updateUser, deleteUser, getMe
+} = require('../contollers').users;
 
 router.get('/', getUsers);
 router.get('/all', adminAuth, getAllUsers);

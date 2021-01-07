@@ -9,7 +9,6 @@ router
   .get('/:reservation_id', getOne)
   .post('/', create)
   .put('/:reservation_id', update)
-  .delete('/:reservation_id', deleteOne)
-  .delete('/', deleteAll);
+  .delete('/:reservation_id', deleteOne);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const { ErrorResponse } = require('../utils/errorResponse');
+const { ErrorResponse, NotFound, BadRequest } = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
@@ -10,10 +10,9 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 404);
   }
 
-  // JSONWEBTOKEN ERROR
-
+  // JSONWEBTOKEN error
   if (err.name === 'JsonWebTokenError') {
-    const message = 'Unauthorized';
+    const message = 'Invalid token';
     error = new ErrorResponse(message, 401);
   }
 
@@ -33,6 +32,19 @@ const errorHandler = (err, req, res, next) => {
     const message = 'Unauthorized';
     error = new ErrorResponse(message, 401);
   }
+
+  // Not Found error
+  if (err.name === 'NotFound') {
+    const message = err.message || `The requested resource ${req.url} was not found.`;
+    error = new NotFound(message, 404);
+  }
+
+  // Bad Request error
+  if (err.name === 'BadRequest') {
+    const message = err.message || 'Bad Request';
+    error = new NotFound(message, 400);
+  }
+
   res.status(error.statusCode || 500).json({
     error: error.message || 'Server Error'
   });
