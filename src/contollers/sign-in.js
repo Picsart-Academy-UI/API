@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 const jwt = require('jsonwebtoken');
 const { User: UserModel } = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
-=======
-const {OAuth2Client} = require('google-auth-library');
-const jwt = require('jsonwebtoken');
-const {User: UserModel} = require('booking-db');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
->>>>>>> c184eed6c3321bf50458fe66e59e6aa048b0569a
-
-const {ErrorResponse} = require('../utils/errorResponse');
-const {asyncHandler} = require('../middlewares/asyncHandler');
+const { ErrorResponse } = require('../utils/errorResponse');
+const { asyncHandler } = require('../middlewares/asyncHandler');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -20,12 +12,8 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // @access  Public
 module.exports = asyncHandler(async (req, res, next) => {
   let requested_user;
-<<<<<<< HEAD
   let ticket;
   const { token: idToken } = req.body;
-=======
-  const {token: idToken} = req.body;
->>>>>>> c184eed6c3321bf50458fe66e59e6aa048b0569a
   if (!idToken) {
     return next(new ErrorResponse('Token was not provided', 401));
   }
@@ -42,9 +30,8 @@ module.exports = asyncHandler(async (req, res, next) => {
   }
 
   const payload = ticket.getPayload();
-  const {email, photo_url} = payload;
-  const user = await UserModel.findOne({email})
-    .exec();
+  const { email, photo_url } = payload;
+  const user = await UserModel.findOne({ email }).exec();
   if (!user) {
     return next(new ErrorResponse('This user has not been invited', 401));
   }
@@ -64,18 +51,9 @@ module.exports = asyncHandler(async (req, res, next) => {
     team_id: requested_user.team_id,
     is_admin: requested_user.is_admin
   }, process.env.JWT_SECRET);
-<<<<<<< HEAD
 
   return res.status(202).json({
     data: requested_user,
     token
   });
-=======
-  return res.status(202)
-    .json({
-      token,
-      user: requested_user
-    });
-
->>>>>>> c184eed6c3321bf50458fe66e59e6aa048b0569a
 });
