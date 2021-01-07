@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { User, Team } = require('booking-db');
-const { admin, user, team, JWT_SECRET_KEY } = require('./data');
+const { User, Team, Table, Chair } = require('booking-db');
+const { admin, user, team, table, JWT_SECRET_KEY } = require('./data');
 
 async function createUser(team_id) {
   const createdUser = await User.create({ ...user, team_id });
@@ -12,9 +12,29 @@ async function createAdmin(team_id) {
   return createdUser;
 }
 
+async function createTable(team_id) {
+  const createdTable = await Table.create({ ...table, team_id });
+  return createdTable;
+}
+
+async function deleteTable(id) {
+  const deletedTable = await Table.deleteOne({ _id: id });
+  return deletedTable;
+}
+
 async function createTeam() {
   const createdTeam = await Team.create(team);
   return createdTeam;
+}
+
+async function createChair() {
+  const createdChair = await Chair.create({ number: 1 });
+  return createdChair;
+}
+
+async function deleteChair(id) {
+  const deletedChair = await Chair.deleteOne({ _id: id });
+  return deletedChair;
 }
 
 async function deleteTeam(id) {
@@ -26,8 +46,8 @@ async function deleteUser(id) {
   await User.findByIdAndDelete({ _id: id });
 }
 
-async function generateToken(user = admin) {
-  const { _id, email, team_id, is_admin } = user;
+async function generateToken(u = admin) {
+  const { _id, email, team_id, is_admin } = u;
   return jwt.sign({
     _id,
     email,
@@ -47,6 +67,10 @@ module.exports = {
   deleteTeam,
   deleteUser,
   createAdmin,
+  createTable,
+  createChair,
+  deleteTable,
+  deleteChair,
   decodeToken,
   generateToken,
 };
