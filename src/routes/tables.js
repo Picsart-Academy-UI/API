@@ -8,7 +8,6 @@ router
   .get('/', getAll)
   .get('/:table_id', getOne)
   .put('/:table_id', update)
-  .delete('/:table_id', deleteOne)
-  .delete('/', deleteAll);
+  .delete('/:table_id', deleteOne);
 
 module.exports = router;

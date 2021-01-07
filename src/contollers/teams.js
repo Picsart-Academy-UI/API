@@ -1,7 +1,7 @@
 const { Team } = require('booking-db');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const { buildQuery,getPagination } = require('../utils/util');
+const { buildQuery, getPagination } = require('../utils/util');
 
 exports.create = asyncHandler(async (req, res, next) => {
   const team = await Team.create(req.body);
@@ -13,26 +13,17 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  let query = Team.find(queryObject);
+  const initialQuery = Team.find(queryObject);
+
   const count = await Team.countDocuments(queryObject);
-  const {sort, select} = req.query;
-  // sorting
-  if (sort) {
-    const sort_by = sort.split(',').join(' ');
-    query = query.sort(sort_by);
-  }
-  // selecting
-  if (select) {
-    const fields = select.split(',').join(' ');
-    query = query.select(fields);
-  }
-  // Pagination Logic
-  // eslint-disable-next-line max-len
-  const { pagination, limit, start_index } = getPagination(req.query.page, req.query.limit, count);
-  query = query.skip(start_index).limit(limit);
+
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
+  );
+
   const teams = await query;
   return res.status(200).json({
-    teams,
+    data: teams,
     count,
     pagination,
   });
@@ -74,14 +65,7 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     ));
   }
   await Team.deleteOne({ _id: req.params.team_id });
-  res.status(200).json({
-    message: 'Teams was deleted.',
-  });
-});
-
-exports.deleteAll = asyncHandler(async (req, res, next) => {
-  await Team.deleteMany();
   return res.status(200).json({
-    message: 'All teams were deleted',
+    message: 'Teams was deleted.',
   });
 });
