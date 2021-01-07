@@ -2,7 +2,9 @@ exports.emailRegexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"
 
 // Pagination
 
-exports.getPagination = (givenPage, givenLimit, count) => {
+exports.getPagination = (givenPage, givenLimit, count, req, query) => {
+
+  let queryRef = query;
   const page = parseInt(givenPage, 10) || 1;
   const limit = parseInt(givenLimit, 10) || 100;
   const start_index = (page - 1) * limit;
@@ -14,10 +16,30 @@ exports.getPagination = (givenPage, givenLimit, count) => {
   if (start_index > 0) {
     pagination.prev_page = page - 1;
   }
+
+  const {select, sort} = req.query;
+
+  if (select) {
+    const fields = select.split(',')
+      .join(' ');
+    queryRef = queryRef.select(fields);
+  }
+  // sorting
+  if (sort) {
+    const sort_by = sort.split(',')
+      .join(' ');
+    queryRef = queryRef.sort(sort_by);
+  } else {
+    queryRef = queryRef.sort('createdAt');
+  }
+  queryRef = queryRef.skip(start_index)
+    .limit(limit);
+
   return {
     pagination,
     limit,
-    start_index
+    start_index,
+    query: queryRef
   };
 };
 
@@ -59,11 +81,15 @@ exports.buildQuery = (query) => {
 
 exports.excludeUndefinedFields = (obj) => {
   let toBeReturned = {};
-  Object.keys(obj).forEach((p) => {
-    if (typeof obj[p] === 'undefined') {
-      return;
-    }
-    toBeReturned = {...toBeReturned, [p]: obj[p]};
-  });
+  Object.keys(obj)
+    .forEach((p) => {
+      if (typeof obj[p] === 'undefined') {
+        return;
+      }
+      toBeReturned = {
+        ...toBeReturned,
+        [p]: obj[p]
+      };
+    });
   return toBeReturned;
 };

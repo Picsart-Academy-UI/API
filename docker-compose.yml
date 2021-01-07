@@ -1,14 +1,18 @@
-version: '3'
-services: 
+version: '2'
+
+services:
   api:
     container_name: api
     restart: always
     build: .
-    ports: 
+    ports:
       - '80:3001'
-    links: 
+    links:
+      - mongo
   mongo:
     container_name: mongo
     image: mongo
-    ports: 
+    ports:
       - '27017:27017'
+    volumes:
+      - '/root/db:/data/db'

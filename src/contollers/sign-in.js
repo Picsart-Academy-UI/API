@@ -2,24 +2,33 @@ const jwt = require('jsonwebtoken');
 const { User: UserModel } = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc  sign-in
 // @route /api/v1/auth/signin
 // @access  Public
 module.exports = asyncHandler(async (req, res, next) => {
   let requested_user;
+  let ticket;
   const { token: idToken } = req.body;
   if (!idToken) {
-    return next(new ErrorResponse('Unauthorized', 401));
+    return next(new ErrorResponse('Token was not provided', 401));
   }
-  const ticket = await client.verifyIdToken({
-    idToken,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
+  try {
+    ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+  } catch (err) {
+    if (err.message.includes('Token used too late')) {
+      return next(new ErrorResponse('Expired OAuth2Client token', 401));
+    }
+    return next(new ErrorResponse('Invalid OAuth2Client token', 401));
+  }
+
   const payload = ticket.getPayload();
   const { email, photo_url } = payload;
   const user = await UserModel.findOne({ email }).exec();
@@ -42,6 +51,7 @@ module.exports = asyncHandler(async (req, res, next) => {
     team_id: requested_user.team_id,
     is_admin: requested_user.is_admin
   }, process.env.JWT_SECRET);
+
   return res.status(202).json({
     data: requested_user,
     token
