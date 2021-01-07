@@ -4,7 +4,7 @@ const JWT_SECRET_KEY = 'Picsart2020';
 const user = {
   first_name: 'Test First Name User',
   last_name: 'Test Last Name User',
-  email: 'testingUser@gmail.com',
+  email: 'UserTestEmail@gmail.com',
   is_admin: false,
   position_id: 'fs3rnaEE2399',
   birthdate: 'date',
@@ -14,7 +14,7 @@ const user = {
 const userUpdated = {
   first_name: 'Test First Name User Updated',
   last_name: 'Test Last Name User Updated',
-  email: 'testingUserUpdated@gmail.com',
+  email: 'UserTestEmailUpdated@gmail.com',
   is_admin: false,
   position_id: 'fs3rnaEE23d9',
   birthdate: 'date',
@@ -42,7 +42,7 @@ const adminUpdated = {
 };
 
 const team = {
-  team_name: 'Web Growth95',
+  team_name: 'Team Test',
 };
 
 module.exports = {

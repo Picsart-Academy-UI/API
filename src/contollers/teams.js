@@ -31,7 +31,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   const { pagination, limit, start_index } = getPagination(
     req.query.page, req.query.limit, count
   );
-  query = query.skip(start_index).limit(limit);
+  // query = query.skip(start_index).limit(limit);
   const teams = await query;
   return res.status(200).json({
     data: teams,

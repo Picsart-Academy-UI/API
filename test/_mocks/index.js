@@ -17,6 +17,11 @@ async function createTeam() {
   return createdTeam;
 }
 
+async function getTeam() {
+  const foundTeam = await Team.findOne({team_name: 'Team Test'}).exec();
+  return foundTeam;
+}
+
 async function deleteTeam(id) {
   const deleted = await Team.deleteOne({ _id: id });
   return deleted;
@@ -43,8 +48,9 @@ async function decodeToken(token) {
 
 module.exports = {
   createTeam,
-  createUser,
   deleteTeam,
+  getTeam,
+  createUser,
   deleteUser,
   createAdmin,
   decodeToken,
