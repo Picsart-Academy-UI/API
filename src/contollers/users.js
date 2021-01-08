@@ -48,7 +48,7 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 exports.getUser = asyncHandler(async (req, res, next) => {
   const { user_id } = req.params;
   const found_user = await UserModel.findById(user_id).lean().exec();
-  if (found_user) {
+  if (!found_user) {
     return next(new ErrorResponse('User not found.', 404));
   }
   return res.status(200).json({
