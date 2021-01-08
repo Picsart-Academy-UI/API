@@ -93,7 +93,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('User not found.', 404));
   }
   return res.status(200).json({
-    message: 'User has successfully deleted.'
+    message: 'User has successfully been deleted.'
   });
 });
 
