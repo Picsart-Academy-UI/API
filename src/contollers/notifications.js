@@ -7,9 +7,6 @@ const {
   PRIVATE_VAPID_KEY
 } = process.env;
 
-// TODO: add subscription to the User model after update of schema
-// And get rid of this variable (or open a github issue, so I'll change it)
-
 webpush.setVapidDetails(
   `mailto:${WEBPUSH_MAILTO}`,
   PUBLIC_VAPID_KEY,
@@ -21,30 +18,32 @@ exports.subscribe = async (req, res) => {
   try {
     const { user_id } = req.params;
     const subscription = req.body;
-    // const user = await User.findById(user_id).lean().exec();
-    // const { push_subscriptions } = user;
-    // const subs = [...push_subscriptions, subscription];
-    console.log(subscription);
-    const updated_user = await User.findOneAndUpdate({ _id: user_id}, 
-      { 
+
+    // UGLY: Used '.lean()' here, because mongo gave me error
+    // but I can't use this instance to save after that
+    const user = await User.findById(user_id).lean().exec();
+    const { push_subscriptions } = user;
+
+    // TODO: Create a proper Error handling for this endpoint
+    if (!subscription || !subscription.endpoint) {
+      return res.status(400).json('Subscription is not valid');
+    }
+
+    if (push_subscriptions.find((sub) => sub.endpoint === subscription.endpoint)) {
+      return res.status(400).json('Subscribtion with given endpoint already exists');
+    }
+
+    const updated_user = await User.findByIdAndUpdate(user_id, 
+      {
         $push: {
-          push_notifications: subscription
+          push_subscriptions: subscription
         }
       },
       { new: true }).exec();
-  
-    console.log(updated_user);
-    // if (!subscription || !subscription.endpoint) {
-    //   return res.status(400).json('Subscription must have an endpoint.');
-    // }
-  
-    // if (subs.find((sub) => sub.endpoint === subscription.endpoint)) {
-    //   return res.status(400).json('Subscribtion with givven endpoint already exists');
-    // }
-    // UGLY: sending back the subscription object back for now ... just because :D
+
     res.status(201).json(JSON.stringify(subscription));
   
-    // creating payload
+    // Creating payload
     const payload = JSON.stringify({
       title: 'Picsart Booking Service',
       body: 'Notifications for Picsart booking is registrated',
@@ -55,26 +54,32 @@ exports.subscribe = async (req, res) => {
       .catch((err) => console.log(err));
   
   } catch (e) {
-    console.log(e)
+    console.error(e);
   }
 };
 
-exports.another_one = (req, res) => {
-  const { user_id } = req.params;
+// The following controller is just for example
+
+exports.another_one = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    
+    const user = await User.findById(user_id).lean().exec();
+    const { push_subscriptions } = user;
+    
+    res.status(201).json({});
   
-  const user = User.findById(user_id).exec();
-  const { push_subscriptions } = user;
-
-  res.status(201).json({});
-
-  const payload = JSON.stringify({
-    title: 'Another One',
-    body: 'Another One',
-    icon: 'https://www.dictionary.com/e/wp-content/uploads/2018/04/another-one.jpg'
-  });
-
-  push_subscriptions.forEach((sub) => {
-    webpush.sendNotification(sub, payload)
-      .catch((err) => console.log(err));
-  });
+    const payload = JSON.stringify({
+      title: 'Another One',
+      body: 'Another One',
+      icon: 'https://www.dictionary.com/e/wp-content/uploads/2018/04/another-one.jpg'
+    });
+  
+    push_subscriptions.forEach((sub) => {
+      webpush.sendNotification(sub, payload)
+        .catch((err) => console.log(err));
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };
