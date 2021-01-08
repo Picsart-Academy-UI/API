@@ -1,4 +1,4 @@
-const { Table } = require('db_picsart');
+const { Table } = require('booking-db');
 
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');

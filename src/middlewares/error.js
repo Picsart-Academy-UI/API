@@ -28,10 +28,6 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors).map((val) => val.message);
     error = new ErrorResponse(message, 400);
   }
-  if (err.name === 'SyntaxError') {
-    const message = 'Unauthorized';
-    error = new ErrorResponse(message, 401);
-  }
 
   // Not Found error
   if (err.name === 'NotFound') {

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User: UserModel } = require('db_picsart');
+const { User: UserModel } = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
 
 const { ErrorResponse } = require('../utils/errorResponse');
@@ -31,17 +31,19 @@ module.exports = asyncHandler(async (req, res, next) => {
 
   const payload = ticket.getPayload();
   const { email, photo_url } = payload;
-  const user = await UserModel.findOne({ email }).exec();
+  const user = await UserModel.findOne({ email }).lean().exec();
   if (!user) {
     return next(new ErrorResponse('This user has not been invited', 401));
   }
   if (!user.accepted) {
+
     requested_user = await UserModel.findOneAndUpdate(
       {email}, {
         profile_picture: photo_url,
         accepted: true
       }, {new: true}
-    );
+    ).lean().exec();
+
   } else {
     requested_user = user;
   }
