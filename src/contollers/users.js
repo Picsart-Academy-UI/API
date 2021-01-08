@@ -27,7 +27,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  let query = await UserModel.find(queryObject);
+  let query = UserModel.find(queryObject);
   const count = await UserModel.countDocuments(queryObject);
   // dynamic select of fields
   const {select, sort} = req.query;

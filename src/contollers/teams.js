@@ -13,7 +13,7 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  let query = await Team.find(queryObject);
+  let query = Team.find(queryObject);
 
   const count = await Team.countDocuments(queryObject);
   const {sort, select} = req.query;
@@ -41,7 +41,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
-  const team = await Team.findById(req.params.team_id);
+  const team = Team.findById(req.params.team_id);
   if (!team) {
     return next(new ErrorResponse(
       `Team not found with id of ${req.params.team_id}`,
