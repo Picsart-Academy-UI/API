@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
         }
       },
       { new: true }).exec();
-      console.log('Here');
+    console.log('Here');
     return res.status(200).json({user});
   } catch (e) {
     console.error(e);

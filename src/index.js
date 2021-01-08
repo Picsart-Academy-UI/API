@@ -1,29 +1,33 @@
 const path = require('path');
+const cors = require('cors');
+const express = require('express');
+
+const { connect_db: DB } = require('db_picsart');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-const DB = require('db_picsart').connect_db;
-
-const express = require('express');
-const cors = require('cors');
-
 const { router } = require('./routes');
+
+const errorHandler = require('./middlewares/error');
 
 const app = express();
 
 // Middlewares
 
+app.use(cors());
+
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
-
 app.use(process.env.API_VERSION, router);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 6788;
 
 // TODO : configure the DB connection so the future server js file is testable
+// TODO : add .lean() to every place where json only needed
 
 DB(process.env.MONGO_URI).then(async (conn) => {
   app.listen(PORT, () => {
@@ -31,3 +35,5 @@ DB(process.env.MONGO_URI).then(async (conn) => {
     console.log(`App is running on port ${PORT}`);
   });
 });
+
+module.exports = app;
