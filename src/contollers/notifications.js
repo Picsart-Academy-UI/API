@@ -16,12 +16,13 @@ webpush.setVapidDetails(
 // eslint-disable-next-line
 exports.subscribe = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { _id } = req.user;
+
     const subscription = req.body;
 
     // UGLY: Used '.lean()' here, because mongo gave me error
     // but I can't use this instance to save after that
-    const user = await User.findById(user_id).lean().exec();
+    const user = await User.findById(_id).lean().exec();
     const { push_subscriptions } = user;
 
     // TODO: Create a proper Error handling for this endpoint
@@ -33,13 +34,13 @@ exports.subscribe = async (req, res) => {
       return res.status(400).json('Subscribtion with given endpoint already exists');
     }
 
-    const updated_user = await User.findByIdAndUpdate(user_id, 
+    const updated_user = await User.findByIdAndUpdate(_id,
       {
         $push: {
           push_subscriptions: subscription
         }
       },
-      { new: true }).exec();
+      { new: true }).lean().exec();
 
     res.status(201).json(JSON.stringify(subscription));
   
@@ -62,9 +63,9 @@ exports.subscribe = async (req, res) => {
 
 exports.another_one = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { _id } = req.user;
     
-    const user = await User.findById(user_id).lean().exec();
+    const user = await User.findById(_id).lean().exec();
     const { push_subscriptions } = user;
     
     res.status(201).json({});
@@ -74,11 +75,11 @@ exports.another_one = async (req, res) => {
       body: 'Another One',
       icon: 'https://www.dictionary.com/e/wp-content/uploads/2018/04/another-one.jpg'
     });
-  
-    push_subscriptions.forEach((sub) => {
-      webpush.sendNotification(sub, payload)
-        .catch((err) => console.log(err));
-    });
+
+    for (let sub of push_subscriptions){
+      await webpush.sendNotification(sub, payload);
+    }
+
   } catch (e) {
     console.error(e);
   }
