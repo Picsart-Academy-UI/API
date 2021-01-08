@@ -9,3 +9,4 @@ exports.getMe = require('./users').getMe;
 exports.updateUser = require('./users').updateUser;
 exports.deleteUser = require('./users').deleteUser;
 exports.notifications = require('./notifications');
+exports.logout = require('./logout');
