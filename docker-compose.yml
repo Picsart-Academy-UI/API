@@ -2,16 +2,33 @@ version: '3'
 services:
   api:
     container_name: api
-    restart: always
-    build: .
+    image: lilitkarapetyan/academy-node
+    networks: 
+      - backend_net
     ports:
       - '3001:3001'
+    deploy:
+      replicas: 2
+      update_config: 
+        parallelism: 1
+        deplay: 10s
+      restart_policy: 
+        condition: on-failure
     links:
       - mongo
   mongo:
     container_name: mongo
     image: mongo
+    networks:
+      - backend_net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
     ports:
       - '27017:27017'
     volumes:
-      - '/root/db:/data/db'
+      - 'db:/data/db'
+networks:
+  backend_net:
+volumes:
+  db:
