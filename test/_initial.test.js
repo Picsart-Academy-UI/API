@@ -1,6 +1,6 @@
 const { describe, before, after, it } = require('mocha');
 const { expect } = require('chai');
-const { connectDB: connect } = require('db_picsart');
+const { connectDB: connect } = require('booking-db');
 const {
   generateToken,
   createAdmin,

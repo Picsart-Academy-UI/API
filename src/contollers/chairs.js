@@ -1,6 +1,5 @@
 const { Chair } = require('booking-db');
 
-
 const { ErrorResponse, NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 

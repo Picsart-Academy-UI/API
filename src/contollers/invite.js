@@ -1,4 +1,4 @@
-const { User: UserModel } = require('db_picsart');
+const { User: UserModel } = require('booking-db');
 
 const mailer = require('../utils/mailer');
 const { ErrorResponse } = require('../utils/errorResponse');

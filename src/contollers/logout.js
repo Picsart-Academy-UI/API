@@ -1,4 +1,4 @@
-const { User } = require('db_picsart');
+const { User } = require('booking-db');
 
 module.exports = async (req, res) => {
   try {

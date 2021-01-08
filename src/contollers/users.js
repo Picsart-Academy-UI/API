@@ -1,4 +1,4 @@
-const { User: UserModel } = require('db_picsart');
+const { User: UserModel } = require('booking-db');
 
 const {
   buildQuery,
