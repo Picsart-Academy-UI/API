@@ -20,7 +20,6 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   const { pagination, query } = getPagination(
     req.query.page, req.query.limit, count, req, initialQuery
   );
-
   const teams = await query;
   return res.status(200).json({
     data: teams,
