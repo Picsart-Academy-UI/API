@@ -7,7 +7,6 @@ const { admin, adminUpdated } = require('./_mocks/data');
 
 const app = require('../src');
 
-
 describe('GET /api/v1/teams', () => {
   describe('Authorized', () => {
     it('admin user should get all teams data', function (done) {
