@@ -6,7 +6,7 @@ const { admin, adminUpdated, hack } = require('./_mocks/data');
 
 const app = require('../src');
 
-describe.skip('users', () => {
+describe('users', () => {
   describe('GET /api/v1/users/all', () => {
     describe('Authorized', () => {
       it('admin user should get all users', async function () {
@@ -41,6 +41,21 @@ describe.skip('users', () => {
     });
   });
 
+<<<<<<< HEAD
+describe.skip('GET /api/v1/users', () => {
+  describe('Authorized', () => {
+    it('get all users list from requester team', function (done) {
+      request(app).get('/api/v1/users')
+        .set('Authorization', `Bearer ${this.adminToken}`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.have.property('users');
+          expect(res.body.users).to.be.an('array');
+          done();
+        })
+        .catch((err) => done(err));
+=======
   describe('GET /api/v1/users', () => {
     describe('Authorized', () => {
       it('get all users list from requester team', function (done) {
@@ -55,6 +70,7 @@ describe.skip('users', () => {
           })
           .catch((err) => done(err));
       });
+>>>>>>> origin
     });
     describe('Unauthorized', () => {
       it('should get an error with status code 401', (done) => {
@@ -70,6 +86,19 @@ describe.skip('users', () => {
     });
   });
 
+<<<<<<< HEAD
+describe.skip('GET /api/v1/users/{{user_id}}', () => {
+  describe('Authorized', () => {
+    it('get user by id', async function () {
+      const user = await decodeToken(this.adminToken);
+      await request(app).get(`/api/v1/users/${user._id}`)
+        .set('Authorization', `Bearer ${this.adminToken}`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.have.property('user');
+        });
+=======
   describe('GET /api/v1/users/{{user_id}}', () => {
     describe('Authorized', () => {
       it('get user by id', async function () {
@@ -81,6 +110,7 @@ describe.skip('users', () => {
             expect(res.body).to.have.property('data');
           });
       });
+>>>>>>> origin
     });
     describe('Unauthorized', () => {
       it('should get an error with status code 401', async function () {
@@ -95,6 +125,20 @@ describe.skip('users', () => {
     });
   });
 
+<<<<<<< HEAD
+describe.skip('PUT /api/v1/users/{{user_id}}', () => {
+  describe('Authorized', () => {
+    it('update user', async function () {
+      const adminUser = await decodeToken(this.adminToken);
+      await request(app).put(`/api/v1/users/${adminUser._id}`)
+        .set('Authorization', `Bearer ${this.adminToken}`)
+        .send(adminUpdated)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.have.property('user');
+        });
+=======
   describe('PUT /api/v1/users/{{user_id}}', () => {
     describe('Authorized', () => {
       it('update admin user', async function () {
@@ -129,6 +173,7 @@ describe.skip('users', () => {
             expect(res.body).to.have.property('error');
           });
       });
+>>>>>>> origin
     });
     describe('Unauthorized', () => {
       it('should get an error with status code 401', async function () {
@@ -144,6 +189,19 @@ describe.skip('users', () => {
     });
   });
 
+<<<<<<< HEAD
+describe.skip('DELETE /api/v1/users/{{user_id}}', () => {
+  describe('Authorized', () => {
+    it('delete user by id', async function () {
+      const user = await decodeToken(this.userToken);
+      await request(app).delete(`/api/v1/users/${user._id}`)
+        .set('Authorization', `Bearer ${this.adminToken}`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.have.property('msg');
+        });
+=======
   describe('DELETE /api/v1/users/{{user_id}}', () => {
     describe('Authorized', () => {
       it('delete user by id', async function () {
@@ -163,6 +221,7 @@ describe.skip('users', () => {
           .expect('Content-Type', /json/)
           .expect(401);
       });
+>>>>>>> origin
     });
     describe('Unauthorized', () => {
       it('should get an error with status code 401', async function () {
