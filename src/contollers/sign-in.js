@@ -31,7 +31,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 
   const payload = ticket.getPayload();
   const { email, photo_url } = payload;
-  const user = await UserModel.findOne({ email }).exec();
+  const user = await UserModel.findOne({ email }).lean().exec();
   if (!user) {
     return next(new ErrorResponse('This user has not been invited', 401));
   }
@@ -41,7 +41,7 @@ module.exports = asyncHandler(async (req, res, next) => {
         profile_picture: photo_url,
         accepted: true
       }, {new: true}
-    );
+    ).lean().exec();
   } else {
     requested_user = user;
   }
