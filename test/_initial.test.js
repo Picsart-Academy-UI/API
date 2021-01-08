@@ -45,7 +45,8 @@ before("Connect to Database and create mock data", async function () {
 
 after("Clean up", async function () {
   this.timeout(5000);
-  expect(team).to.contain.property("_id");
+
+  expect(team).to.contain.property('_id');
   await deleteTeam(team._id);
 
   expect(user).to.contain.property("_id");
