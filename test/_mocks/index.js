@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User, Team } = require('booking-db');
+const { User, Team } = require('db_picsart');
 const { admin, user, team, JWT_SECRET_KEY } = require('./data');
 
 async function createUser(team_id) {

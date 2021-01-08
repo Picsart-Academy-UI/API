@@ -2,7 +2,7 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 
-const { connectDB: DB } = require('booking-db');
+const { connect_db: DB } = require('db_picsart');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 

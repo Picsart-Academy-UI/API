@@ -1,4 +1,4 @@
-const { Team } = require('booking-db');
+const { Team } = require('db_picsart');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { buildQuery, getPagination } = require('../utils/util');

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {User: UserModel} = require('booking-db');
+const {User: UserModel} = require('db_picsart');
 
 const {asyncHandler} = require('./asyncHandler');
 const {ErrorResponse} = require('../utils/errorResponse');
