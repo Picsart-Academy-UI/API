@@ -1,5 +1,17 @@
 version: '3'
 services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    networks:
+      - backend_net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    ports:
+      - '27017:27017'
+    volumes:
+      - 'db:/data/db'
   api:
     container_name: api
     image: lilitkarapetyan/academy-node
@@ -18,18 +30,6 @@ services:
       - mongo
     depends_on:
       - mongo
-  mongo:
-    container_name: mongo
-    image: mongo
-    networks:
-      - backend_net
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-    ports:
-      - '27017:27017'
-    volumes:
-      - 'db:/data/db'
 networks:
   backend_net:
 volumes:
