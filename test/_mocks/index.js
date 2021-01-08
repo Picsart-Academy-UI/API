@@ -17,8 +17,8 @@ async function createTeam() {
   return createdTeam;
 }
 
-async function getTeam() {
-  const foundTeam = await Team.findOne({team_name: 'Team Test'}).exec();
+async function getTeam(name) {
+  const foundTeam = await Team.findOne({team_name: name}).exec();
   return foundTeam;
 }
 
