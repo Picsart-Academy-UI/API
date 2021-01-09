@@ -12,6 +12,11 @@
     MAIL_PASSWORD=[[That mail password]]
     JWT_SECRET=[[Whatever you want]]
   </pre>
+  
+## Run tests
+`npm run test` - will run all the tests
+<br>
+`npm run test:only file=beginning of the test file name"` - will run specific test 
 
 ## Documentation
 
