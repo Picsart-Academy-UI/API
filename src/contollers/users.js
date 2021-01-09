@@ -110,3 +110,17 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     data: found_user
   });
 });
+
+// @desc search users by given field
+// @route /api/v1/users/search
+// @access Private (User/Admin)
+
+exports.search = asyncHandler(async (req, res) => {
+  const { search_by: field, value } = req.query;
+  const regexp = new RegExp(`^${value}`, 'i');
+
+  const users = await UserModel.find({ [field]: regexp }).lean().exec();
+  return res.status(200).json({
+    data: users
+  });
+});
