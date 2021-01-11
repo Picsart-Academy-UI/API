@@ -20,7 +20,7 @@ services:
     ports:
       - '3001:3001'
     deploy:
-      replicas: 2
+      replicas: 4
       update_config: 
         parallelism: 1
         delay: 10s
