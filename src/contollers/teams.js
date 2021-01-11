@@ -1,4 +1,4 @@
-const { Team } = require('booking-db');
+const { Team, User } = require('booking-db');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { buildQuery, getPagination } = require('../utils/util');
@@ -13,25 +13,20 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  let query = Team.find(queryObject);
+  const initialQuery = Team.find(queryObject);
+
+  const members_count = await User.find().populate({
+    path: 'members_count',
+  });
+
+  console.log('members_count: ', members_count);
 
   const count = await Team.countDocuments(queryObject);
-  const {sort, select} = req.query;
-  // sorting
-  if (sort) {
-    const sort_by = sort.split(',').join(' ');
-    query = query.sort(sort_by);
-  }
-  // selecting
-  if (select) {
-    const fields = select.split(',').join(' ');
-    query = query.select(fields);
-  }
-  // Pagination Logic
-  const { pagination, limit, start_index } = getPagination(
-    req.query.page, req.query.limit, count
+
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
   );
-  query = query.skip(start_index).limit(limit);
+
   const teams = await query;
   return res.status(200).json({
     data: teams,
@@ -41,7 +36,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
-  const team = Team.findById(req.params.team_id);
+  const team = await Team.findById(req.params.team_id);
   if (!team) {
     return next(new ErrorResponse(
       `Team not found with id of ${req.params.team_id}`,
@@ -76,7 +71,7 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     ));
   }
   await Team.deleteOne({ _id: req.params.team_id });
-  res.status(200).json({
+  return res.status(200).json({
     message: 'Teams was deleted.',
   });
 });

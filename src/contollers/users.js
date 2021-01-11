@@ -13,7 +13,7 @@ const { asyncHandler } = require('../middlewares/asyncHandler');
 // @access Private (admin/user)
 exports.getUsers = asyncHandler(async (req, res, next) => {
   const { team_id } = req.user;
-  const users = await UserModel.find({ team_id }).exec();
+  const users = await UserModel.find({ team_id }).lean().exec();
   if (!users) {
     return next(new ErrorResponse('User not found.', 404));
   }
@@ -27,27 +27,14 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  let query = UserModel.find(queryObject);
+  const initialQuery = UserModel.find(queryObject);
   const count = await UserModel.countDocuments(queryObject);
-  // dynamic select of fields
-  const {select, sort} = req.query;
-  if (select) {
-    const fields = select.split(',').join(' ');
-    query = query.select(fields);
-  }
-  // sorting
-  if (sort) {
-    const sort_by = sort.split(',')
-      .join(' ');
-    query = query.sort(sort_by);
-  }
-  // Pagination Logic
+  // Pagination Logic & dynamic select of fields
   // eslint-disable-next-line max-len
-  const { pagination, limit, start_index } = getPagination(
-    req.query.page, req.query.limit, count
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
   );
-  query = query.skip(start_index).limit(limit);
-  const users = await query;
+  const users = await query.lean().exec();
   return res.status(200).json({
     data: users,
     count,
@@ -60,8 +47,8 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.getUser = asyncHandler(async (req, res, next) => {
   const { user_id } = req.params;
-  const found_user = await UserModel.findById(user_id).exec();
-  if (found_user) {
+  const found_user = await UserModel.findById(user_id).lean().exec();
+  if (!found_user) {
     return next(new ErrorResponse('User not found.', 404));
   }
   return res.status(200).json({
@@ -87,7 +74,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true
-    }).exec();
+    }).lean().exec();
   if (!updated_user) {
     return next(new ErrorResponse('User not found.', 404));
   }
@@ -101,12 +88,12 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.deleteUser = asyncHandler(async (req, res, next) => {
   const { user_id } = req.params;
-  const deleted_user = await UserModel.findByIdAndDelete(user_id).exec();
+  const deleted_user = await UserModel.findByIdAndDelete(user_id).lean().exec();
   if (!deleted_user) {
     return next(new ErrorResponse('User not found.', 404));
   }
   return res.status(200).json({
-    message: 'User has successfully deleted.'
+    message: 'User has successfully been deleted.'
   });
 });
 
@@ -115,7 +102,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @access Private (User)
 exports.getMe = asyncHandler(async (req, res, next) => {
   const { _id } = req.user;
-  const found_user = await UserModel.findById(_id).exec();
+  const found_user = await UserModel.findById(_id).lean().exec();
   if (!found_user) {
     return next(new ErrorResponse('User not found.', 404));
   }

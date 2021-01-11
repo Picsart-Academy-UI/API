@@ -18,6 +18,8 @@ const positionsRouter = require('./positions');
 
 const reservationsRouter = require('./reservations');
 
+const notificationsRouter = require('./notifications');
+
 router.use(authRouter);
 
 router.use('/teams', authenticate, teamsRouter);
@@ -31,5 +33,7 @@ router.use('/positions', positionsRouter);
 router.use('/reservations', reservationsRouter);
 
 router.use('/users', authenticate, usersRouter);
+
+router.use('/notifications', notificationsRouter);
 
 module.exports = router;

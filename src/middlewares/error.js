@@ -3,6 +3,7 @@ const { ErrorResponse, NotFound, BadRequest, Conflict } = require('../utils/erro
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
+
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
     const message = `The requested URL: ${req.path} was not found on this server`;
@@ -12,7 +13,7 @@ const errorHandler = (err, req, res, next) => {
 
   // JSONWEBTOKEN error
   if (err.name === 'JsonWebTokenError') {
-    const message = 'Unauthorized';
+    const message = 'Invalid token';
     error = new ErrorResponse(message, 401);
   }
 

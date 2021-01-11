@@ -1,4 +1,5 @@
 const { Chair } = require('booking-db');
+
 const { ErrorResponse, NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
@@ -45,7 +46,8 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     ));
   }
   await Chair.deleteOne({ _id: req.params.chair_id });
-  res.status(200).json({
+
+  return res.status(200).json({
     message: 'Chair was deleted.',
   });
 });

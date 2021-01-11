@@ -49,7 +49,8 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     ));
   }
   await Table.deleteOne({ _id: req.params.table_id });
-  res.status(200).json({
+
+  return res.status(200).json({
     message: 'Table was deleted.',
   });
 });
