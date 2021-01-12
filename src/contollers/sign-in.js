@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { User: UserModel } = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
 
@@ -47,12 +46,7 @@ module.exports = asyncHandler(async (req, res, next) => {
   } else {
     requested_user = user;
   }
-  const token = await jwt.sign({
-    _id: requested_user._id,
-    email: requested_user.email,
-    team_id: requested_user.team_id,
-    is_admin: requested_user.is_admin
-  }, process.env.JWT_SECRET);
+  const token = await requested_user.getJWT();
 
   return res.status(202).json({
     data: requested_user,
