@@ -1,7 +1,12 @@
 const {Reservation} = require('booking-db');
 
 const {asyncHandler} = require('../middlewares/asyncHandler');
-const {ErrorResponse, Conflict, NotFound} = require('../utils/errorResponse');
+const {ErrorResponse, NotFound} = require('../utils/errorResponse');
+
+const {
+  buildQuery,
+  getPagination,
+} = require('../utils/util');
 
 const {
   formatDateAndGiveQuery,
@@ -15,7 +20,7 @@ exports.create = asyncHandler(async (req, res, next) => {
   const found = await foundReservations.lean().exec();
 
   if (found.length !== 0) {
-    return next(new ErrorResponse('Conflict with the reservation period', 400));
+    throw new ErrorResponse('Conflict with the reservation period', 400);
   }
   const reserved = await createReservation(reservation, today);
 
@@ -30,11 +35,11 @@ exports.update = asyncHandler(async (req, res, next) => {
   const requestedReservation = await Reservation.findById(reservation_id);
 
   if (!requestedReservation) {
-    return next(new NotFound(`The reservation with id ${reservation_id} was not found`));
+    throw new NotFound(`The reservation with id ${reservation_id} was not found`);
   }
 
   if (!req.user.is_admin && req.user._id.toString() !== requestedReservation.user_id.toString()) {
-    return next(new ErrorResponse('Not authorized to modify this entity', 401));
+    throw new ErrorResponse('Not authorized to modify this entity', 401);
   }
 
   const {today, foundReservations, reservation} = formatDateAndGiveQuery(req);
@@ -45,7 +50,7 @@ exports.update = asyncHandler(async (req, res, next) => {
     requestedReservation, reservation_id, today, req);
 
   if (!updatedReservation) {
-    return next(new ErrorResponse('Conflict with the reservation period'));
+    throw new ErrorResponse('Conflict with the reservation period');
   }
 
   return res.status(202).json({
@@ -55,18 +60,30 @@ exports.update = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const reservations = await Reservation.find();
-  return res.status(200)
-    .json({data: reservations});
+
+  const queryObject = buildQuery(req.query);
+
+  const initialQuery = Reservation.find(queryObject);
+
+  const count = await Reservation.countDocuments(queryObject);
+
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
+  );
+
+  const reservations = await query.lean().exec();
+
+  return res.status(200).json({data: reservations, count, pagination});
+
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
   const reservation = await Reservation.findById(req.params.reservation_id);
   if (!reservation) {
-    return next(new ErrorResponse(
-      `Reservation not found with id of ${req.params.reservation_id}`,
-      404
-    ));
+    throw new ErrorResponse(`Reservation not found with id of ${req.params.reservation_id}`, 404);
+  }
+  if (reservation.user_id.toString() !== req.user._id.toString() && !req.user.is_admin) {
+    throw new ErrorResponse('Not authorized', 401);
   }
   return res.status(200)
     .json({data: reservation});

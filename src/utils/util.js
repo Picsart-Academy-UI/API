@@ -121,7 +121,7 @@ exports.createUser = async (userProperties) => {
   return createdUser;
 };
 
-exports.updateUser = async (userProperties, user_id) => {
+exports.updateUserAndSendEmail = async (userProperties, user_id) => {
   const updatedUser = await User.findOneAndUpdate({_id: user_id},
     excludeUndefinedFields(userProperties), {
       new: true,
@@ -139,8 +139,19 @@ exports.findUserByEmailAndUpdate = async (email, photo_url) => {
   return User.findOneAndUpdate({email}, {
     profile_picture: photo_url,
     accepted: true
-  }, {new: true}).lean().exec();
+  }, {new: true, runValidators: true}).lean().exec();
 };
+
+exports.findUserByIdAndUpdate = (id, req) => {
+  const userProperties = excludeUndefinedFields({
+    email: req.body.email,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    team_id: req.body.team_id,
+    is_admin: req.body.is_admin
+  });
+  return User.findByIdAndUpdate(id, userProperties, {new: true, runValidators: true});
+}
 
 exports.getJwt = (user) => {
   return jwt.sign({

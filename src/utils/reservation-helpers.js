@@ -27,7 +27,6 @@ exports.formatDateAndGiveQuery = (req) => {
   const {start_date, end_date, table_id, chair_id, team_id} = req.body;
   const status = req.user.is_admin ? req.body.status : 'pending';
   const user_id = req.user.is_admin ? req.body.user_id : req.user._id;
-  console.log(user_id);
   // building correct formats
   const start = moment(start_date).format(format);
   const end = moment(end_date).format(format);
@@ -96,6 +95,7 @@ exports.createReservation = (reservation, today) => {
     const dividedReservations = divideReservation(reserve);
     return Reservation.create(dividedReservations);
   }
+  return Reservation.create(reserve);
 };
 
 // eslint-disable-next-line max-len

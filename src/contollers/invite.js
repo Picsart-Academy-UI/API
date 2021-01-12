@@ -2,7 +2,7 @@ const {User: UserModel} = require('booking-db');
 
 const {ErrorResponse} = require('../utils/errorResponse');
 const {asyncHandler} = require('../middlewares/asyncHandler');
-const {getUserProperties, createUser, updateUser} = require('../utils/util');
+const {getUserProperties, createUser, updateUserAndSendEmail} = require('../utils/util');
 
 // @desc  Admin invites the user
 // @route /api/v1/auth/invite
@@ -21,7 +21,7 @@ module.exports = asyncHandler(async (req, res, next) => {
   if (found.accepted) {
     return next(new ErrorResponse('User has already accepted the invitation', 409));
   }
-  const updated_user = await updateUser(userProperties, found._id);
+  const updated_user = await updateUserAndSendEmail(userProperties, found._id);
 
   return res.status(202).json({data: updated_user});
 });

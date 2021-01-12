@@ -1,10 +1,6 @@
-const { User: UserModel } = require('booking-db');
+const { User } = require('booking-db');
 
-const {
-  buildQuery,
-  getPagination,
-  excludeUndefinedFields,
-} = require('../utils/util');
+const {buildQuery, getPagination, findUserByIdAndUpdate} = require('../utils/util');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
@@ -12,10 +8,9 @@ const { asyncHandler } = require('../middlewares/asyncHandler');
 // @route GET /api/v1/users
 // @access Private (admin/user)
 exports.getUsers = asyncHandler(async (req, res, next) => {
-  const { team_id } = req.user;
-  const users = await UserModel.find({ team_id }).lean().exec();
+  const users = await User.find({ team_id: req.user.team_id }).lean().exec();
   if (!users) {
-    return next(new ErrorResponse('User not found.', 404));
+    throw new ErrorResponse('User not found.', 404);
   }
   return res.status(200).json({
     data: users
@@ -27,8 +22,8 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
-  const initialQuery = UserModel.find(queryObject);
-  const count = await UserModel.countDocuments(queryObject);
+  const initialQuery = User.find(queryObject);
+  const count = await User.countDocuments(queryObject);
   // Pagination Logic & dynamic select of fields
   // eslint-disable-next-line max-len
   const { pagination, query } = getPagination(
@@ -46,13 +41,12 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 // @route GET /api/v1/user/:user_id
 // @access  Private (Admin)
 exports.getUser = asyncHandler(async (req, res, next) => {
-  const { user_id } = req.params;
-  const found_user = await UserModel.findById(user_id).lean().exec();
-  if (!found_user) {
-    return next(new ErrorResponse('User not found.', 404));
+  const user = await User.findById(req.params.user_id).lean().exec();
+  if (!user) {
+    throw new ErrorResponse('User not found.', 404);
   }
   return res.status(200).json({
-    data: found_user
+    data: user
   });
 });
 
@@ -60,26 +54,12 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 // @route  PUT /api/v1/:user_id
 // @access  Private (Admin)
 exports.updateUser = asyncHandler(async (req, res, next) => {
-  const { user_id } = req.params;
-  const { email, first_name, last_name, team_id, is_admin } = req.body;
-  const user = excludeUndefinedFields({
-    email,
-    first_name,
-    last_name,
-    team_id,
-    is_admin
-  });
-  const updated_user = await UserModel.findByIdAndUpdate(user_id,
-    {$set: user},
-    {
-      new: true,
-      runValidators: true
-    }).lean().exec();
-  if (!updated_user) {
-    return next(new ErrorResponse('User not found.', 404));
+  const user = await findUserByIdAndUpdate(req.params.user_id, req).lean().exec();
+  if (!user) {
+    throw new ErrorResponse('User not found.', 404);
   }
   return res.status(200).json({
-    data: updated_user
+    data: user
   });
 });
 
@@ -87,9 +67,8 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @route DELETE /api/v1/users/:user_id
 // @access  Private (Admin)
 exports.deleteUser = asyncHandler(async (req, res, next) => {
-  const { user_id } = req.params;
-  const deleted_user = await UserModel.findByIdAndDelete(user_id).lean().exec();
-  if (!deleted_user) {
+  const user = await User.findByIdAndDelete(req.params.user_id).lean().exec();
+  if (!user) {
     return next(new ErrorResponse('User not found.', 404));
   }
   return res.status(200).json({
@@ -101,12 +80,11 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @route /api/v1/users/me
 // @access Private (User)
 exports.getMe = asyncHandler(async (req, res, next) => {
-  const { _id } = req.user;
-  const found_user = await UserModel.findById(_id).lean().exec();
-  if (!found_user) {
-    return next(new ErrorResponse('User not found.', 404));
+  const user = await User.findById(req.user._id).lean().exec();
+  if (!user) {
+    throw new ErrorResponse('User not found.', 404);
   }
   return res.status(200).json({
-    data: found_user
+    data: user
   });
 });
