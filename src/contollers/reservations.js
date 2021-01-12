@@ -1,8 +1,38 @@
+const moment = require('moment-timezone');
+
 const { Reservation } = require('booking-db');
-const { ErrorResponse } = require('../utils/errorResponse');
+
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
+const { ErrorResponse, Conflict } = require('../utils/errorResponse');
+
+const { fragmentation } = require('../utils/reservationFragmentation');
+
 exports.create = asyncHandler(async (req, res, next) => {
+  const { start_date, end_date, table_id, chair_id, team_id, user_id } = req.body;
+
+  const start = moment(start_date);
+  const end = moment(end_date);
+  const momentDate = moment();
+  const founded = await Reservation.find({
+    //                  1             10
+    start_date: {$gte: start, $lte: end},
+    end_date: {$gte: start, $lte: end},
+    chair_id
+  }).sort('rating');
+  console.log(founded);
+
+  if (founded.length !== 0) {
+    return next(new Conflict('Conflict with the reservation period.'));
+  }
+
+  // if (
+  //   start.month() === momentDate.month()
+  //   && start.date() === momentDate.date()
+  // ) {
+  //   fragmentation();
+  // }
+
   const reservation = await Reservation.create(req.body);
   return res.status(201).json({data: reservation});
 });

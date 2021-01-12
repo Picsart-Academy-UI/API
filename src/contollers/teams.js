@@ -1,4 +1,4 @@
-const { Team } = require('booking-db');
+const { Team, User } = require('booking-db');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { buildQuery, getPagination } = require('../utils/util');
@@ -14,6 +14,12 @@ exports.create = asyncHandler(async (req, res, next) => {
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
   const initialQuery = Team.find(queryObject);
+
+  const members_count = await User.find().populate({
+    path: 'members_count',
+  });
+
+  console.log('members_count: ', members_count);
 
   const count = await Team.countDocuments(queryObject);
 

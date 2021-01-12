@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+// const checkReservation = require('../middlewares/check-reservation');
+
 const {
   getAll, getOne, create, update, deleteOne, deleteAll,
 } = require('../contollers').reservations;

@@ -29,8 +29,19 @@ class BadRequest extends Error {
   }
 }
 
+class Conflict extends Error {
+  constructor(message, statusCode = 409) {
+    super();
+    this.name = this.constructor.name;
+    this.statusCode = statusCode;
+    this.message = message;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
 module.exports = {
   ErrorResponse,
   NotFound,
-  BadRequest
+  BadRequest,
+  Conflict
 };
