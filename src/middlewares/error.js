@@ -30,15 +30,6 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors).map((val) => val.message);
     error = new ErrorResponse(message, 400);
   }
-<<<<<<< HEAD
-=======
-
-  // Syntax error
-  if (err.name === 'SyntaxError') {
-    const message = 'Unauthorized';
-    error = new ErrorResponse(message, 401);
-  }
->>>>>>> 053b14cce05cfdc5d0a016bb6d9fbeb31aa8609b
 
   // Not Found error
   if (err.name === 'NotFound') {

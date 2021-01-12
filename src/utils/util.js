@@ -1,6 +1,10 @@
 const {User} = require('booking-db');
+const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+
 const mailer = require('./mailer');
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Pagination
 
@@ -101,8 +105,8 @@ exports.getUserProperties = (req) => {
   const userProperties = {
     email: req.body.email,
     is_admin: req.body.is_admin,
-    team_id: req.body,
-    position_id: req.body,
+    team_id: req.body.team_id,
+    position: req.body.position,
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     birthdate: req.body.birthdate,
@@ -125,6 +129,26 @@ exports.updateUser = async (userProperties, user_id) => {
     }).lean().exec();
   await mailer(updatedUser.email);
   return updatedUser;
+};
+
+exports.verifyIdToken = (idToken) => {
+  return client.verifyIdToken({idToken, audience: process.env.GOOGLE_CLIENT_ID});
+};
+
+exports.findUserByEmailAndUpdate = async (email, photo_url) => {
+  return User.findOneAndUpdate({email}, {
+    profile_picture: photo_url,
+    accepted: true
+  }, {new: true}).lean().exec();
+};
+
+exports.getJwt = (user) => {
+  return jwt.sign({
+    _id: user._id,
+    email: user.email,
+    team_id: user.team_id,
+    is_admin: user.is_admin
+  }, process.env.JWT_SECRET, {expiresIn: '5h'});
 };
 
 exports.excludeUndefinedFields = excludeUndefinedFields;

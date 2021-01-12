@@ -9,23 +9,19 @@ const {getUserProperties, createUser, updateUser} = require('../utils/util');
 // @access Private (Admin)
 
 module.exports = asyncHandler(async (req, res, next) => {
-  let user;
-
   const userProperties = getUserProperties(req);
-
   const found = await UserModel
     .findOne({email: userProperties.email})
     .lean()
     .exec();
-
   if (!found) {
-    user = await createUser(userProperties);
-    return res.status(201).json({data: user.toJSON()});
+    const created_user = await createUser(userProperties);
+    return res.status(201).json({data: created_user.toJSON()});
   }
-
   if (found.accepted) {
     return next(new ErrorResponse('User has already accepted the invitation', 409));
   }
-  user = await updateUser(userProperties, found._id);
-  return res.status(202).json({data: user.toJSON()});
+  const updated_user = await updateUser(userProperties, found._id);
+
+  return res.status(202).json({data: updated_user});
 });
