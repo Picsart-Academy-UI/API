@@ -36,6 +36,7 @@ module.exports = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('This user has not been invited', 401));
   }
   if (!user.accepted) {
+
     requested_user = await UserModel.findOneAndUpdate(
       {email}, {
         profile_picture: photo_url,

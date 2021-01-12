@@ -3,7 +3,7 @@ const { User: UserModel } = require('booking-db');
 const mailer = require('../utils/mailer');
 const { ErrorResponse } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const {checkUserProperties} = require('../utils/util');
+const { checkUserProperties } = require('../utils/util');
 
 // @desc  Admin invites the user
 // @route /api/v1/auth/invite
