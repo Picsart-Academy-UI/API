@@ -14,8 +14,6 @@ const chairsRouter = require('./chairs');
 
 const tablesRouter = require('./tables');
 
-const positionsRouter = require('./positions');
-
 const reservationsRouter = require('./reservations');
 
 const notificationsRouter = require('./notifications');
@@ -28,12 +26,10 @@ router.use('/chairs', chairsRouter);
 
 router.use('/tables', tablesRouter);
 
-router.use('/positions', positionsRouter);
-
-router.use('/reservations', reservationsRouter);
+router.use('/reservations', authenticate, reservationsRouter);
 
 router.use('/users', authenticate, usersRouter);
 
-router.use('/notifications', notificationsRouter);
+router.use('/notifications', authenticate, notificationsRouter);
 
 module.exports = router;

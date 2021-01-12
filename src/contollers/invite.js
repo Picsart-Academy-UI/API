@@ -14,7 +14,8 @@ module.exports = asyncHandler(async (req, res, next) => {
   const {body} = req;
 
   const {
-    email, is_admin, team_id,
+    email,
+    is_admin, team_id,
     position_id, first_name, last_name, birthdate, phone
   } = body;
 

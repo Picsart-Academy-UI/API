@@ -4,9 +4,8 @@ const { notifications } = require('../contollers');
 
 const { subscribe } = notifications;
 const { another_one} = notifications;
-const authenticate = require('../middlewares/auth');
 
-router.post('/subscribe', authenticate, subscribe);
-router.post('/anotherOne', authenticate, another_one);
+router.post('/subscribe', subscribe);
+router.post('/anotherOne', another_one);
 
 module.exports = router;
