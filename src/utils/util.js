@@ -10,6 +10,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
   const start_index = (page - 1) * limit;
   const end_index = page * limit;
   const pagination = {};
+
   if (end_index < count) {
     pagination.next_page = page + 1;
   }
@@ -17,13 +18,23 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
     pagination.prev_page = page - 1;
   }
 
-  const {select, sort} = req.query;
+  const {select, sort, search_by} = req.query;
+
+  if (search_by) {
+    const { search_by: field, value } = req.query;
+    const regexp = new RegExp(`^${value}`, 'i');
+    queryRef = queryRef.find({ [field]: regexp });
+    
+  }
 
   if (select) {
     const fields = select.split(',')
       .join(' ');
     queryRef = queryRef.select(fields);
   }
+
+
+
   // sorting
   if (sort) {
     const sort_by = sort.split(',')
@@ -45,7 +56,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'search_by'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
