@@ -116,11 +116,13 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 // @access Private (User/Admin)
 
 exports.search = asyncHandler(async (req, res) => {
-  const { search_by: field, value } = req.query;
-   const regexp = new RegExp(`^${value}`, 'i');
-  // const users = UserModel.find({ [field]: regexp });
-  let count = await UserModel.countDocuments({ [field]: regexp });
-  const { pagination, query } = getPagination(req.query.page, req.query.limit, count, req, users);
+  const { search_by: field, value, page, limit } = req.query;
+  const regexp = new RegExp(`^${value}`, 'i');
+
+  const users = UserModel.find({ [field]: regexp });
+  const count = await UserModel.countDocuments({ [field]: regexp });
+  
+  const { pagination, query } = getPagination(page, limit, count, req, users);
 
   const result = await query.lean().exec();
 

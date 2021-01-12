@@ -1,5 +1,4 @@
 exports.emailRegexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
-
 // Pagination
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
@@ -18,22 +17,13 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
     pagination.prev_page = page - 1;
   }
 
-  const {select, sort, search_by} = req.query;
-
-  if (search_by) {
-    const { search_by: field, value } = req.query;
-    const regexp = new RegExp(`^${value}`, 'i');
-    queryRef = queryRef.find({ [field]: regexp });
-    
-  }
+  const {select, sort} = req.query;
 
   if (select) {
     const fields = select.split(',')
       .join(' ');
     queryRef = queryRef.select(fields);
   }
-
-
 
   // sorting
   if (sort) {
