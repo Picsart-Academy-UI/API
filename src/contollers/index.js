@@ -5,6 +5,5 @@ exports.users = require('./users');
 exports.logout = require('./logout');
 exports.chairs = require('./chairs');
 exports.tables = require('./tables');
-exports.positions = require('./positions');
 exports.reservations = require('./reservations');
 exports.notifications = require('./notifications');
