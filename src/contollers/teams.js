@@ -72,7 +72,7 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
   }
   await Team.deleteOne({ _id: req.params.team_id });
   return res.status(200).json({
-    message: 'Teams was deleted.',
+    message: 'Team was deleted.',
   });
 });
 

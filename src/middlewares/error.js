@@ -31,12 +31,6 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 400);
   }
 
-  // Syntax error
-  if (err.name === 'SyntaxError') {
-    const message = 'Unauthorized';
-    error = new ErrorResponse(message, 401);
-  }
-
   // Not Found error
   if (err.name === 'NotFound') {
     const message = err.message || `The requested resource ${req.url} was not found.`;

@@ -1,13 +1,15 @@
 const router = require('express').Router();
 
+const adminAuth = require('../middlewares/auth-admin');
+
 // const checkReservation = require('../middlewares/check-reservation');
 
 const {
-  getAll, getOne, create, update, deleteOne, deleteAll,
+  getAll, getOne, create, update, deleteOne,
 } = require('../contollers').reservations;
 
 router
-  .get('/', getAll)
+  .get('/', adminAuth, getAll)
   .get('/:reservation_id', getOne)
   .post('/', create)
   .put('/:reservation_id', update)
