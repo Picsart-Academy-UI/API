@@ -75,3 +75,24 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     message: 'Team was deleted.',
   });
 });
+
+// @desc search teams by given field
+// @route /api/v1/teams/search
+// @access Private (User)
+
+exports.search = asyncHandler(async (req, res) => {
+  const { search_by: field, value, page, limit } = req.query;
+  const regexp = new RegExp(`^${value}`, 'i');
+
+  const teams = Team.find({ [field]: regexp });
+  const count = await Team.countDocuments({ [field]: regexp });
+
+  const { pagination, query } = getPagination(page, limit, count, req, teams);
+  const result = await query.lean().exec();
+
+  return res.status(200).json({
+    data: result,
+    count,
+    pagination
+  });
+});

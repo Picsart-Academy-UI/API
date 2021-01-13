@@ -6,8 +6,6 @@ const mailer = require('./mailer');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// Pagination
-
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
   let queryRef = query;
@@ -16,6 +14,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
   const start_index = (page - 1) * limit;
   const end_index = page * limit;
   const pagination = {};
+
   if (end_index < count) {
     pagination.next_page = page + 1;
   }
@@ -30,6 +29,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
       .join(' ');
     queryRef = queryRef.select(fields);
   }
+
   // sorting
   if (sort) {
     const sort_by = sort.split(',')
@@ -51,7 +51,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'search_by'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
