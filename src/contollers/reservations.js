@@ -13,7 +13,7 @@ const {
   updateReservation,
   createReservation} = require('../utils/reservation-helpers');
 
-exports.create = asyncHandler(async (req, res, next) => {
+exports.create = asyncHandler(async (req, res) => {
 
   const {today, foundReservations, reservation} = formatDateAndGiveQuery(req);
 
@@ -28,7 +28,7 @@ exports.create = asyncHandler(async (req, res, next) => {
     .json({data: reserved});
 });
 
-exports.update = asyncHandler(async (req, res, next) => {
+exports.update = asyncHandler(async (req, res) => {
 
   const {reservation_id} = req.params;
 
@@ -59,7 +59,7 @@ exports.update = asyncHandler(async (req, res, next) => {
 
 });
 
-exports.getAll = asyncHandler(async (req, res, next) => {
+exports.getAll = asyncHandler(async (req, res) => {
 
   const queryObject = buildQuery(req.query);
 
@@ -77,7 +77,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 
 });
 
-exports.getOne = asyncHandler(async (req, res, next) => {
+exports.getOne = asyncHandler(async (req, res) => {
   const reservation = await Reservation.findById(req.params.reservation_id);
   if (!reservation) {
     throw new ErrorResponse(`Reservation not found with id of ${req.params.reservation_id}`, 404);

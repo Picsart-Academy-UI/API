@@ -115,7 +115,7 @@ exports.getUserProperties = (req) => {
   return userProperties;
 };
 
-exports.createUser = async (userProperties) => {
+exports.createUserAndSendEmail = async (userProperties) => {
   const createdUser = await User.create(userProperties);
   await mailer(userProperties.email);
   return createdUser;
@@ -151,7 +151,7 @@ exports.findUserByIdAndUpdate = (id, req) => {
     is_admin: req.body.is_admin
   });
   return User.findByIdAndUpdate(id, userProperties, {new: true, runValidators: true});
-}
+};
 
 exports.getJwt = (user) => {
   return jwt.sign({
