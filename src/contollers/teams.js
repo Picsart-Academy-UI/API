@@ -15,11 +15,13 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
   const initialQuery = Team.find(queryObject);
 
-  const members_count = await User.find().populate({
-    path: 'members_count',
-  });
-
-  console.log('members_count: ', members_count);
+  const TeamsMembersCountTables = await Team.find()
+    .populate({
+      path: 'members_count',
+    })
+    .populate({
+      path: 'tables',
+    });
 
   const count = await Team.countDocuments(queryObject);
 
@@ -27,9 +29,9 @@ exports.getAll = asyncHandler(async (req, res, next) => {
     req.query.page, req.query.limit, count, req, initialQuery
   );
 
-  const teams = await query;
+  // const teams = await query;
   return res.status(200).json({
-    data: teams,
+    data: TeamsMembersCountTables,
     count,
     pagination,
   });
