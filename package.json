@@ -8,7 +8,8 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js ./src",
     "lint:fix": "node ./node_modules/eslint/bin/eslint.js ./src --fix",
     "precommit": "node ./node_modules/eslint/bin/eslint.js ./src",
-    "test": "mocha test"
+    "test": "mocha test --exit",
+    "test:only": "mocha ./test/_initial.test.js mocha ./test/$npm_config_file.test.js --exit"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,7 @@
   },
   "homepage": "https://github.com/Picsart-Academy-UI/API#readme",
   "dependencies": {
-    "booking-db": "^1.4.3",
+    "booking-db": "^1.2.8",
     "chai": "^4.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

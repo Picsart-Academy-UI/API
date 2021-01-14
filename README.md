@@ -15,6 +15,11 @@
     PRIVATE_VAPID_KEY=[[Your generated private vapid key]]
     WEBPUSH_MAILTO=[[Whatever email you want]]
   </pre>
+  
+## Run tests
+`npm run test` - will run all the tests
+<br>
+`npm run test:only file=beginning of the test file name"` - will run specific test 
 
 ### Generate Vapid Keys
 Before first server start, run the following command to get the public and private vapid keys from **web-push** package:<br/>
