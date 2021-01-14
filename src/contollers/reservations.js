@@ -1,7 +1,7 @@
 const {Reservation} = require('booking-db');
 
 const {asyncHandler} = require('../middlewares/asyncHandler');
-const {ErrorResponse, NotFound} = require('../utils/errorResponse');
+const {ErrorResponse} = require('../utils/errorResponse');
 const {findOneReservation, deleteOneReservation} = require('../utils/util');
 
 const {
@@ -10,52 +10,19 @@ const {
 } = require('../utils/util');
 
 const {
-  formatDateAndGiveQuery,
   updateReservation,
   createReservation} = require('../utils/reservation-helpers');
 
 exports.create = asyncHandler(async (req, res) => {
-
-  const {today, foundReservations, reservation} = formatDateAndGiveQuery(req);
-
-  const found = await foundReservations.lean().exec();
-
-  if (found.length !== 0) {
-    throw new ErrorResponse('Conflict with the reservation period', 400);
-  }
-  const reserved = await createReservation(reservation, today);
-
+  const reservation = await createReservation(req);
   return res.status(201)
-    .json({data: reserved});
+    .json({data: reservation});
 });
 
 exports.update = asyncHandler(async (req, res) => {
-
-  const {reservation_id} = req.params;
-
-  const requestedReservation = await Reservation.findById(reservation_id);
-
-  if (!requestedReservation) {
-    throw new NotFound(`The reservation with id ${reservation_id} was not found`);
-  }
-
-  if (!req.user.is_admin && req.user._id.toString() !== requestedReservation.user_id.toString()) {
-    throw new ErrorResponse('Not authorized to modify this entity', 401);
-  }
-
-  const {today, foundReservations, reservation} = formatDateAndGiveQuery(req);
-
-  const found = await foundReservations.lean().exec();
-
-  const updatedReservation = await updateReservation(reservation, found,
-    requestedReservation, reservation_id, today, req);
-
-  if (!updatedReservation) {
-    throw new ErrorResponse('Conflict with the reservation period');
-  }
-
+  const reservation = await updateReservation(req);
   return res.status(202).json({
-    data: updatedReservation
+    data: reservation
   });
 
 });
