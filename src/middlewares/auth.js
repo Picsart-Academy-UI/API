@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
 const {User: UserModel} = require('booking-db');
 
 const {asyncHandler} = require('./asyncHandler');
 const {ErrorResponse} = require('../utils/errorResponse');
+const {decodeToken} = require('../utils/util');
 
 module.exports = asyncHandler(async (req, res, next) => {
   const {authorization} = req.headers;
@@ -11,14 +11,13 @@ module.exports = asyncHandler(async (req, res, next) => {
     token = authorization.split(' ')[1];
   }
   if (!token) {
-    return next(new ErrorResponse('Token was not provided', 401));
+    throw new ErrorResponse('Token was not provided', 401);
   }
-  const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-  const user = await UserModel.findById(decoded._id)
-    .exec();
-  if (user) {
-    req.user = user;
-    return next();
+  const decoded = await decodeToken(token);
+  const user = await UserModel.findById(decoded._id).exec();
+  if (!user) {
+    throw new ErrorResponse('Not authorized', 401);
   }
-  return next(new ErrorResponse('Not authorized', 401));
+  req.user = user;
+  return next();
 });

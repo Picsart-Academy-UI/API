@@ -2,6 +2,7 @@ const {Reservation} = require('booking-db');
 
 const {asyncHandler} = require('../middlewares/asyncHandler');
 const {ErrorResponse, NotFound} = require('../utils/errorResponse');
+const {findOneReservation, deleteOneReservation} = require('../utils/util');
 
 const {
   buildQuery,
@@ -78,26 +79,22 @@ exports.getAll = asyncHandler(async (req, res) => {
 });
 
 exports.getOne = asyncHandler(async (req, res) => {
-  const reservation = await Reservation.findById(req.params.reservation_id);
+  const reservation = await findOneReservation(req);
   if (!reservation) {
     throw new ErrorResponse(`Reservation not found with id of ${req.params.reservation_id}`, 404);
-  }
-  if (reservation.user_id.toString() !== req.user._id.toString() && !req.user.is_admin) {
-    throw new ErrorResponse('Not authorized', 401);
   }
   return res.status(200)
     .json({data: reservation});
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.findById(req.params.reservation_id);
+  const reservation = await deleteOneReservation(req);
   if (!reservation) {
     return next(new ErrorResponse(
       `Reservation not found with id of ${req.params.reservation_id}`,
       404
     ));
   }
-  await Reservation.deleteOne({_id: req.params.reservation_id});
   return res.status(200)
     .json({
       message: 'Reservation was deleted',
