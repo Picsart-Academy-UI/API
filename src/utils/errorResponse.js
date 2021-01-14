@@ -19,8 +19,48 @@ class BadRequest extends Error {
   }
 }
 
+class Unauthorized extends Error {
+  constructor(message, statusCode = 401) {
+    super();
+    this.name = this.constructor.name;
+    this.statusCode = statusCode;
+    this.message = message;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+class Forbidden extends Error {
+  constructor(message, statusCode = 403) {
+    super();
+    this.name = this.constructor.name;
+    this.statusCode = statusCode;
+    this.message = message;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
 class NotFound extends Error {
   constructor(message, statusCode = 404) {
+    super(message);
+    this.name = this.constructor.name;
+    this.statusCode = statusCode;
+    this.message = message;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+class MethodNotAllowed extends Error {
+  constructor(message, statusCode = 405) {
+    super(message);
+    this.name = this.constructor.name;
+    this.statusCode = statusCode;
+    this.message = message;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+class NotAcceptable extends Error {
+  constructor(message, statusCode = 406) {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
@@ -42,6 +82,10 @@ class Conflict extends Error {
 module.exports = {
   ErrorResponse,
   NotFound,
+  Conflict,
+  Forbidden,
   BadRequest,
-  Conflict
+  Unauthorized,
+  NotAcceptable,
+  MethodNotAllowed
 };

@@ -1,4 +1,7 @@
-const { ErrorResponse, NotFound, BadRequest, Conflict } = require('../utils/errorResponse');
+const {
+  ErrorResponse, NotFound, BadRequest, Unauthorized,
+  MethodNotAllowed, Forbidden, Conflict, NotAcceptable
+} = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
@@ -33,14 +36,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Syntax error
   if (err.name === 'SyntaxError') {
-    const message = 'Unauthorized';
+    const message = 'Syntax Error';
     error = new ErrorResponse(message, 401);
-  }
-
-  // Not Found error
-  if (err.name === 'NotFound') {
-    const message = err.message || `The requested resource ${req.url} was not found.`;
-    error = new NotFound(message, 404);
   }
 
   // Bad Request error
@@ -49,10 +46,40 @@ const errorHandler = (err, req, res, next) => {
     error = new BadRequest(message, 400);
   }
 
+  // Unauthorized error
+  if (err.name === 'Unauthorized') {
+    const message = err.message || 'Unauthorized';
+    error = new Unauthorized(message, 401);
+  }
+
+  // Not Found error
+  if (err.name === 'NotFound') {
+    const message = err.message || `The requested resource ${req.url} was not found.`;
+    error = new NotFound(message, 404);
+  }
+
+  // Forbidden error
+  if (err.name === 'Forbidden') {
+    const message = err.message || 'Forbidden';
+    error = new Forbidden(message, 403);
+  }
+
+  // MethodNotAllowed error
+  if (err.name === 'MethodNotAllowed') {
+    const message = err.message || 'Method Not Allowed';
+    error = new MethodNotAllowed(message, 405);
+  }
+
+  // NotAcceptable error
+  if (err.name === 'NotAcceptable') {
+    const message = err.message || 'Not Acceptable';
+    error = new NotAcceptable(message, 406);
+  }
+
   // Conflict error
   if (err.name === 'Conflict') {
     const message = err.message || 'Conflict';
-    error = new Conflict(message, 400);
+    error = new Conflict(message, 409);
   }
 
   res.status(error.statusCode || 500).json({
