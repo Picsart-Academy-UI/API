@@ -1,7 +1,7 @@
+const { User } = require('booking-db');
 const { BadRequest, Unauthorized } = require('../utils/errorResponse');
-
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const {verifyIdToken, findUserByEmailAndUpdate, getJwt} = require('../utils/util');
+const { verifyIdToken, findUserByEmailAndUpdate, getJwt } = require('../utils/util');
 
 // @desc  sign-in
 // @route /api/v1/auth/signin
@@ -21,7 +21,9 @@ module.exports = asyncHandler(async (req, res, next) => {
   }
 
   const payload = ticket.getPayload();
-
+  console.log('payload', payload);
+  const users = await User.find({});
+  console.log('allusers', users);
   const { email, picture } = payload;
 
   const user = await findUserByEmailAndUpdate(email, picture);
