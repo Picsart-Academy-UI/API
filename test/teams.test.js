@@ -25,7 +25,7 @@ describe('teams', async () => {
         });
     });
 
-    it('should not get teams data - USER', function (done) {
+    it('non-admin user should not get team\'s data', function (done) {
       request(app)
         .get('/api/v1/teams')
         .set('Authorization', `Bearer ${this.userToken}`)
@@ -38,8 +38,7 @@ describe('teams', async () => {
   });
 
   describe('GET /api/v1/teams/:team_id', () => {
-    it('should get team data requested with team id', function (done) {
-      // const requestedTeam = await getTeam(team.team_name);
+    it('admin user should get team data requested with team id', function (done) {
       request(app)
         .get(`/api/v1/teams/${this.team._id}`)
         .set('Authorization', `Bearer ${this.adminToken}`)
@@ -51,7 +50,7 @@ describe('teams', async () => {
         });
     });
 
-    it('should not get requested team data - USER', function (done) {
+    it('non-admin user should not get requested team data', function (done) {
       // const requestedTeam = await getTeam(team.team_name);
       request(app)
         .get(`/api/v1/teams/${this.team._id}`)

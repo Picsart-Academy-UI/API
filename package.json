@@ -9,7 +9,7 @@
     "lint:fix": "node ./node_modules/eslint/bin/eslint.js ./src --fix",
     "precommit": "node ./node_modules/eslint/bin/eslint.js ./src",
     "test": "mocha test --exit",
-    "test:only": "mocha -g"
+    "test:only": "mocha ./test/_initial.test.js mocha ./test/$npm_config_file.test.js --exit"
   },
   "repository": {
     "type": "git",
@@ -25,12 +25,12 @@
     "booking-db": "^1.2.8",
     "chai": "^4.2.0",
     "cors": "^2.8.5",
-    "db_picsart": "^1.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "google-auth-library": "^6.1.3",
+    "google-auth-library": "^6.1.4",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^8.2.1",
+    "moment-timezone": "^0.5.32",
     "nodemailer": "^6.4.17",
     "supertest": "^6.0.1",
     "web-push": "^3.4.4"
@@ -39,6 +39,6 @@
     "eslint": "^7.17.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.7"
   }
 }

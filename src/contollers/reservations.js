@@ -1,61 +1,69 @@
-const { Reservation } = require('booking-db');
-const { ErrorResponse } = require('../utils/errorResponse');
-const { asyncHandler } = require('../middlewares/asyncHandler');
+const {Reservation} = require('booking-db');
 
-exports.create = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.create(req.body);
-  return res.status(201).json({data: reservation});
+const {asyncHandler} = require('../middlewares/asyncHandler');
+const {ErrorResponse} = require('../utils/errorResponse');
+const {findOneReservation, deleteOneReservation} = require('../utils/util');
+
+const {
+  buildQuery,
+  getPagination,
+} = require('../utils/util');
+
+const {
+  updateReservation,
+  createReservation} = require('../utils/reservation-helpers');
+
+exports.create = asyncHandler(async (req, res) => {
+  const reservation = await createReservation(req);
+  return res.status(201)
+    .json({data: reservation});
 });
 
-exports.update = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.findOneAndUpdate(
-    { _id: req.params.reservation_id },
-    { $set: req.body },
-    { new: true },
-    { runValidators: true }
-  );
-  if (!reservation) {
-    return next(new ErrorResponse(
-      `Reservation not found with id of ${req.params.reservation_id}`,
-      404
-    ));
-  }
-  return res.status(200).json({data: reservation});
-});
-
-exports.getAll = asyncHandler(async (req, res, next) => {
-  const reservations = await Reservation.find();
-  return res.status(200).json({data: reservations});
-});
-
-exports.getOne = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.findById(req.params.reservation_id);
-  if (!reservation) {
-    return next(new ErrorResponse(
-      `Reservation not found with id of ${req.params.reservation_id}`,
-      404
-    ));
-  }
-  return res.status(200).json({data: reservation});
-});
-
-exports.deleteAll = asyncHandler(async (req, res, next) => {
-  await Reservation.deleteMany();
-  return res.status(200).json({
-    message: 'All reservations were deleted',
+exports.update = asyncHandler(async (req, res) => {
+  const reservation = await updateReservation(req);
+  return res.status(202).json({
+    data: reservation
   });
+
+});
+
+exports.getAll = asyncHandler(async (req, res) => {
+
+  const queryObject = buildQuery(req.query);
+
+  const initialQuery = Reservation.find(queryObject);
+
+  const count = await Reservation.countDocuments(queryObject);
+
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
+  );
+
+  const reservations = await query.lean().exec();
+
+  return res.status(200).json({data: reservations, count, pagination});
+
+});
+
+exports.getOne = asyncHandler(async (req, res) => {
+  const reservation = await findOneReservation(req);
+  if (!reservation) {
+    throw new ErrorResponse(`Reservation not found with id of ${req.params.reservation_id}`, 404);
+  }
+  return res.status(200)
+    .json({data: reservation});
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.findById(req.params.reservation_id);
+  const reservation = await deleteOneReservation(req);
   if (!reservation) {
     return next(new ErrorResponse(
       `Reservation not found with id of ${req.params.reservation_id}`,
       404
     ));
   }
-  await Reservation.deleteOne({ _id: req.params.reservation_id });
-  return res.status(200).json({
-    message: 'Reservation was deleted',
-  });
+  return res.status(200)
+    .json({
+      message: 'Reservation was deleted',
+    });
 });
