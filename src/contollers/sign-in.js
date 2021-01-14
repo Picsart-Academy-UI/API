@@ -1,4 +1,5 @@
-const { ErrorResponse } = require('../utils/errorResponse');
+const { BadRequest, Unauthorized } = require('../utils/errorResponse');
+
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const {verifyIdToken, findUserByEmailAndUpdate, getJwt} = require('../utils/util');
 
@@ -10,7 +11,7 @@ module.exports = asyncHandler(async (req, res, next) => {
   const { token: idToken } = req.body;
 
   if (!idToken) {
-    throw new ErrorResponse('Token was not provided', 401);
+    throw new BadRequest('Token was not provided');
   }
 
   const ticket = await verifyIdToken(idToken);
@@ -21,7 +22,7 @@ module.exports = asyncHandler(async (req, res, next) => {
   const user = await findUserByEmailAndUpdate(email, picture);
 
   if (!user) {
-    throw new ErrorResponse('User has not been invited', 401);
+    throw new Unauthorized('User has not been invited');
   }
 
   const token = await getJwt(user);

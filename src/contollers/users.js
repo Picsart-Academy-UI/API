@@ -99,7 +99,7 @@ exports.search = asyncHandler(async (req, res) => {
 
   const users = User.find({ [field]: regexp });
   const count = await User.countDocuments({ [field]: regexp });
-  
+
   const { pagination, query } = getPagination(page, limit, count, req, users);
 
   const result = await query.lean().exec();

@@ -1,4 +1,7 @@
-const { ErrorResponse, NotFound, BadRequest, Conflict } = require('../utils/errorResponse');
+const {
+  ErrorResponse, NotFound, BadRequest, Unauthorized,
+  MethodNotAllowed, Forbidden, Conflict, NotAcceptable
+} = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
@@ -30,6 +33,17 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors).map((val) => val.message);
     error = new ErrorResponse(message, 400);
   }
+  // Bad Request error
+  if (err.name === 'BadRequest') {
+    const message = err.message || 'Bad Request';
+    error = new BadRequest(message, 400);
+  }
+
+  // Unauthorized error
+  if (err.name === 'Unauthorized') {
+    const message = err.message || 'Unauthorized';
+    error = new Unauthorized(message, 401);
+  }
 
   // Not Found error
   if (err.name === 'NotFound') {
@@ -37,16 +51,28 @@ const errorHandler = (err, req, res, next) => {
     error = new NotFound(message, 404);
   }
 
-  // Bad Request error
-  if (err.name === 'BadRequest') {
-    const message = err.message || 'Bad Request';
-    error = new BadRequest(message, 400);
+  // Forbidden error
+  if (err.name === 'Forbidden') {
+    const message = err.message || 'Forbidden';
+    error = new Forbidden(message, 403);
+  }
+
+  // MethodNotAllowed error
+  if (err.name === 'MethodNotAllowed') {
+    const message = err.message || 'Method Not Allowed';
+    error = new MethodNotAllowed(message, 405);
+  }
+
+  // NotAcceptable error
+  if (err.name === 'NotAcceptable') {
+    const message = err.message || 'Not Acceptable';
+    error = new NotAcceptable(message, 406);
   }
 
   // Conflict error
   if (err.name === 'Conflict') {
     const message = err.message || 'Conflict';
-    error = new Conflict(message, 400);
+    error = new Conflict(message, 409);
   }
 
   res.status(error.statusCode || 500).json({
