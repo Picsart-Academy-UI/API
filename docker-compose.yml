@@ -174,5 +174,4 @@ networks:
           
 volumes:
   db:
-  grafana-data:        
-
+  grafana-data:
