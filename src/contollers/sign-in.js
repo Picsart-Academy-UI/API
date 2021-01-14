@@ -12,8 +12,12 @@ module.exports = asyncHandler(async (req, res, next) => {
   if (!idToken) {
     throw new ErrorResponse('Token was not provided', 401);
   }
+  try {
+    const ticket = await verifyIdToken(idToken);
+  } catch (err) {
+    console.log(err);
+  }
 
-  const ticket = await verifyIdToken(idToken);
   const payload = ticket.getPayload();
 
   const { email, picture } = payload;
