@@ -1,7 +1,7 @@
 const { User } = require('booking-db');
 
 const {buildQuery, getPagination, findUserByIdAndUpdate} = require('../utils/util');
-const { ErrorResponse } = require('../utils/errorResponse');
+const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 // @desc  get users from the same team
@@ -10,7 +10,7 @@ const { asyncHandler } = require('../middlewares/asyncHandler');
 exports.getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({ team_id: req.user.team_id }).lean().exec();
   if (!users) {
-    throw new ErrorResponse('User not found.', 404);
+    throw new NotFound('User not found.');
   }
   return res.status(200).json({
     data: users
@@ -43,7 +43,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 exports.getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.user_id).lean().exec();
   if (!user) {
-    throw new ErrorResponse('User not found.', 404);
+    throw new NotFound('User not found.');
   }
   return res.status(200).json({
     data: user
@@ -56,7 +56,7 @@ exports.getUser = asyncHandler(async (req, res) => {
 exports.updateUser = asyncHandler(async (req, res) => {
   const user = await findUserByIdAndUpdate(req.params.user_id, req).lean().exec();
   if (!user) {
-    throw new ErrorResponse('User not found.', 404);
+    throw new NotFound('User not found.');
   }
   return res.status(200).json({
     data: user
@@ -69,7 +69,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
 exports.deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndDelete(req.params.user_id).lean().exec();
   if (!user) {
-    throw new ErrorResponse('User not found.', 404);
+    throw new NotFound('User not found.');
   }
   return res.status(200).json({
     message: 'User has successfully been deleted.'
@@ -82,7 +82,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 exports.getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id).lean().exec();
   if (!user) {
-    throw new ErrorResponse('User not found.', 404);
+    throw new NotFound('User not found.');
   }
   return res.status(200).json({
     data: user
@@ -99,7 +99,7 @@ exports.search = asyncHandler(async (req, res) => {
 
   const users = User.find({ [field]: regexp });
   const count = await User.countDocuments({ [field]: regexp });
-  
+
   const { pagination, query } = getPagination(page, limit, count, req, users);
 
   const result = await query.lean().exec();

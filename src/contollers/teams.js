@@ -1,5 +1,5 @@
-const { Team, User } = require('booking-db');
-const { ErrorResponse } = require('../utils/errorResponse');
+const { Team } = require('booking-db');
+const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { buildQuery, getPagination } = require('../utils/util');
 
@@ -21,7 +21,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
     })
     .populate({
       path: 'tables',
-    });
+    }).exec();
 
   const count = await Team.countDocuments(queryObject);
 
@@ -38,12 +38,9 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
-  const team = await Team.findById(req.params.team_id);
+  const team = await Team.findById(req.params.team_id).exec();
   if (!team) {
-    return next(new ErrorResponse(
-      `Team not found with id of ${req.params.team_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   return res.status(200).json({data: team});
 });
@@ -55,21 +52,15 @@ exports.update = asyncHandler(async (req, res, next) => {
     { new: true, runValidators: true },
   );
   if (!team) {
-    return next(new ErrorResponse(
-      `Team not found with id of ${req.params.team_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   return res.status(200).json({data: team});
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const team = await Team.findById(req.params.team_id);
+  const team = await Team.findById(req.params.team_id).exec();
   if (!team) {
-    return next(new ErrorResponse(
-      `Team not found with id of ${req.params.team_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   await Team.deleteOne({ _id: req.params.team_id });
   return res.status(200).json({

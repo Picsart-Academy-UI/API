@@ -1,6 +1,6 @@
 const { Chair } = require('booking-db');
 
-const { ErrorResponse, NotFound } = require('../utils/errorResponse');
+const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 exports.create = asyncHandler(async (req, res, next) => {
@@ -28,10 +28,7 @@ exports.update = asyncHandler(async (req, res, next) => {
     { new: true, runValidators: true },
   );
   if (!chair) {
-    return next(new ErrorResponse(
-      `Chair not found with id of ${req.params.chair_id}.`,
-      404
-    ));
+    return next(new NotFound());
   }
   return res.status(200).json({data: chair});
 });
@@ -39,10 +36,7 @@ exports.update = asyncHandler(async (req, res, next) => {
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const chair = await Chair.findById(req.params.chair_id);
   if (!chair) {
-    return next(new ErrorResponse(
-      `Chair not found with id of ${req.params.chair_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   await Chair.deleteOne({ _id: req.params.chair_id });
 
