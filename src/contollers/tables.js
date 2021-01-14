@@ -28,8 +28,7 @@ exports.update = asyncHandler(async (req, res, next) => {
   const table = await Table.findOneAndUpdate(
     { _id: req.params.table_id },
     { $set: req.body },
-    { new: true },
-    { runValidators: true }
+    { new: true, runValidators: true },
   );
   if (!table) {
     return next(new ErrorResponse(

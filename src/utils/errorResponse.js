@@ -9,9 +9,9 @@ class ErrorResponse extends Error {
   }
 }
 
-class NotFound extends Error {
-  constructor(message, statusCode = 404) {
-    super(message);
+class BadRequest extends Error {
+  constructor(message, statusCode = 400) {
+    super();
     this.name = this.constructor.name;
     this.statusCode = statusCode;
     this.message = message;
@@ -19,9 +19,9 @@ class NotFound extends Error {
   }
 }
 
-class BadRequest extends Error {
-  constructor(message, statusCode = 400) {
-    super();
+class NotFound extends Error {
+  constructor(message, statusCode = 404) {
+    super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
     this.message = message;

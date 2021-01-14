@@ -13,7 +13,7 @@ exports.reserve = asyncHandler(async (req, res, next) => {
   const reserve_1 = await Reservation.create({
     date_start: startDate,
     date_end: startDate,
-    status: 'Approved',
+    status: 'approved',
     table_id,
     chair_id,
     team_id,
@@ -23,7 +23,7 @@ exports.reserve = asyncHandler(async (req, res, next) => {
   const reserve_2 = await Reservation.create({
     start_date: startDate.add(1, 'day'),
     end_date,
-    status: 'Pending',
+    status: 'pending',
     table_id,
     chair_id,
     team_id,

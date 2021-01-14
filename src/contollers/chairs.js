@@ -25,8 +25,7 @@ exports.update = asyncHandler(async (req, res, next) => {
   const chair = await Chair.findOneAndUpdate(
     { _id: req.params.chair_id },
     { $set: req.body },
-    { new: true },
-    { runValidators: true }
+    { new: true, runValidators: true },
   );
   if (!chair) {
     return next(new ErrorResponse(
