@@ -1,6 +1,6 @@
 const {User} = require('booking-db');
 
-const {ErrorResponse} = require('../utils/errorResponse');
+const {Conflict} = require('../utils/errorResponse');
 const {asyncHandler} = require('../middlewares/asyncHandler');
 const {getUserProperties, createUserAndSendEmail, updateUserAndSendEmail} = require('../utils/util');
 
@@ -18,7 +18,7 @@ module.exports = asyncHandler(async (req, res) => {
     return res.status(201).json({data: created_user.toJSON()});
   }
   if (user.accepted) {
-    throw new ErrorResponse('User has already accepted the invitation', 409);
+    throw new Conflict('User has already accepted the invitation');
   }
   const updated_user = await updateUserAndSendEmail(userProperties, user._id);
 
