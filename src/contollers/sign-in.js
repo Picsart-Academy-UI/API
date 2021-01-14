@@ -7,14 +7,19 @@ const {verifyIdToken, findUserByEmailAndUpdate, getJwt} = require('../utils/util
 // @route /api/v1/auth/signin
 // @access  Public
 module.exports = asyncHandler(async (req, res, next) => {
-
+  let ticket;
   const { token: idToken } = req.body;
 
   if (!idToken) {
     throw new BadRequest('Token was not provided');
   }
 
-  const ticket = await verifyIdToken(idToken);
+  try {
+    ticket = await verifyIdToken(idToken);
+  } catch (err) {
+    console.log(err, 'ID token error');
+  }
+
   const payload = ticket.getPayload();
 
   const { email, picture } = payload;
