@@ -52,8 +52,7 @@ exports.update = asyncHandler(async (req, res, next) => {
   const team = await Team.findOneAndUpdate(
     { _id: req.params.team_id },
     { $set: req.body },
-    { new: true },
-    { runValidators: true }
+    { new: true, runValidators: true },
   );
   if (!team) {
     return next(new ErrorResponse(

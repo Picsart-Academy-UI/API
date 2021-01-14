@@ -11,7 +11,8 @@ const {
 const {
   formatDateAndGiveQuery,
   updateReservation,
-  createReservation} = require('../utils/reservation-helpers');
+  createReservation
+} = require('../utils/reservation-helpers');
 
 exports.create = asyncHandler(async (req, res) => {
 
