@@ -1,6 +1,6 @@
-version: '3'
+version: "3"
 services:
-   mongo:
+  mongo:
     container_name: mongo
     image: mongo
     networks:
@@ -11,167 +11,165 @@ services:
       placement:
         constraints: [node.role == manager]
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
-      - 'db:/data/db'
-   api:
+      - "db:/data/db"
+  api:
     container_name: api
     image: lilitkarapetyan/academy-node:test
-    networks: 
+    networks:
       - backend_net
     ports:
-      - '3001:3001'
+      - "3001:3001"
     deploy:
       replicas: 4
-      update_config: 
+      update_config:
         parallelism: 1
         delay: 10s
-      restart_policy: 
+      restart_policy:
         condition: on-failure
     links:
       - mongo
     depends_on:
       - mongo
 
-   prometheus:
-     image: prom/prometheus
-     volumes:
-             - /etc/prometheus/:/etc/prometheus
-     ports:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - /etc/prometheus/:/etc/prometheus
+    ports:
       - 9090:9090
-     deploy:
-       placement:
-         constraints:
-           - node.role == manager
-     networks:
-       - backend_net
-       - frontend
-   manager-001:
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - backend_net
+      - frontend
+  manager-001:
     image: prom/node-exporter
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/host'
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/host"
       - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
       - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
     deploy:
       placement:
         constraints:
-         # hostname of the manager node!
-         - node.hostname == picsart-academy-project
+          # hostname of the manager node!
+          - node.hostname == picsart-academy-project
     networks:
-         - backend_net
+      - backend_net
 
-   worker-001:
-     image: prom/node-exporter
-     volumes:
+  worker-001:
+    image: prom/node-exporter
+    volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-     command:
-        - '--path.procfs=/host/proc'
-        - '--path.sysfs=/host/sys'
-        - '--path.rootfs=/host'
-        - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
-        - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
-     deploy:
-       placement:
-          constraints:
-         # hostname of the worker node!
-                - node.hostname == docker-node-01
-     networks:
-                - backend_net
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/host"
+      - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
+      - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+    deploy:
+      placement:
+        constraints:
+          # hostname of the worker node!
+          - node.hostname == docker-node-01
+    networks:
+      - backend_net
 
-   worker-002:       
-     image: prom/node-exporter       
-     volumes:       
-      - /proc:/host/proc:ro       
-      - /sys:/host/sys:ro       
-      - /:/rootfs:ro       
-     command:       
-        - '--path.procfs=/host/proc'       
-        - '--path.sysfs=/host/sys'       
-        - '--path.rootfs=/host'       
-        - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'       
-        - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'       
-     deploy:       
-       placement:       
-          constraints:       
-         # hostname of the worker node!       
-                - node.hostname == docker-node-02       
-     networks:       
-                - backend_net    
+  worker-002:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/host"
+      - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
+      - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+    deploy:
+      placement:
+        constraints:
+          # hostname of the worker node!
+          - node.hostname == docker-node-02
+    networks:
+      - backend_net
 
-   docker-manager-001:
-     image: google/cadvisor:latest
-     volumes:
-     - /:/rootfs:ro
-     - /var/run:/var/run:rw
-     - /sys:/sys:ro
-     - /var/lib/docker/:/var/lib/docker:ro
-     deploy:
-       placement:
-         constraints:
+  docker-manager-001:
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    deploy:
+      placement:
+        constraints:
           # hostname of the first manager node!
-           - node.hostname == picsart-academy-project
-     networks:
+          - node.hostname == picsart-academy-project
+    networks:
       - backend_net
 
-   docker-worker-001:
-     image: google/cadvisor:latest
-     volumes:
-     - /:/rootfs:ro
-     - /var/run:/var/run:rw
-     - /sys:/sys:ro
-     - /var/lib/docker/:/var/lib/docker:ro
-     deploy:
-       placement:
-         constraints:
+  docker-worker-001:
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    deploy:
+      placement:
+        constraints:
           # hostname of the worker node!
-           - node.hostname == docker-node-01
-     networks:
+          - node.hostname == docker-node-01
+    networks:
       - backend_net
 
-   docker-worker-002:
-     image: google/cadvisor:latest
-     volumes:
-     - /:/rootfs:ro
-     - /var/run:/var/run:rw
-     - /sys:/sys:ro
-     - /var/lib/docker/:/var/lib/docker:ro
-     deploy:
-       placement:
-         constraints:
+  docker-worker-002:
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    deploy:
+      placement:
+        constraints:
           # hostname of the worker node!
-           - node.hostname == docker-node-02
-     networks:
-      - backend_net           
+          - node.hostname == docker-node-02
+    networks:
+      - backend_net
 
-   grafana:
-     image: grafana/grafana
-     volumes:
-       - grafana-data:/var/lib/grafana
-     deploy:
-       placement:
-         constraints:
-           - node.role == manager
-     ports:
-      - '3000:3000'
-     networks:
-       - frontend
-       - backend_net
-
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+      - backend_net
 
 networks:
-        frontend:
-                external:
-                        name: imixs-proxy-net      
-        backend_net:
-          
+  frontend:
+    external:
+      name: imixs-proxy-net
+  backend_net:
+
 volumes:
   db:
   grafana-data:
