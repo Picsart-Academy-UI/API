@@ -33,13 +33,6 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors).map((val) => val.message);
     error = new ErrorResponse(message, 400);
   }
-
-  // Syntax error
-  if (err.name === 'SyntaxError') {
-    const message = 'Syntax Error';
-    error = new ErrorResponse(message, 401);
-  }
-
   // Bad Request error
   if (err.name === 'BadRequest') {
     const message = err.message || 'Bad Request';
