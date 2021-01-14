@@ -9,6 +9,16 @@
     "ecmaVersion": 12
   },
   "rules": {
+    // the below should be removed
+    "space-before-blocks": "off",
+    "eol-last":"off",
+    "no-restricted-syntax":"off",
+    "no-await-in-loop":"off",
+    "no-console":"off",
+    "no-multiple-empty-lines":"off",
+    "indent":"off",
+    "arrow-body-style":"off",
+    // the lines above should be removed
     "object-curly-spacing": "off",
     "object-curly-newline": "off",
     "consistent-return": "off",
