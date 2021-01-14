@@ -1,45 +1,39 @@
-const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
+const { BadRequest, Unauthorized } = require('../utils/errorResponse');
 
-const { find_one_user } = require('../utils/db_utils');
-const { update_user } = require('../utils/db_utils');
+const { asyncHandler } = require('../middlewares/asyncHandler');
+const {verifyIdToken, findUserByEmailAndUpdate, getJwt} = require('../utils/util');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-module.exports = async (req, res, next) => {
+// @desc  sign-in
+// @route /api/v1/auth/signin
+// @access  Public
+module.exports = asyncHandler(async (req, res, next) => {
+  let ticket;
   const { token: idToken } = req.body;
 
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-
-    const {
-      email, given_name: first_name, family_name: last_name, photo_url,
-    } = payload;
-
-    const user = await find_one_user(email);
-
-    if (!user) {
-      return next(new Error('Not invited'));
-    }
-
-    const user_to_be_updated = { first_name, last_name, photo_url };
-
-    const updated_user = await update_user(email, user_to_be_updated);
-
-    const token = await jwt.sign({ ...updated_user }, process.env.JWT_SECRET);
-
-    return res.status(202).json({
-      success: true,
-      token
-    });
-  } catch (err) {
-    // TODO: create Error handlers
-
-    return next(new Error('Auth error'));
+  if (!idToken) {
+    throw new BadRequest('Token was not provided');
   }
-};
+
+  try {
+    ticket = await verifyIdToken(idToken);
+  } catch (err) {
+    console.log(err, 'ID token error');
+  }
+
+  const payload = ticket.getPayload();
+
+  const { email, picture } = payload;
+
+  const user = await findUserByEmailAndUpdate(email, picture);
+
+  if (!user) {
+    throw new Unauthorized('User has not been invited');
+  }
+
+  const token = await getJwt(user);
+
+  return res.status(202).json({
+    data: user,
+    token
+  });
+});

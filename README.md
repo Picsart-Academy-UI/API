@@ -11,7 +11,21 @@
     MAIL_USER=[[Your mail, from where you'll send the invitation emails]]
     MAIL_PASSWORD=[[That mail password]]
     JWT_SECRET=[[Whatever you want]]
+    PUBLIC_VAPID_KEY=[[Your generated public vapid key]]
+    PRIVATE_VAPID_KEY=[[Your generated private vapid key]]
+    WEBPUSH_MAILTO=[[Whatever email you want]]
   </pre>
+  
+## Run tests
+`npm run test` - will run all the tests
+<br>
+`npm run test:only file=beginning of the test file name"` - will run specific test 
+
+### Generate Vapid Keys
+Before first server start, run the following command to get the public and private vapid keys from **web-push** package:<br/>
+`./node_modules/.bin/web-push generate-vapid-keys`<br/>
+It will give you the public and private vapid keys in terminal. Copy them and set into your `.env` file.
+
 
 ## Documentation
 

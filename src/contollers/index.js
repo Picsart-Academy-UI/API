@@ -1,4 +1,9 @@
-exports.signIn = require('./sign-in');
+exports.signin = require('./sign-in');
 exports.invite = require('./invite');
-exports.team = require('./team');
-exports.reservation = require('./reservation');
+exports.teams = require('./teams');
+exports.users = require('./users');
+exports.logout = require('./logout');
+exports.chairs = require('./chairs');
+exports.tables = require('./tables');
+exports.reservations = require('./reservations');
+exports.notifications = require('./notifications');

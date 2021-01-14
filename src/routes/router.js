@@ -1,21 +1,35 @@
 const express = require('express');
 
+const authenticate = require('../middlewares/auth');
+
 const router = express.Router();
 
-const signInRouter = require('./sign-in');
+const authRouter = require('./auth');
 
-const inviteRouter = require('./invite');
+const teamsRouter = require('./teams');
 
-const teamRouter = require('./team');
+const usersRouter = require('./users');
 
-const reservationRouter = require('./reservation');
+const chairsRouter = require('./chairs');
 
-router.use('/auth', signInRouter);
+const tablesRouter = require('./tables');
 
-router.use('/auth', inviteRouter);
+const reservationsRouter = require('./reservations');
 
-router.use('/teams', teamRouter);
+const notificationsRouter = require('./notifications');
 
-router.use('/reservation', reservationRouter);
+router.use(authRouter);
+
+router.use('/teams', authenticate, teamsRouter);
+
+router.use('/chairs', chairsRouter);
+
+router.use('/tables', tablesRouter);
+
+router.use('/reservations', authenticate, reservationsRouter);
+
+router.use('/users', authenticate, usersRouter);
+
+router.use('/notifications', authenticate, notificationsRouter);
 
 module.exports = router;

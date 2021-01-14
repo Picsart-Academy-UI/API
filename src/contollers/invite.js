@@ -1,38 +1,25 @@
-const { find_one_user } = require('../utils/db_utils');
-const { emailRegexp } = require('../utils/util');
-const { create_user } = require('../utils/db_utils');
+const {User} = require('booking-db');
+const {Conflict} = require('../utils/errorResponse');
+const {asyncHandler} = require('../middlewares/asyncHandler');
+const {getUserProperties, createUserAndSendEmail, updateUserAndSendEmail} = require('../utils/util');
 
-module.exports = async (req, res, next) => {
-  const { email, _isAdmin, team_id } = req.body;
+// @desc  Admin invites the user
+// @route /api/v1/auth/invite
+// @access Private (Admin)
 
-  // checking to see if the email input is valid
-
-  if (!emailRegexp.test(email)) {
-    return next(new Error('wrong input email'));
+module.exports = asyncHandler(async (req, res) => {
+  const userProperties = getUserProperties(req);
+  const user = await User.findOne({email: userProperties.email})
+    .lean()
+    .exec();
+  if (!user) {
+    const created_user = await createUserAndSendEmail(userProperties);
+    return res.status(201).json({data: created_user.toJSON()});
   }
-
-  try {
-    const user = await find_one_user(email);
-
-    if (user) {
-      if (user.accepted) {
-        return next(new Error('User has already accepted the invitation'));
-      }
-
-      // TODO just resent the invitation ?
-
-      return next('Invitation has been resend');
-    }
-
-    const user_properties = { email, _isAdmin, team_id };
-
-    const created_user = await create_user(user_properties);
-
-    return res.status(201).json({
-      success: true,
-      msg: 'The user has successfully been initialized!',
-    });
-  } catch (err) {
-    return next(new Error('Server error'));
+  if (user.accepted) {
+    throw new Conflict('User has already accepted the invitation');
   }
-};
+  const updated_user = await updateUserAndSendEmail(userProperties, user._id);
+
+  return res.status(202).json({data: updated_user});
+});
