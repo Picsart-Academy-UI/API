@@ -1,4 +1,4 @@
-const {User} = require('booking-db');
+const {User, Reservation} = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 
@@ -165,7 +165,3 @@ exports.getJwt = (user) => {
 exports.decodeToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
-
-
-
-exports.excludeUndefinedFields = excludeUndefinedFields;

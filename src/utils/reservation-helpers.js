@@ -4,7 +4,6 @@ const {ErrorResponse} = require('./errorResponse');
 
 const format = 'YYYY-MM-DD';
 
-
 const getToday = () => {
   return moment().tz('Asia/Yerevan').format(format);
 };
@@ -124,6 +123,7 @@ exports.createReservation = async (req) => {
     const reservation = await Reservation.create(divideReservation(plainReservation));
     return reservation;
   }
+
   const reservation = await Reservation.create(plainReservation);
   return reservation;
 };
