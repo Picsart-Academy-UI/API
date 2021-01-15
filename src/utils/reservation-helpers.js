@@ -83,7 +83,7 @@ const divideReservation = (reservation) => {
   });
 
   const reserve_2 = new Reservation({
-    start_date: moment(start_date).add(2, 'd'),
+    start_date: moment(start_date).add(1, 'day').format(format),
     end_date,
     table_id,
     chair_id,

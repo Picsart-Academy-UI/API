@@ -20,8 +20,5 @@ module.exports = asyncHandler(async (req, res, next) => {
   }
   req.user = user;
   return next();
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> 001102f3a7d546589860df0bebed6bcd64ac7904
+

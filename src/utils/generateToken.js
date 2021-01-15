@@ -1,3 +1,5 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const jwt = require('jsonwebtoken');
 const { User: UserModel } = require('booking-db');
 const {connectDB} = require('booking-db');
@@ -7,7 +9,7 @@ const email = process.argv.slice(2);
 async function generateToken(){
   let foundUser;
   try {
-    await connectDB('mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false');
+    await connectDB(process.env.MONGO_URI);
      foundUser = await UserModel.findOne({email}).lean().exec();
   } catch (err){
     console.log(err);
@@ -22,7 +24,7 @@ async function generateToken(){
     email: foundUser.email,
     team_id: foundUser.team_id,
     is_admin: foundUser.is_admin
-  }, 'Picsart2020');
+  }, process.env.JWT_SECRET);
   return token;
 }
 
