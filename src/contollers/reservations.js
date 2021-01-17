@@ -1,7 +1,8 @@
-const {Reservation} = require('booking-db');
+const {Reservation, User} = require('booking-db');
 
 const {asyncHandler} = require('../middlewares/asyncHandler');
 const {ErrorResponse} = require('../utils/errorResponse');
+const { reservationNotification } = require('../utils/generateNotifications');
 const {findOneReservation, deleteOneReservation} = require('../utils/reservation-helpers');
 
 
@@ -16,12 +17,28 @@ const {
 
 exports.create = asyncHandler(async (req, res) => {
   const reservation = await createReservation(req);
+  const { user_id, start_date, end_date } = reservation;
+
+  const user = await User.findById(user_id);
+  const { push_subscriptions } = user;
+
+  if (reservation.status === 'approved') {
+    reservationNotification('approved', reservation, push_subscriptions);
+  }
+
   return res.status(201)
     .json({data: reservation});
 });
 
 exports.update = asyncHandler(async (req, res) => {
   const reservation = await updateReservation(req);
+  const { user_id } = reservation;
+
+  const user = await User.findById(user_id);
+  const { push_subscriptions } = user;
+
+  reservationNotification('updated', reservation, push_subscriptions);
+
   return res.status(202).json({
     data: reservation
   });
