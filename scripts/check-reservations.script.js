@@ -31,6 +31,7 @@ const updateTodayReservations = async () => {
     foundReservations = await getTodayReservations();
   } catch (err) {
     console.log('error occurred while getting the reservations', err);
+    process.exit(1);
   }
   for (const reservation of foundReservations){
     try {
