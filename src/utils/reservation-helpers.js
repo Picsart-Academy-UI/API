@@ -4,9 +4,13 @@ const {ErrorResponse} = require('./errorResponse');
 
 const format = 'YYYY-MM-DD';
 
+const getToday = () => {
+  return moment().tz('Asia/Yerevan').format(format);
+};
+
 const checkReservationDates = (reservation) => {
   const {start_date, end_date} = reservation;
-  const today = moment().format(format);
+  const today = getToday();
   return start_date >= today && end_date >= today && end_date >= start_date;
 };
 
@@ -79,7 +83,7 @@ const divideReservation = (reservation) => {
   });
 
   const reserve_2 = new Reservation({
-    start_date: moment(start_date).add(2, 'd'),
+    start_date: moment(start_date).add(1, 'day').format(format),
     end_date,
     table_id,
     chair_id,
@@ -99,7 +103,7 @@ exports.createReservation = async (req) => {
   if (!checkReservationDates(plainReservation)) {
     throw new ErrorResponse('Reservations should have appropriate dates', 400);
   }
-  const today = moment().format(format);
+  const today = getToday();
   const conflictingReservations = await getConflictingReservations(plainReservation);
   if (conflictingReservations.length !== 0) {
     throw new ErrorResponse('Conflict with the reservation period', 400);
@@ -119,6 +123,7 @@ exports.createReservation = async (req) => {
     const reservation = await Reservation.create(divideReservation(plainReservation));
     return reservation;
   }
+
   const reservation = await Reservation.create(plainReservation);
   return reservation;
 };
@@ -144,7 +149,7 @@ exports.updateReservation = async (req) => {
   if (!checkReservationDates(modifiedReservation)) {
     throw new ErrorResponse('Reservations should have appropriate dates', 400);
   }
-  const today = moment().format(format);
+  const today = getToday();
   const conflictingReservations = await getConflictingReservations(modifiedReservation);
   // eslint-disable-next-line max-len
 
@@ -176,3 +181,29 @@ exports.updateReservation = async (req) => {
   }
   throw new ErrorResponse('Conflict with the reservation period', 400);
 };
+
+exports.findOneReservation = (req) => {
+  if (req.user.is_admin) {
+    return Reservation.findById(req.params.reservation_id);
+  }
+  return Reservation.findOne({_id: req.params.reservation_id, user_id: req.user._id});
+};
+
+exports.deleteOneReservation = (req) => {
+  if (req.user.is_admin) {
+    return Reservation.findByIdAndDelete(req.params.reservation_id);
+  }
+  return Reservation.findOneAndDelete({user_id: req.user._id, _id: req.params.reservation_id});
+};
+
+exports.getTodayReservations = () => {
+  const today = getToday();
+  return Reservation.find({start_date: today, status: 'pending'}).lean().exec();
+};
+
+exports.getFormattedDate = (date) => {
+  return moment(date).format(format);
+};
+
+exports.divideReservation = divideReservation;
+exports.getToday = getToday;
