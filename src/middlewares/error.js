@@ -75,6 +75,11 @@ const errorHandler = (err, req, res, next) => {
     error = new Conflict(message, 409);
   }
 
+  if (err.message.startsWith('Unexpected token')){
+    const message = err.message || 'Invalid token';
+    error = new Unauthorized(message);
+  }
+
   res.status(error.statusCode || 500).json({
     error: error.message || 'Server Error'
   });

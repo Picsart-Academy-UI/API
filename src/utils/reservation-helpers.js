@@ -195,3 +195,15 @@ exports.deleteOneReservation = (req) => {
   }
   return Reservation.findOneAndDelete({user_id: req.user._id, _id: req.params.reservation_id});
 };
+
+exports.getTodayReservations = () => {
+  const today = getToday();
+  return Reservation.find({start_date: today, status: 'pending'}).lean().exec();
+};
+
+exports.getFormattedDate = (date) => {
+  return moment(date).format(format);
+};
+
+exports.divideReservation = divideReservation;
+exports.getToday = getToday;
