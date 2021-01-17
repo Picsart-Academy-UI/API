@@ -8,7 +8,8 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js ./src",
     "lint:fix": "node ./node_modules/eslint/bin/eslint.js ./src --fix",
     "precommit": "node ./node_modules/eslint/bin/eslint.js ./src",
-    "test": "mocha test"
+    "test": "mocha test --exit",
+    "test:only": "mocha ./test/_initial.test.js mocha ./test/$npm_config_file.test.js --exit"
   },
   "repository": {
     "type": "git",

@@ -1,40 +1,36 @@
 const moment = require('moment-timezone');
 const { Reservation } = require('booking-db');
-const {excludeUndefinedFields} = require('./util');
+const {ErrorResponse} = require('./errorResponse');
 
 const format = 'YYYY-MM-DD';
 
-const buildConflictingReservationsQuery = (start, end, chair_id) => Reservation.find({
-  $or: [
-    {
-      start_date: {$lte: start},
-      end_date: {$gte: start},
-    },
-    {
-      start_date: {$gte: start},
-      end_date: {$lte: end},
-    },
-    {
-      start_date: {
-        $eq: end
-      }
-    }
-  ],
-  chair_id
-}).sort('rating');
+const checkReservationDates = (reservation) => {
+  const {start_date, end_date} = reservation;
+  const today = moment().format(format);
+  return start_date >= today && end_date >= today && end_date >= start_date;
+};
 
-exports.formatDateAndGiveQuery = (req) => {
+const attachMissingFields = (reservation, foundReservation) => {
+  return {
+    start_date: reservation.start_date || foundReservation.start_date,
+    end_date: reservation.end_date || foundReservation.end_date,
+    table_id: reservation.table_id || foundReservation.table_id,
+    chair_id: reservation.chair_id || foundReservation.chair_id,
+    team_id: reservation.team_id || foundReservation.team_id,
+    user_id: reservation.user_id || foundReservation.user_id,
+    status: reservation.status || foundReservation.status
+  };
+};
+
+const getPlainReservation = (req) => {
   const {start_date, end_date, table_id, chair_id, team_id} = req.body;
   const status = req.user.is_admin ? req.body.status : 'pending';
   const user_id = req.user.is_admin ? req.body.user_id : req.user._id;
   // building correct formats
   const start = moment(start_date).format(format);
   const end = moment(end_date).format(format);
-  const today = moment().format(format);
-
   // building the reservation
-
-  const reservation = {
+  return {
     start_date: start,
     end_date: end,
     table_id,
@@ -43,20 +39,30 @@ exports.formatDateAndGiveQuery = (req) => {
     user_id,
     status
   };
-
-  // checking to see for overlaping reservations;
-
-  const foundReservations = buildConflictingReservationsQuery(
-    start, end, chair_id
-  );
-
-  return {
-    foundReservations,
-    reservation,
-    today
-  };
 };
 
+const getConflictingReservations = (reservation) => {
+  const {start_date, end_date, chair_id} = reservation;
+  return Reservation.find({
+
+    $or: [
+      {
+        start_date: {$lte: start_date},
+        end_date: {$gte: start_date},
+      },
+      {
+        start_date: {$gte: start_date},
+        end_date: {$lte: end_date},
+      },
+      {
+        start_date: {
+          $eq: end_date
+        }
+      }
+    ],
+    chair_id
+  }).sort('rating');
+};
 // eslint-disable-next-line no-shadow
 const divideReservation = (reservation) => {
 
@@ -85,60 +91,88 @@ const divideReservation = (reservation) => {
   return [reserve_1, reserve_2];
 
 };
-exports.createReservation = (reservation, today) => {
-  const reserve = reservation;
-  if (reserve.start_date === today && reserve.end_date === today) {
-    reserve.status = 'approved';
-    return Reservation.create(reserve);
+
+// Create Reservation
+
+exports.createReservation = async (req) => {
+  const plainReservation = getPlainReservation(req);
+  if (!checkReservationDates(plainReservation)) {
+    throw new ErrorResponse('Reservations should have appropriate dates', 400);
   }
-  if (reserve.start_date === today) {
-    const dividedReservations = divideReservation(reserve);
-    return Reservation.create(dividedReservations);
+  const today = moment().format(format);
+  const conflictingReservations = await getConflictingReservations(plainReservation);
+  if (conflictingReservations.length !== 0) {
+    throw new ErrorResponse('Conflict with the reservation period', 400);
   }
-  return Reservation.create(reserve);
+  if (plainReservation.start_date === today && plainReservation.end_date === today) {
+    plainReservation.status = 'approved';
+    const reservation = await Reservation.create(plainReservation);
+    return reservation;
+  }
+  if (plainReservation.start_date === today) {
+    if (req.user.is_admin) {
+      if (plainReservation.status === 'approved') {
+        const reservation = await Reservation.create(plainReservation);
+        return reservation;
+      }
+    }
+    const reservation = await Reservation.create(divideReservation(plainReservation));
+    return reservation;
+  }
+  const reservation = await Reservation.create(plainReservation);
+  return reservation;
 };
 
-// eslint-disable-next-line max-len
-exports.updateReservation = async (reservation, found, requestedReservation, reservation_id, today, req) => {
-  // eslint-disable-next-line no-mixed-operators
-  if (found.length === 1 && found[0]._id.toString() === reservation_id || (!found.length)) {
+// Update Reservation;
 
-    if (reservation.start_date === today && reservation.end_date === today) {
+exports.updateReservation = async (req) => {
+  let found;
+  const {reservation_id} = req.params;
+  if (req.user.is_admin) {
+    found = await Reservation.findById(reservation_id);
+  } else {
+    found = await Reservation.findOne({user_id: req.user._id, _id: reservation_id});
+  }
+  if (!found) {
+    throw new ErrorResponse(`The reservation with id ${reservation_id} was not found`, 404);
+  }
+  if (found.status === 'approved') {
+    throw new ErrorResponse('You cannot modify approved reservations');
+  }
+  const plainReservation = getPlainReservation(req);
+  const modifiedReservation = attachMissingFields(plainReservation, found);
+  if (!checkReservationDates(modifiedReservation)) {
+    throw new ErrorResponse('Reservations should have appropriate dates', 400);
+  }
+  const today = moment().format(format);
+  const conflictingReservations = await getConflictingReservations(modifiedReservation);
+  // eslint-disable-next-line max-len
+
+  // eslint-disable-next-line max-len
+  if ((conflictingReservations.length === 1 && found._id.toString() === reservation_id) || !found.length) {
+    if (modifiedReservation.start_date === today && modifiedReservation.end_date === today) {
+      modifiedReservation.status = 'approved';
       // eslint-disable-next-line max-len
-      const updated = await Reservation.findByIdAndUpdate(reservation_id, reservation, {new: true}).lean().exec();
-
+      const updated = await Reservation.findByIdAndUpdate(reservation_id, modifiedReservation, {new: true}).lean().exec();
       return updated;
     }
-
-    if (reservation.start_date === today && !req.user.is_admin) {
-
-      const deleted = await requestedReservation.delete();
-
-      const deletedReservationProperties = {
-        start_date: deleted.start_date,
-        end_date: deleted.end_date,
-        user_id: deleted.user_id,
-        team_id: deleted.team_id,
-        table_id: deleted.table_id,
-        chair_id: deleted.chair_id,
-        status: 'pending'
-      };
-      
-      const reserve = {...deletedReservationProperties, ...excludeUndefinedFields(reservation)};
-
-      const dividedReservations = divideReservation(reserve);
-
-      const reservations = await Reservation.create(dividedReservations);
-
-      return reservations;
+    if (modifiedReservation.start_date === today) {
+      console.log(modifiedReservation);
+      if (req.user.is_admin) {
+        if (modifiedReservation.status === 'approved') {
+          // eslint-disable-next-line max-len
+          const updated = await Reservation.findByIdAndUpdate(reservation_id, modifiedReservation, {new: true}).lean().exec();
+          return updated;
+        }
+      }
+      // eslint-disable-next-line max-len
+      await Reservation.findByIdAndDelete(reservation_id).lean().exec();
+      const created = await Reservation.create(divideReservation(modifiedReservation));
+      return created;
     }
-    // means there are no overlaping appointments
-    const updated = await Reservation.findByIdAndUpdate(reservation_id,
-      excludeUndefinedFields(reservation), {new: true})
-      .lean()
-      .exec();
-
+    // eslint-disable-next-line max-len
+    const updated = await Reservation.findByIdAndUpdate(reservation_id, modifiedReservation, {new: true}).lean().exec();
     return updated;
   }
-  return null;
+  throw new ErrorResponse('Conflict with the reservation period', 400);
 };

@@ -1,5 +1,4 @@
 const {User} = require('booking-db');
-
 const {Conflict} = require('../utils/errorResponse');
 const {asyncHandler} = require('../middlewares/asyncHandler');
 const {getUserProperties, createUserAndSendEmail, updateUserAndSendEmail} = require('../utils/util');

@@ -27,6 +27,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 6788;
 
 // TODO : configure the DB connection so the future server js file is testable
+// TODO : add .lean() to every place where json only needed
 
 DB(process.env.MONGO_URI).then(async (conn) => {
   app.listen(PORT, () => {

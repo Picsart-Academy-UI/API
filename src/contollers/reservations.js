@@ -1,7 +1,8 @@
 const {Reservation} = require('booking-db');
 
 const {asyncHandler} = require('../middlewares/asyncHandler');
-const {NotFound, Unauthorized, Conflict} = require('../utils/errorResponse');
+const {ErrorResponse} = require('../utils/errorResponse');
+const {findOneReservation, deleteOneReservation} = require('../utils/util');
 
 const {
   buildQuery,
@@ -9,53 +10,19 @@ const {
 } = require('../utils/util');
 
 const {
-  formatDateAndGiveQuery,
   updateReservation,
-  createReservation
-} = require('../utils/reservation-helpers');
+  createReservation} = require('../utils/reservation-helpers');
 
 exports.create = asyncHandler(async (req, res) => {
-
-  const {today, foundReservations, reservation} = formatDateAndGiveQuery(req);
-
-  const found = await foundReservations.lean().exec();
-
-  if (found.length !== 0) {
-    throw new Conflict('Conflict with the reservation period');
-  }
-  const reserved = await createReservation(reservation, today);
-
+  const reservation = await createReservation(req);
   return res.status(201)
-    .json({data: reserved});
+    .json({data: reservation});
 });
 
 exports.update = asyncHandler(async (req, res) => {
-
-  const {reservation_id} = req.params;
-
-  const requestedReservation = await Reservation.findById(reservation_id);
-
-  if (!requestedReservation) {
-    throw new NotFound();
-  }
-
-  if (!req.user.is_admin && req.user._id.toString() !== requestedReservation.user_id.toString()) {
-    throw new Unauthorized('Not authorized to modify this entity');
-  }
-
-  const {today, foundReservations, reservation} = formatDateAndGiveQuery(req);
-
-  const found = await foundReservations.lean().exec();
-
-  const updatedReservation = await updateReservation(reservation, found,
-    requestedReservation, reservation_id, today, req);
-
-  if (!updatedReservation) {
-    throw new Conflict('Conflict with the reservation period');
-  }
-
+  const reservation = await updateReservation(req);
   return res.status(202).json({
-    data: updatedReservation
+    data: reservation
   });
 
 });
@@ -79,23 +46,22 @@ exports.getAll = asyncHandler(async (req, res) => {
 });
 
 exports.getOne = asyncHandler(async (req, res) => {
-  const reservation = await Reservation.findById(req.params.reservation_id);
+  const reservation = await findOneReservation(req);
   if (!reservation) {
-    throw new NotFound();
-  }
-  if (reservation.user_id.toString() !== req.user._id.toString() && !req.user.is_admin) {
-    throw new Unauthorized('Not authorized');
+    throw new ErrorResponse(`Reservation not found with id of ${req.params.reservation_id}`, 404);
   }
   return res.status(200)
     .json({data: reservation});
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.findById(req.params.reservation_id);
+  const reservation = await deleteOneReservation(req);
   if (!reservation) {
-    return next(new NotFound());
+    return next(new ErrorResponse(
+      `Reservation not found with id of ${req.params.reservation_id}`,
+      404
+    ));
   }
-  await Reservation.deleteOne({_id: req.params.reservation_id});
   return res.status(200)
     .json({
       message: 'Reservation was deleted',

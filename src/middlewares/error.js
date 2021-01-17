@@ -9,8 +9,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
-    const message = `The requested URL: ${req.path} was not found on this server`;
-    // const { message } = err;
+    // const message = `The requested URL: ${req.path} was not found on this server`;
+    const { message } = err;
     error = new ErrorResponse(message, 404);
   }
 
@@ -33,13 +33,6 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors).map((val) => val.message);
     error = new ErrorResponse(message, 400);
   }
-
-  // Syntax error
-  if (err.name === 'SyntaxError') {
-    const message = 'Syntax Error';
-    error = new ErrorResponse(message, 401);
-  }
-
   // Bad Request error
   if (err.name === 'BadRequest') {
     const message = err.message || 'Bad Request';
