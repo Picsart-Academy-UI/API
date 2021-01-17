@@ -2,7 +2,8 @@ const {Reservation} = require('booking-db');
 
 const {asyncHandler} = require('../middlewares/asyncHandler');
 const {ErrorResponse} = require('../utils/errorResponse');
-const {findOneReservation, deleteOneReservation} = require('../utils/util');
+const {findOneReservation, deleteOneReservation} = require('../utils/reservation-helpers');
+
 
 const {
   buildQuery,

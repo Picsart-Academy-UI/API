@@ -159,25 +159,9 @@ exports.getJwt = (user) => {
     email: user.email,
     team_id: user.team_id,
     is_admin: user.is_admin
-  }, process.env.JWT_SECRET, {expiresIn: '5h'});
+  }, process.env.JWT_SECRET, {expiresIn: process.env.JWTEXPIERYTIME || '5h'});
 };
 
 exports.decodeToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
-
-exports.findOneReservation = (req) => {
-  if (req.user.is_admin) {
-    return Reservation.findById(req.params.reservation_id);
-  }
-  return Reservation.findOne({_id: req.params.reservation_id, user_id: req.user._id});
-};
-
-exports.deleteOneReservation = (req) => {
-  if (req.user.is_admin) {
-    return Reservation.findByIdAndDelete(req.params.reservation_id);
-  }
-  return Reservation.findOneAndDelete({user_id: req.user._id, _id: req.params.reservation_id});
-};
-
-exports.excludeUndefinedFields = excludeUndefinedFields;

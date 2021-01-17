@@ -9,8 +9,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
-    const message = `The requested URL: ${req.path} was not found on this server`;
-    // const { message } = err;
+    // const message = `The requested URL: ${req.path} was not found on this server`;
+    const { message } = err;
     error = new ErrorResponse(message, 404);
   }
 
@@ -73,6 +73,11 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'Conflict') {
     const message = err.message || 'Conflict';
     error = new Conflict(message, 409);
+  }
+
+  if (err.message.startsWith('Unexpected token')){
+    const message = err.message || 'Invalid token';
+    error = new Unauthorized(message);
   }
 
   res.status(error.statusCode || 500).json({
