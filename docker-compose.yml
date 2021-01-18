@@ -14,7 +14,7 @@ services:
     volumes:
       - 'db:/data/db'
    api:
-           image: lilitkarapetyan/academy-node:test
+    image: lilitkarapetyan/academy-node:test
     networks: 
       - backend_net
     ports:
