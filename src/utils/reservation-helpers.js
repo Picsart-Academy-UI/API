@@ -8,10 +8,16 @@ const getToday = () => {
   return moment().tz('Asia/Yerevan').format(format);
 };
 
+const formatDate = (date) => {
+  return moment(date).format(format);
+};
+
 const checkReservationDates = (reservation) => {
   const {start_date, end_date} = reservation;
+  const start = formatDate(start_date);
+  const end = formatDate(end_date);
   const today = getToday();
-  return start_date >= today && end_date >= today && end_date >= start_date;
+  return start >= today && end >= today && end >= start;
 };
 
 const attachMissingFields = (reservation, foundReservation) => {
@@ -31,8 +37,14 @@ const getPlainReservation = (req) => {
   const status = req.user.is_admin ? req.body.status : 'pending';
   const user_id = req.user.is_admin ? req.body.user_id : req.user._id;
   // building correct formats
-  const start = moment(start_date).format(format);
-  const end = moment(end_date).format(format);
+  let start, end;
+  if (start_date){
+    start = moment(start_date).format(format);
+  }
+  if (end_date){
+    end = moment(end_date).format(format);
+  }
+
   // building the reservation
   return {
     start_date: start,
@@ -48,7 +60,6 @@ const getPlainReservation = (req) => {
 const getConflictingReservations = (reservation) => {
   const {start_date, end_date, chair_id} = reservation;
   return Reservation.find({
-
     $or: [
       {
         start_date: {$lte: start_date},
@@ -207,3 +218,4 @@ exports.getFormattedDate = (date) => {
 
 exports.divideReservation = divideReservation;
 exports.getToday = getToday;
+exports.formatDate = formatDate;
