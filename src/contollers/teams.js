@@ -1,7 +1,8 @@
 const { Team } = require('booking-db');
-const { NotFound } = require('../utils/errorResponse');
-const { asyncHandler } = require('../middlewares/asyncHandler');
+
 const { buildQuery, getPagination } = require('../utils/util');
+const { asyncHandler } = require('../middlewares/asyncHandler');
+const { NotFound, BadRequest } = require('../utils/errorResponse');
 
 exports.create = asyncHandler(async (req, res, next) => {
   const team = await Team.create(req.body);
@@ -17,10 +18,12 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 
   const TeamsMembersCountTables = await Team.find()
     .populate({
-      path: 'members_count',
+      path: 'members_count'
     })
     .populate({
       path: 'tables',
+      populate: { path: 'chairs_count' },
+      select: 'table_name chairs_count table_config'
     }).exec();
 
   const count = await Team.countDocuments(queryObject);
@@ -42,7 +45,7 @@ exports.getOne = asyncHandler(async (req, res, next) => {
   if (!team) {
     return next(new NotFound());
   }
-  return res.status(200).json({data: team});
+  return res.status(200).json({ data: team });
 });
 
 exports.update = asyncHandler(async (req, res, next) => {
@@ -54,14 +57,22 @@ exports.update = asyncHandler(async (req, res, next) => {
   if (!team) {
     return next(new NotFound());
   }
-  return res.status(200).json({data: team});
+  return res.status(200).json({ data: team });
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const team = await Team.findById(req.params.team_id).exec();
+  const team = await Team.findById(req.params.team_id)
+    .populate('members_count').exec();
+
   if (!team) {
     return next(new NotFound());
   }
+  if (team.members_count !== 0) {
+    return next(new BadRequest(
+      `The ${team.team_name} team cannot be deleted because it has employees.`
+    ));
+  }
+
   await Team.deleteOne({ _id: req.params.team_id });
   return res.status(200).json({
     message: 'Team was deleted.',
