@@ -22,7 +22,7 @@ let team = {};
 let user = {};
 
 before('Connect to Database and create mock data', async function () {
-  this.timeout(5000);
+  this.timeout(20000);
   await connect(DB_URI);
   it('create new a team', async () => {
     team = await createTeam();
@@ -56,6 +56,7 @@ before('Connect to Database and create mock data', async function () {
     expect(user).to.contain.property('team_id');
     expect(user).to.contain.property('is_admin');
     this.adminToken = await generateToken(user);
+    console.log(this.adminToken);
     this.userToken = await generateToken(nonAdminUser);
   });
 });

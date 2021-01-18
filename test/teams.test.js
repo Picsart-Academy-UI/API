@@ -6,7 +6,7 @@ const { Team } = require('booking-db');
 
 const app = require('../src');
 
-describe('teams', async () => {
+describe.skip('teams', async () => {
   describe('GET /api/v1/teams', () => {
     it('admin user should get all teams data', function (done) {
       request(app)

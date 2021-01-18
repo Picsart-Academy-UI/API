@@ -6,7 +6,7 @@ const { admin, adminUpdated, hack } = require('./_mocks/data');
 
 const app = require('../src');
 
-describe('users', () => {
+describe.skip('users', () => {
   describe('GET /api/v1/users/all', () => {
     describe('Authorized', () => {
       it('admin user should get all users', async function () {
