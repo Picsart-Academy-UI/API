@@ -15,6 +15,10 @@ const {
   updateReservation,
   createReservation} = require('../utils/reservation-helpers');
 
+// @desc  create reservation
+// @route POST => /api/v1/reservations
+// @access Private (User/Admin)
+
 exports.create = asyncHandler(async (req, res) => {
   const reservation = await createReservation(req);
   const { user_id, start_date, end_date } = reservation;
@@ -30,6 +34,10 @@ exports.create = asyncHandler(async (req, res) => {
     .json({data: reservation});
 });
 
+// @desc  update reservation
+// @route PUT => /api/v1/reservations/:reservation_id
+// @access Private (User/Admin)
+
 exports.update = asyncHandler(async (req, res) => {
   const reservation = await updateReservation(req);
   const { user_id } = reservation;
@@ -44,6 +52,11 @@ exports.update = asyncHandler(async (req, res) => {
   });
 
 });
+
+
+// @desc  get reservations
+// @route GET => /api/v1/reservations
+// @access Private (Admin)
 
 exports.getAll = asyncHandler(async (req, res) => {
 
