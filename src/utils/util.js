@@ -1,6 +1,10 @@
-exports.emailRegexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+const {User, Reservation} = require('booking-db');
+const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
 
-// Pagination
+const mailer = require('./mailer');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
@@ -10,6 +14,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
   const start_index = (page - 1) * limit;
   const end_index = page * limit;
   const pagination = {};
+
   if (end_index < count) {
     pagination.next_page = page + 1;
   }
@@ -24,6 +29,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
       .join(' ');
     queryRef = queryRef.select(fields);
   }
+
   // sorting
   if (sort) {
     const sort_by = sort.split(',')
@@ -45,7 +51,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'search_by'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
@@ -79,7 +85,7 @@ exports.buildQuery = (query) => {
 
 // excluding undefined fields
 
-exports.excludeUndefinedFields = (obj) => {
+const excludeUndefinedFields = (obj) => {
   let toBeReturned = {};
   Object.keys(obj)
     .forEach((p) => {
@@ -93,3 +99,85 @@ exports.excludeUndefinedFields = (obj) => {
     });
   return toBeReturned;
 };
+
+exports.getUserProperties = (req) => {
+
+  const userProperties = {
+    email: req.body.email,
+    is_admin: req.body.is_admin,
+    team_id: req.body.team_id,
+    position: req.body.position,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    birthdate: req.body.birthdate,
+    phone: req.body.phone
+  };
+  return userProperties;
+};
+
+exports.createUserAndSendEmail = async (userProperties) => {
+  const createdUser = await User.create(userProperties);
+  await mailer(userProperties.email);
+  return createdUser;
+};
+
+exports.updateUserAndSendEmail = async (userProperties, user_id) => {
+  const updatedUser = await User.findOneAndUpdate({_id: user_id},
+    excludeUndefinedFields(userProperties), {
+      new: true,
+      runValidators: true
+    }).lean().exec();
+  await mailer(updatedUser.email);
+  return updatedUser;
+};
+
+exports.verifyIdToken = (idToken) => {
+  return client.verifyIdToken({idToken, audience: process.env.GOOGLE_CLIENT_ID});
+};
+
+exports.findUserByEmailAndUpdate = async (email, photo_url) => {
+  return User.findOneAndUpdate({email}, {
+    profile_picture: photo_url,
+    accepted: true
+  }, {new: true, runValidators: true}).lean().exec();
+};
+
+exports.findUserByIdAndUpdate = (id, req) => {
+  const userProperties = excludeUndefinedFields({
+    email: req.body.email,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    team_id: req.body.team_id,
+    is_admin: req.body.is_admin
+  });
+  return User.findByIdAndUpdate(id, userProperties, {new: true, runValidators: true});
+};
+
+exports.getJwt = (user) => {
+  return jwt.sign({
+    _id: user._id,
+    email: user.email,
+    team_id: user.team_id,
+    is_admin: user.is_admin
+  }, process.env.JWT_SECRET, {expiresIn: '5h'});
+};
+
+exports.decodeToken = (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
+
+exports.findOneReservation = (req) => {
+  if (req.user.is_admin) {
+    return Reservation.findById(req.params.reservation_id);
+  }
+  return Reservation.findOne({_id: req.params.reservation_id, user_id: req.user._id});
+};
+
+exports.deleteOneReservation = (req) => {
+  if (req.user.is_admin) {
+    return Reservation.findByIdAndDelete(req.params.reservation_id);
+  }
+  return Reservation.findOneAndDelete({user_id: req.user._id, _id: req.params.reservation_id});
+};
+
+exports.excludeUndefinedFields = excludeUndefinedFields;
