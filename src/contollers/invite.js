@@ -1,7 +1,7 @@
 const {User} = require('booking-db');
 const {Conflict} = require('../utils/errorResponse');
 const {asyncHandler} = require('../middlewares/asyncHandler');
-const {getUserProperties, createUserAndSendEmail, updateUserAndSendEmail} = require('../utils/util');
+const {getUserProperties, createUserAndSendEmail} = require('../utils/util');
 
 // @desc  Admin invites the user
 // @route /api/v1/auth/invite
@@ -12,14 +12,9 @@ module.exports = asyncHandler(async (req, res) => {
   const user = await User.findOne({email: userProperties.email})
     .lean()
     .exec();
-  if (!user) {
-    const created_user = await createUserAndSendEmail(userProperties);
-    return res.status(201).json({data: created_user.toJSON()});
+  if (user) {
+    throw new Conflict('User has already been invited');
   }
-  if (user.accepted) {
-    throw new Conflict('User has already accepted the invitation');
-  }
-  const updated_user = await updateUserAndSendEmail(userProperties, user._id);
-
-  return res.status(202).json({data: updated_user});
+  const created_user = await createUserAndSendEmail(userProperties);
+  return res.status(201).json({data: created_user.toJSON()});
 });

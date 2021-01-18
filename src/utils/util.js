@@ -7,7 +7,6 @@ const mailer = require('./mailer');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
-
   let queryRef = query;
   const page = parseInt(givenPage, 10) || 1;
   const limit = parseInt(givenLimit, 10) || 100;
@@ -100,17 +99,17 @@ const excludeUndefinedFields = (obj) => {
   return toBeReturned;
 };
 
-exports.getUserProperties = (req) => {
+const getUserProperties = (req) => {
 
   const userProperties = {
-    email: req.body.email,
-    is_admin: req.body.is_admin,
-    team_id: req.body.team_id,
-    position: req.body.position,
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    birthdate: req.body.birthdate,
-    phone: req.body.phone
+    email: req.body.email,
+    phone: req.body.phone,
+    birthday: req.body.birthday,
+    team_id: req.body.team_id,
+    position: req.body.position,
+    is_admin: req.body.is_admin
   };
   return userProperties;
 };
@@ -119,16 +118,6 @@ exports.createUserAndSendEmail = async (userProperties) => {
   const createdUser = await User.create(userProperties);
   await mailer(userProperties.email);
   return createdUser;
-};
-
-exports.updateUserAndSendEmail = async (userProperties, user_id) => {
-  const updatedUser = await User.findOneAndUpdate({_id: user_id},
-    excludeUndefinedFields(userProperties), {
-      new: true,
-      runValidators: true
-    }).lean().exec();
-  await mailer(updatedUser.email);
-  return updatedUser;
 };
 
 exports.verifyIdToken = (idToken) => {
@@ -143,14 +132,9 @@ exports.findUserByEmailAndUpdate = async (email, photo_url) => {
 };
 
 exports.findUserByIdAndUpdate = (id, req) => {
-  const userProperties = excludeUndefinedFields({
-    email: req.body.email,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    team_id: req.body.team_id,
-    is_admin: req.body.is_admin
-  });
-  return User.findByIdAndUpdate(id, userProperties, {new: true, runValidators: true});
+  const userProperties = getUserProperties(req);
+  return User.findByIdAndUpdate(id, excludeUndefinedFields(userProperties),
+      {new: true, runValidators: true});
 };
 
 exports.getJwt = (user) => {
@@ -159,25 +143,11 @@ exports.getJwt = (user) => {
     email: user.email,
     team_id: user.team_id,
     is_admin: user.is_admin
-  }, process.env.JWT_SECRET, {expiresIn: '5h'});
+  }, process.env.JWT_SECRET, {expiresIn: process.env.JWTEXPIERYTIME || '5h'});
 };
 
 exports.decodeToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-exports.findOneReservation = (req) => {
-  if (req.user.is_admin) {
-    return Reservation.findById(req.params.reservation_id);
-  }
-  return Reservation.findOne({_id: req.params.reservation_id, user_id: req.user._id});
-};
-
-exports.deleteOneReservation = (req) => {
-  if (req.user.is_admin) {
-    return Reservation.findByIdAndDelete(req.params.reservation_id);
-  }
-  return Reservation.findOneAndDelete({user_id: req.user._id, _id: req.params.reservation_id});
-};
-
-exports.excludeUndefinedFields = excludeUndefinedFields;
+exports.getUserProperties = getUserProperties;
