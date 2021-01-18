@@ -14,8 +14,8 @@ services:
     volumes:
       - 'db:/data/db'
    api:
-    image: lilitkarapetyan/academy-node:test
-    networks:
+           image: lilitkarapetyan/academy-node:test
+    networks: 
       - backend_net
     ports:
       - '3001:3001'
@@ -180,8 +180,34 @@ services:
      networks:
        - frontend
        - backend_net
+   swarm-cronjob:
+    image: crazymax/swarm-cronjob
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - "TZ=Europe/Paris"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager      
 
-
+   reservationchecker:
+    image: lilitkarapetyan/academy-node:test
+    environment:
+        - MONGO_URI=mongodb://mongo:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false
+    command: bash -c 'cd scripts && node check-reservations.script.js'
+    depends_on:
+      - swarm-cronjob
+    deploy:
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=true"
+      replicas: 0
+      restart_policy:
+        condition: none
 networks:
         frontend:
                 external:
