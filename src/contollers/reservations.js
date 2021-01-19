@@ -5,6 +5,7 @@ const {ErrorResponse} = require('../utils/errorResponse');
 const {findOneReservation, deleteOneReservation} = require('../utils/reservation-helpers');
 
 
+
 const {
   buildQuery,
   getPagination,
@@ -24,6 +25,7 @@ exports.create = asyncHandler(async (req, res) => {
     .json({data: reservation});
 });
 
+
 // @desc  update reservation
 // @route PUT => /api/v1/reservations/:reservation_id
 // @access Private (User/Admin)
@@ -40,6 +42,7 @@ exports.update = asyncHandler(async (req, res) => {
 // @desc  get reservations
 // @route GET => /api/v1/reservations
 // @access Private (Admin)
+
 
 exports.getAll = asyncHandler(async (req, res) => {
 

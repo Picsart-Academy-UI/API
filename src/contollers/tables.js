@@ -2,6 +2,7 @@ const { Table } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
 const { buildQuery, getPagination } = require('../utils/util');
+
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 exports.create = asyncHandler(async (req, res, next) => {
