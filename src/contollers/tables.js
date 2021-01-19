@@ -1,6 +1,7 @@
 const { Table } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
+const { buildQuery, getPagination } = require('../utils/util');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 exports.create = asyncHandler(async (req, res, next) => {
@@ -9,8 +10,25 @@ exports.create = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const tables = await Table.find();
-  return res.status(200).json({data: tables});
+  const queryObject = buildQuery(req.query);
+  const initialQuery = Table.find(queryObject);
+
+  const tables = await Table.find()
+    .populate({
+      path: 'chairs_count',
+    }).exec();
+
+  const count = await Table.countDocuments(queryObject);
+
+  const { pagination } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
+  );
+
+  return res.status(200).json({
+    data: tables,
+    count,
+    pagination,
+  });
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {

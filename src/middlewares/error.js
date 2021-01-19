@@ -9,8 +9,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
-    const message = `The requested URL: ${req.path} was not found on this server`;
-    // const { message } = err;
+    // const message = `The requested URL: ${req.path} was not found on this server`;
+    const { message } = err;
     error = new ErrorResponse(message, 404);
   }
 
