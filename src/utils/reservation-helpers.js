@@ -139,6 +139,10 @@ exports.createReservation = async (req) => {
   return reservation;
 };
 
+const findReservationByIdAndUpdate = (id, reservation) => {
+  return Reservation.findByIdAndUpdate(id, reservation, {new: true, runValidators: true}).lean().exec();
+}
+
 // Update Reservation;
 
 exports.updateReservation = async (req) => {
@@ -169,7 +173,7 @@ exports.updateReservation = async (req) => {
     if (modifiedReservation.start_date === today && modifiedReservation.end_date === today) {
       modifiedReservation.status = 'approved';
       // eslint-disable-next-line max-len
-      const updated = await Reservation.findByIdAndUpdate(reservation_id, modifiedReservation, {new: true}).lean().exec();
+      const updated = await findReservationByIdAndUpdate(reservation_id, modifiedReservation);
       return updated;
     }
     if (modifiedReservation.start_date === today) {
@@ -177,7 +181,7 @@ exports.updateReservation = async (req) => {
       if (req.user.is_admin) {
         if (modifiedReservation.status === 'approved') {
           // eslint-disable-next-line max-len
-          const updated = await Reservation.findByIdAndUpdate(reservation_id, modifiedReservation, {new: true}).lean().exec();
+          const updated = findReservationByIdAndUpdate(reservation_id, modifiedReservation);
           return updated;
         }
       }
@@ -187,7 +191,7 @@ exports.updateReservation = async (req) => {
       return created;
     }
     // eslint-disable-next-line max-len
-    const updated = await Reservation.findByIdAndUpdate(reservation_id, modifiedReservation, {new: true}).lean().exec();
+    const updated = await findReservationByIdAndUpdate(reservation_id, modifiedReservation);
     return updated;
   }
   throw new ErrorResponse('Conflict with the reservation period', 400);
