@@ -21,7 +21,13 @@ exports.getUsers = asyncHandler(async (req, res) => {
 // @route GET /api/v1/users/all
 // @access Private (Admin)
 exports.getAllUsers = asyncHandler(async (req, res) => {
-  const queryObject = buildQuery(req.query);
+  let queryObject = buildQuery(req.query);
+  // searching by first_name
+  if (req.query.first_name){
+    const regexp = new RegExp(`^${req.query.first_name}`, 'i');
+    queryObject = {...queryObject, first_name: regexp };
+  }
+  // searching by first_name
   const initialQuery = User.find(queryObject);
   const count = await User.countDocuments(queryObject);
   // Pagination Logic & dynamic select of fields
