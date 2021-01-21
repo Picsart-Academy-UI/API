@@ -1,17 +1,20 @@
 const { User } = require('booking-db');
 
 const {buildQuery, getPagination, findUserByIdAndUpdate} = require('../utils/util');
-const { ErrorResponse } = require('../utils/errorResponse');
+const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 // @desc  get users from the same team
 // @route GET /api/v1/users
 // @access Private (admin/user)
-exports.getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({ team_id: req.user.team_id }).lean().exec();
-  if (!users) {
-    throw new ErrorResponse('User not found.', 404);
-  }
+exports.getUsers = asyncHandler(async (req, res, next) => {
+  const users = await User
+    .find({ team_id: req.user.team_id })
+    .lean()
+    .exec();
+
+  if (!users) next(new NotFound('User not found.'));
+
   return res.status(200).json({
     data: users
   });
@@ -24,6 +27,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
   const queryObject = buildQuery(req.query);
   const initialQuery = User.find(queryObject);
   const count = await User.countDocuments(queryObject);
+
   // Pagination Logic & dynamic select of fields
   // eslint-disable-next-line max-len
   const { pagination, query } = getPagination(
@@ -40,11 +44,14 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 // @desc  get requested user
 // @route GET /api/v1/user/:user_id
 // @access  Private (Admin)
-exports.getUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.user_id).lean().exec();
-  if (!user) {
-    throw new ErrorResponse('User not found.', 404);
-  }
+exports.getUser = asyncHandler(async (req, res, next) => {
+  const user = await User
+    .findById(req.params.user_id)
+    .lean()
+    .exec();
+
+  if (!user) next(new NotFound('User not found.'));
+
   return res.status(200).json({
     data: user
   });
@@ -53,11 +60,13 @@ exports.getUser = asyncHandler(async (req, res) => {
 // @desc  update requested user
 // @route  PUT /api/v1/:user_id
 // @access  Private (Admin)
-exports.updateUser = asyncHandler(async (req, res) => {
-  const user = await findUserByIdAndUpdate(req.params.user_id, req).lean().exec();
-  if (!user) {
-    throw new ErrorResponse('User not found.', 404);
-  }
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const user = await findUserByIdAndUpdate(req.params.user_id, req)
+    .lean()
+    .exec();
+
+  if (!user) next(new NotFound('User not found.'));
+
   return res.status(200).json({
     data: user
   });
@@ -66,11 +75,14 @@ exports.updateUser = asyncHandler(async (req, res) => {
 // @desc  delete requested user
 // @route DELETE /api/v1/users/:user_id
 // @access  Private (Admin)
-exports.deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findByIdAndDelete(req.params.user_id).lean().exec();
-  if (!user) {
-    throw new ErrorResponse('User not found.', 404);
-  }
+exports.deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User
+    .findByIdAndDelete(req.params.user_id)
+    .lean()
+    .exec();
+
+  if (!user) next(new NotFound('User not found.'));
+
   return res.status(200).json({
     message: 'User has successfully been deleted.'
   });
@@ -79,11 +91,14 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 // @desc  get yourself
 // @route /api/v1/users/me
 // @access Private (User)
-exports.getMe = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).lean().exec();
-  if (!user) {
-    throw new ErrorResponse('User not found.', 404);
-  }
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const user = await User
+    .findById(req.user._id)
+    .lean()
+    .exec();
+
+  if (!user) next(new NotFound('User not found.'));
+
   return res.status(200).json({
     data: user
   });
@@ -92,8 +107,7 @@ exports.getMe = asyncHandler(async (req, res) => {
 // @desc search users by given field
 // @route /api/v1/users/search
 // @access Private (User/Admin)
-
-exports.search = asyncHandler(async (req, res) => {
+exports.search = asyncHandler(async (req, res, next) => {
   const { search_by: field, value, page, limit } = req.query;
   const regexp = new RegExp(`^${value}`, 'i');
 
