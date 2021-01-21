@@ -18,7 +18,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   const TeamsMembersCountTables = await Team
     .find()
     .populate({ path: 'members_count' })
-    .populate({ path: 'tables', select: '_id' })
+    .populate({ path: 'tables', select: '_id -team_id' })
     .lean()
     .exec();
 
