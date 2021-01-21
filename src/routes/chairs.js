@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const {
   create, getAll, getOne, update, deleteOne, deleteAll
-} = require('../contollers').chairs;
+} = require('../controllers').chairs;
 
 router
   .post('/', create)

@@ -4,7 +4,7 @@ const adminAuth = require('../middlewares/auth-admin');
 
 const {
   getUsers, getAllUsers, getUser, updateUser, deleteUser, getMe, search
-} = require('../contollers').users;
+} = require('../controllers').users;
 
 router.get('/', getUsers);
 router.get('/all', adminAuth, getAllUsers);

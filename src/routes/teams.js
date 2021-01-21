@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const {
   create, getAll, getOne, update, deleteOne, search
-} = require('../contollers').teams;
+} = require('../controllers').teams;
 
 router.get('/search', search);
 
