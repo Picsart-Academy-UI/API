@@ -2,7 +2,7 @@ const webpush = require('web-push');
 const { User } = require('booking-db');
 
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const { ErrorResponse, Conflict } = require('../utils/errorResponse');
+const { ErrorResponse, BadRequest, Conflict } = require('../utils/errorResponse');
 
 const {
   WEBPUSH_MAILTO,
@@ -28,7 +28,7 @@ exports.subscribe = asyncHandler(async (req, res, next) => {
   const { push_subscriptions } = user;
 
   if (!subscription || !subscription.endpoint) {
-    return next(new ErrorResponse('Subscription is not valid'));
+    return next(new BadRequest('Subscription is not valid'));
   }
 
   if (push_subscriptions.find((sub) => sub.endpoint === subscription.endpoint)) {
@@ -53,7 +53,7 @@ exports.subscribe = asyncHandler(async (req, res, next) => {
   });
 
   webpush.sendNotification(subscription, payload)
-    .catch((err) => next(new ErrorResponse()));
+    .catch((err) => next(new ErrorResponse(err.message)));
 
 });
 
