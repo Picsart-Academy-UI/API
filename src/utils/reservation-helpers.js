@@ -140,11 +140,13 @@ exports.createReservation = async (req) => {
 };
 
 const findReservationByIdAndUpdate = (id, reservation) => {
-  return Reservation.findByIdAndUpdate(id, reservation, {new: true, runValidators: true}).lean().exec();
-}
+  return Reservation.findByIdAndUpdate(
+    id, reservation,
+    { new: true, runValidators: true }
+  ).lean().exec();
+};
 
 // Update Reservation;
-
 exports.updateReservation = async (req) => {
   let found;
   const {reservation_id} = req.params;
