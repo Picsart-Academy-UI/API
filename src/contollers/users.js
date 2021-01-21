@@ -1,8 +1,12 @@
 const { User } = require('booking-db');
 
-const {buildQuery, getPagination, findUserByIdAndUpdate} = require('../utils/util');
+const {
+  buildQuery, getPagination, findUserByIdAndUpdate
+} = require('../utils/util');
+
 const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
+
 
 // @desc  get users from the same team
 // @route GET /api/v1/users
@@ -20,11 +24,20 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   });
 });
 
+
 // @desc get all users query select sort etc
 // @route GET /api/v1/users/all
 // @access Private (Admin)
 exports.getAllUsers = asyncHandler(async (req, res) => {
-  const queryObject = buildQuery(req.query);
+  let queryObject = buildQuery(req.query);
+
+  // searching by first_name
+  if (req.query.first_name){
+    const regexp = new RegExp(`^${req.query.first_name}`, 'i');
+    queryObject = { ...queryObject, first_name: regexp };
+  }
+
+  // searching by first_name
   const initialQuery = User.find(queryObject);
   const count = await User.countDocuments(queryObject);
 
@@ -33,6 +46,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
   const { pagination, query } = getPagination(
     req.query.page, req.query.limit, count, req, initialQuery
   );
+
   const users = await query.lean().exec();
   return res.status(200).json({
     data: users,
@@ -40,6 +54,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
     pagination,
   });
 });
+
 
 // @desc  get requested user
 // @route GET /api/v1/user/:user_id
@@ -57,6 +72,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+
 // @desc  update requested user
 // @route  PUT /api/v1/:user_id
 // @access  Private (Admin)
@@ -71,6 +87,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+
 
 // @desc  delete requested user
 // @route DELETE /api/v1/users/:user_id
@@ -88,6 +105,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+
 // @desc  get yourself
 // @route /api/v1/users/me
 // @access Private (User)
@@ -103,6 +121,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+
 
 // @desc search users by given field
 // @route /api/v1/users/search

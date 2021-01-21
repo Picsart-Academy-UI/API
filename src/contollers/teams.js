@@ -9,6 +9,7 @@ exports.create = asyncHandler(async (req, res, next) => {
   return res.status(201).json({ data: team });
 });
 
+
 // @desc  get all teams
 // @route GET -> /api/vi/teams
 // @access  Private (Admin)
@@ -69,6 +70,7 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     message: 'Team was deleted.',
   });
 });
+
 
 // @desc search teams by given field
 // @route /api/v1/teams/search

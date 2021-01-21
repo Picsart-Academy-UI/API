@@ -18,6 +18,7 @@ const {
   createReservation
 } = require('../utils/reservation-helpers');
 
+
 // @desc  create reservation
 // @route POST => /api/v1/reservations
 // @access Private (User/Admin)
@@ -26,27 +27,23 @@ exports.create = asyncHandler(async (req, res) => {
   return res.status(201).json({data: reservation});
 });
 
+
 // @desc  update reservation
 // @route PUT => /api/v1/reservations/:reservation_id
 // @access Private (User/Admin)
-
 exports.update = asyncHandler(async (req, res) => {
   const reservation = await updateReservation(req);
   return res.status(202).json({
     data: reservation
   });
-
 });
 
 
 // @desc  get reservations
 // @route GET => /api/v1/reservations
 // @access Private (Admin)
-
 exports.getAll = asyncHandler(async (req, res) => {
-
   const queryObject = buildQuery(req.query);
-
   const initialQuery = Reservation.find(queryObject);
 
   const count = await Reservation.countDocuments(queryObject);
@@ -58,7 +55,6 @@ exports.getAll = asyncHandler(async (req, res) => {
   const reservations = await query.lean().exec();
 
   return res.status(200).json({data: reservations, count, pagination});
-
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
