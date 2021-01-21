@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { notifications } = require('../contollers');
+const { notifications } = require('../controllers');
 
 const { subscribe } = notifications;
 const { another_one} = notifications;
