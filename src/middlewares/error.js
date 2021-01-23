@@ -26,13 +26,13 @@ const errorHandler = (err, req, res, next) => {
     const errValStr = JSON.stringify(err.keyValue);
     const message = `Duplicate ${errValStr} field value entered.`;
     // const { message } = err;
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message, 400);
   }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values(err.errors).map((val) => val.message);
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message[0], 400);
   }
   // Bad Request error
   if (err.name === 'BadRequest') {
@@ -76,9 +76,9 @@ const errorHandler = (err, req, res, next) => {
     error = new Conflict(message, 409);
   }
 
-  if (err.message.startsWith('Unexpected token')){
+  if (error.message.startsWith('Unexpected token')){
     const message = err.message || 'Invalid token';
-    error = new Unauthorized(message);
+    error = new Unauthorized(message, 401);
   }
 
   res.status(error.statusCode || 500).json({
