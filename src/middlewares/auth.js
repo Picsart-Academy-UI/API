@@ -15,6 +15,7 @@ module.exports = asyncHandler(async (req, res, next) => {
   }
   const decoded = await decodeToken(token);
   const user = await UserModel.findById(decoded._id).exec();
+  console.log(user);
   if (!user) {
     throw new ErrorResponse('Not authorized', 401);
   }
