@@ -1,6 +1,7 @@
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
+const RateLimit = require('express-rate-limit');
 
 const { connectDB: DB } = require('booking-db');
 
@@ -12,7 +13,15 @@ const errorHandler = require('./middlewares/error');
 
 const app = express();
 
+const limiter = new RateLimit({
+  windowMs: 60000,
+  max: 1,
+  delayMs: 0
+});
+
 // Middlewares
+
+app.use(limiter);
 
 app.use(cors());
 
