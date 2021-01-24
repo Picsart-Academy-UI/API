@@ -210,7 +210,7 @@ services:
       restart_policy:
         condition: none
   redis:
-    image: redis:6.0-rc1
+    image: redis
     ports:
       - "6379:6379"
     volumes:
