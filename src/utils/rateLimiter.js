@@ -11,6 +11,6 @@ module.exports = new RateLimit({
     store: new RedisStore({
         client: redisClient
     }),
-    windowMs: 5000,
-    max: 1
+    windowMs: 60000,
+    max: 100
 });
