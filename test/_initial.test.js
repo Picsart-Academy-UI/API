@@ -1,20 +1,23 @@
-const { describe, before, after, it } = require('mocha');
 const { expect } = require('chai');
-const { User: UserModel } = require('booking-db');
+const { before, after, it } = require('mocha');
 const { connectDB: connect } = require('booking-db');
 const {
   generateToken,
-	createAdmin,
-	createTable,
-	deleteTable,
+  createAdmin,
+  createTable,
+  deleteTable,
+  createChair,
+  deleteChair,
   createTeam,
-  createUser,
   deleteTeam,
+  createUser,
   deleteUser,
 } = require('./_mocks');
-const { DB_URI } = require('./_mocks/data');
+const { DB_URI } = require('./_config');
 
 let nonAdminUser = {};
+let table = {};
+let chair = {};
 let team = {};
 let user = {};
 let table = {};
@@ -22,27 +25,33 @@ let table = {};
 before('Connect to Database and create mock data', async function () {
   this.timeout(5000);
   await connect(DB_URI);
-  it('create new a team for testing', async () => {
-		team = await createTeam();
-		this.team = team;
+  it('create new a team', async () => {
+    team = await createTeam();
+    this.team = team;
   });
 
-  it('create a new admin user for testing', async () => {
+  it('create a new admin user', async () => {
     expect(team).to.contain.property('_id');
     user = await createAdmin(team._id);
   });
 
-  it('create a new non-admin user for testing', async () => {
+  it('create a new non-admin user', async () => {
     expect(team).to.contain.property('_id');
     nonAdminUser = await createUser(team._id);
+    this.nonAdminUser = nonAdminUser;
   });
 
-	it('create a table', async () => {
-		table = await createTable(team._id);
-		this.table = table;
-	});
+  it('create a table', async () => {
+    table = await createTable(team._id);
+    this.table = table;
+  });
 
-  it('generate a token for testing', async () => {
+  it('create a chair', async () => {
+    chair = await createChair();
+    this.chair = chair;
+  });
+
+  it('generate a token', async () => {
     expect(user).to.contain.property('_id');
     expect(user).to.contain.property('email');
     expect(user).to.contain.property('team_id');
@@ -54,6 +63,7 @@ before('Connect to Database and create mock data', async function () {
 
 after('Clean up', async function () {
   this.timeout(5000);
+
   expect(team).to.contain.property('_id');
   await deleteTeam(team._id);
 
@@ -61,8 +71,11 @@ after('Clean up', async function () {
   await deleteUser(user._id);
 
   expect(nonAdminUser).to.contain.property('_id');
-	await deleteUser(nonAdminUser._id);
-	
-	expect(table).to.contain.property('_id');
-	await deleteTable(table._id);
+  await deleteUser(nonAdminUser._id);
+
+  expect(table).to.contain.property('_id');
+  await deleteTable(table._id);
+
+  expect(chair).to.contain.property('_id');
+  await deleteChair(chair._id);
 });

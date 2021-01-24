@@ -1,15 +1,19 @@
-exports.emailRegexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+const {User, Reservation} = require('booking-db');
+const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
 
-// Pagination
+const mailer = require('./mailer');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
-
   let queryRef = query;
   const page = parseInt(givenPage, 10) || 1;
   const limit = parseInt(givenLimit, 10) || 100;
   const start_index = (page - 1) * limit;
   const end_index = page * limit;
   const pagination = {};
+
   if (end_index < count) {
     pagination.next_page = page + 1;
   }
@@ -24,6 +28,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
       .join(' ');
     queryRef = queryRef.select(fields);
   }
+
   // sorting
   if (sort) {
     const sort_by = sort.split(',')
@@ -45,7 +50,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'search_by'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
@@ -79,7 +84,7 @@ exports.buildQuery = (query) => {
 
 // excluding undefined fields
 
-exports.excludeUndefinedFields = (obj) => {
+const excludeUndefinedFields = (obj) => {
   let toBeReturned = {};
   Object.keys(obj)
     .forEach((p) => {
@@ -93,3 +98,56 @@ exports.excludeUndefinedFields = (obj) => {
     });
   return toBeReturned;
 };
+
+const getUserProperties = (req) => {
+
+  const userProperties = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    phone: req.body.phone,
+    birthday: req.body.birthday,
+    team_id: req.body.team_id,
+    position: req.body.position,
+    is_admin: req.body.is_admin
+  };
+  return userProperties;
+};
+
+exports.createUserAndSendEmail = async (userProperties) => {
+  const createdUser = await User.create(userProperties);
+  await mailer(userProperties.email);
+  return createdUser;
+};
+
+exports.verifyIdToken = (idToken) => {
+  return client.verifyIdToken({idToken, audience: process.env.GOOGLE_CLIENT_ID});
+};
+
+exports.findUserByEmailAndUpdate = async (email, photo_url) => {
+  return User.findOneAndUpdate({email}, {
+    profile_picture: photo_url,
+    accepted: true
+  }, {new: true, runValidators: true}).lean().exec();
+};
+
+exports.findUserByIdAndUpdate = (id, req) => {
+  const userProperties = getUserProperties(req);
+  return User.findByIdAndUpdate(id, excludeUndefinedFields(userProperties),
+      {new: true, runValidators: true});
+};
+
+exports.getJwt = (user) => {
+  return jwt.sign({
+    _id: user._id,
+    email: user.email,
+    team_id: user.team_id,
+    is_admin: user.is_admin
+  }, process.env.JWT_SECRET, {expiresIn: process.env.JWTEXPIERYTIME || '5h'});
+};
+
+exports.decodeToken = (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
+
+exports.getUserProperties = getUserProperties;

@@ -1,6 +1,8 @@
 const { Table } = require('booking-db');
 
-const { ErrorResponse } = require('../utils/errorResponse');
+const { NotFound } = require('../utils/errorResponse');
+const { buildQuery, getPagination } = require('../utils/util');
+
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 exports.create = asyncHandler(async (req, res, next) => {
@@ -9,46 +11,54 @@ exports.create = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const tables = await Table.find();
-  return res.status(200).json({data: tables});
+  const queryObject = buildQuery(req.query);
+  const initialQuery = Table.find(queryObject);
+
+  const tables = await Table.find()
+    .populate({
+      path: 'chairs_count',
+    }).exec();
+
+  const count = await Table.countDocuments(queryObject);
+
+  const { pagination } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
+  );
+
+  return res.status(200).json({
+    data: tables,
+    count,
+    pagination,
+  });
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
-  const table = await Table.findById(req.params.table_id);
+  const table = await Table.findById(req.params.table_id).exec();
   if (!table) {
-    return next(new ErrorResponse(
-      `Table not found with id of ${req.params.table_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   return res.status(200).json({data: table});
 });
 
 exports.update = asyncHandler(async (req, res, next) => {
-  const table = await Table.findOneAndUpdate(
+  const table = await Table.findByIdAndUpdate(
     { _id: req.params.table_id },
     { $set: req.body },
-    { new: true },
-    { runValidators: true }
+    { new: true, runValidators: true },
   );
   if (!table) {
-    return next(new ErrorResponse(
-      `Table not found with id of ${req.params.table_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   return res.status(200).json({data: table});
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const table = await Table.findById(req.params.table_id);
+  const table = await Table.findById(req.params.table_id).exec();
   if (!table) {
-    return next(new ErrorResponse(
-      `Table not found with id of ${req.params.table_id}`,
-      404
-    ));
+    return next(new NotFound());
   }
   await Table.deleteOne({ _id: req.params.table_id });
+
   return res.status(200).json({
     message: 'Table was deleted.',
   });
