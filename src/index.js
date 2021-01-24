@@ -10,9 +10,13 @@ const { router } = require('./routes');
 
 const errorHandler = require('./middlewares/error');
 
+const rateLimiter = require('./utils/rateLimiter');
+
 const app = express();
 
 // Middlewares
+
+app.use(rateLimiter);
 
 app.use(cors());
 
