@@ -14,7 +14,7 @@ services:
     volumes:
       - "db:/data/db"
   api:
-    image: lilitkarapetyan/academy-node:test
+    image: lilitkarapetyan/academy-node
     networks:
       - backend_net
     ports:
@@ -184,7 +184,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
-      - "TZ=Europe/Paris"
+      - "TZ=Asia/Yerevan"
       - "LOG_LEVEL=info"
       - "LOG_JSON=false"
     deploy:
@@ -193,7 +193,7 @@ services:
           - node.role == manager
 
   reservationchecker:
-    image: lilitkarapetyan/academy-node:test
+    image: lilitkarapetyan/academy-node
     networks:
       - backend_net
     environment:
@@ -204,7 +204,7 @@ services:
     deploy:
       labels:
         - "swarm.cronjob.enable=true"
-        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.schedule=0 6 * * *"
         - "swarm.cronjob.skip-running=true"
       replicas: 0
       restart_policy:
