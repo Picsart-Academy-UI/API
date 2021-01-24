@@ -16,11 +16,11 @@ exports.create = asyncHandler(async (req, res, next) => {
 exports.getAll = asyncHandler(async (req, res, next) => {
 
   const TeamsMembersCountTables = await Team
-    .find()
-    .populate({ path: 'members_count' })
-    .populate({ path: 'tables', select: '_id -team_id' })
-    .lean()
-    .exec();
+      .find()
+      .populate({ path: 'members_count' })
+      .populate({ path: 'tables', select: '_id -team_id' })
+      .lean()
+      .exec();
 
   return res.status(200).json({
     data: TeamsMembersCountTables,
@@ -29,9 +29,9 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 
 exports.getOne = asyncHandler(async (req, res, next) => {
   const team = await Team
-    .findById(req.params.team_id)
-    .lean()
-    .exec();
+      .findById(req.params.team_id)
+      .lean()
+      .exec();
 
   if (!team) next(new NotFound());
 
@@ -40,9 +40,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 
 exports.update = asyncHandler(async (req, res, next) => {
   const team = await Team.findOneAndUpdate(
-    { _id: req.params.team_id },
-    { $set: req.body },
-    { new: true, runValidators: true },
+      { _id: req.params.team_id },
+      { $set: req.body },
+      { new: true, runValidators: true },
   );
 
   if (!team) next(new NotFound());
@@ -52,16 +52,16 @@ exports.update = asyncHandler(async (req, res, next) => {
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const team = await Team
-    .findById(req.params.team_id)
-    .populate({ path: 'members_count' })
-    .lean()
-    .exec();
+      .findById(req.params.team_id)
+      .populate({ path: 'members_count' })
+      .lean()
+      .exec();
 
   if (!team) next(new NotFound());
 
   if (team.members_count !== 0) {
     return next(new BadRequest(
-      `The ${team.team_name} team cannot be deleted because it has employees.`
+        `The ${team.team_name} team cannot be deleted because it has employees.`
     ));
   }
 

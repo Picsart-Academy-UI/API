@@ -49,7 +49,7 @@ exports.getAll = asyncHandler(async (req, res) => {
   const count = await Reservation.countDocuments(queryObject);
 
   const { pagination, query } = getPagination(
-    req.query.page, req.query.limit, count, req, initialQuery
+      req.query.page, req.query.limit, count, req, initialQuery
   );
 
   const reservations = await query.lean().exec();
@@ -71,6 +71,6 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
   if (!reservation) next(new NotFound());
 
   return res.status(200).json({
-      message: 'Reservation was deleted.',
+    message: 'Reservation was deleted.',
   });
 });
