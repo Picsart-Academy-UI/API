@@ -22,7 +22,7 @@ let team = {};
 let user = {};
 
 before('Connect to Database and create mock data', async function () {
-	this.timeout(20000);
+	this.timeout(5000);
 	await connect(DB_URI);
 	it('create new a team', async () => {
 		team = await createTeam();
