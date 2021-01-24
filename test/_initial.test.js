@@ -20,7 +20,6 @@ let table = {};
 let chair = {};
 let team = {};
 let user = {};
-let table = {};
 
 before('Connect to Database and create mock data', async function () {
   this.timeout(5000);
