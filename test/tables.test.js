@@ -48,6 +48,48 @@ describe('tables', async () => {
       });
     });
   });
+  describe('Authorised', () => {
+    describe('GET /api/v1/tables/:table_id', () => {
+      it('admin user should get table data', function (done) {
+        request(app)
+          .get(`/api/v1/tables/${this.table._id}`)
+          .set('Authorization', `Bearer ${this.adminToken}`)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body).to.have.property('data');
+            expect(res.body.data).to.be.an('object');
+            done();
+          });
+      });
+  
+      it('should get table data with user token', function (done) {
+        request(app)
+          .get(`/api/v1/tables/${this.table._id}`)
+          .set('Authorization', `Bearer ${this.userToken}`)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body).to.have.property('data');
+            expect(res.body.data).to.be.an('object');
+            done();
+          });
+      });
+    });
+  });
+  describe('Unauthorised', () => {
+    describe('GET /api/v1/tables/:table_id', () => {
+      it('should not get table data without token', function (done) {
+        request(app)
+          .get(`/api/v1/tables/${this.table._id}`)
+          .expect(401)
+          .end((err, res) => {
+            if (err) return done(err);
+            done();
+          });
+      });
+    });
+  });
 
   describe('POST /api/v1/tables', () => {
     describe('Authorized', () => {
@@ -103,14 +145,14 @@ describe('tables', async () => {
           .expect(400)
           .end((err, res) => {
             if (err) {
-              expect(res.body.err).to.be.equal(`Duplicate {"table_name":"${testTableName}"} field value entered.`)
+              expect(res.body.err).to.be.equal(`Duplicate {"table_name":"${testTableName}"} field value entered.`);
               return done(err);
             }
             done();
           });
       });
 
-      after('delete created team', () => Table.deleteOne({ table_name: testTableName }));
+      after('delete created table', () => Table.deleteOne({ table_name: testTableName }));
     });
 
     describe('Unauthorized', () => {
@@ -160,69 +202,93 @@ describe('tables', async () => {
     });
   });
 
-  // describe('PUT /api/v1/tables/:team_id', () => {
-  //   const newTeamName = 'test new team name';
-  //   let teamId;
+  describe('PUT /api/v1/tables/:table_id', () => {
+    const newTableName = 'test new table name';
 
-  //   it('should update team name', function (done) {
-  //     teamId = this.team._id;
-  //     request(app)
-  //       .get(`/api/v1/tables/${teamId}`)
-  //       .set('Authorization', `Bearer ${this.adminToken}`)
-  //       .send(JSON.stringify({ team_name: newTeamName }))
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) return done(err);
-  //         expect(res.body).to.not.have.property('error');
-  //         done();
-  //       });
-  //   });
+    describe('Authorized', () => {
+      it('should update table name', function (done) {
+        request(app)
+          .get(`/api/v1/tables/${this.table._id}`)
+          .set('Authorization', `Bearer ${this.adminToken}`)
+          .send(JSON.stringify({ table_name: newTableName }))
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body).to.not.have.property('error');
+            done();
+          });
+      });
+  
+      it('should not update table name with user token', function (done) {
+        request(app)
+          .get(`/api/v1/tables/${this.table._id}`)
+          .set('Authorization', `Bearer ${this.userToken}`)
+          .send(JSON.stringify({ table_name: 'newTableName2' }))
+          .expect(401)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body).to.have.property('error');
+          });
+      });
+    });
 
-  //   it('should not update team name - USER', function (done) {
-  //     request(app)
-  //       .get(`/api/v1/tables/${teamId}`)
-  //       .set('Authorization', `Bearer ${this.userToken}`)
-  //       .send(JSON.stringify({ team_name: 'newTeamName2' }))
-  //       .expect(401)
-  //       .end((err, res) => {
-  //         if (err) return done(err);
-  //         expect(res.body).to.have.property('error');
-  //       });
-  //   });
-  // });
+    describe('Unauthorized', () => {
+      it('should not update table name without token', function (done) {
+        request(app)
+          .get(`/api/v1/tables/${this.table._id}`)
+          .send(JSON.stringify({ table_name: 'newTableName3' }))
+          .expect(401)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body).to.have.property('error');
+            done();
+          });
+      });
+    });
+  });
 
-  // describe('DELETE /api/v1/tables/:team_id', () => {
-  //   let newTeam;
-  //   const newTeamName = 'Team delete Test 48';
-  //   beforeEach('creating team to delete', async () => {
-  //     newTeam = await Team.create({
-  //       team_name: newTeamName,
-  //     });
-  //   });
+  describe('DELETE /api/v1/tables/:table_id', () => {
+    let newTable;
+    const newTableName = 'Table delete Test 2';
+    beforeEach('creating team to delete', async () => {
+      newTable = await Table.create({
+        table_name: newTableName,
+      });
+    });
 
-  //   it('should delete team', function (done) {
-  //     request(app)
-  //       .delete(`/api/v1/tables/${newTeam._id}`)
-  //       .set('Authorization', `Bearer ${this.adminToken}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) return done(err);
-  //         expect(res.body).to.have.property('message');
-  //         done();
-  //       });
-  //   });
+    it('should delete table', function (done) {
+      request(app)
+        .delete(`/api/v1/tables/${newTable._id}`)
+        .set('Authorization', `Bearer ${this.adminToken}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body).to.have.property('message');
+          done();
+        });
+    });
 
-  //   it('should not delete team - USER', function (done) {
-  //     request(app)
-  //       .delete(`/api/v1/tables/${newTeam._id}`)
-  //       .set('Authorization', `Bearer ${this.userToken}`)
-  //       .expect(401)
-  //       .end((err, res) => {
-  //         if (err) return done(err);
-  //         done();
-  //       });
-  //   });
+    it('should not delete Table with user token', function (done) {
+      request(app)
+        .delete(`/api/v1/tables/${newTable._id}`)
+        .set('Authorization', `Bearer ${this.userToken}`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) return done(err);
+          done();
+        });
+    });
 
-  //   after('delete team if not deleted', () => Team.deleteOne({ team_name: newTeamName }));
-  // });
+    it('should not delete Table without token', function (done) {
+      request(app)
+        .delete(`/api/v1/tables/${newTable._id}`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    after('delete table if not deleted', () => Table.deleteOne({ table_name: newTableName }));
+  });
 });
