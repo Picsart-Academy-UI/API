@@ -4,7 +4,9 @@ const { User: UserModel } = require('booking-db');
 const { connectDB: connect } = require('booking-db');
 const {
   generateToken,
-  createAdmin,
+	createAdmin,
+	createTable,
+	deleteTable,
   createTeam,
   createUser,
   deleteTeam,
@@ -15,12 +17,14 @@ const { DB_URI } = require('./_mocks/data');
 let nonAdminUser = {};
 let team = {};
 let user = {};
+let table = {};
 
 before('Connect to Database and create mock data', async function () {
   this.timeout(5000);
   await connect(DB_URI);
   it('create new a team for testing', async () => {
-    team = await createTeam();
+		team = await createTeam();
+		this.team = team;
   });
 
   it('create a new admin user for testing', async () => {
@@ -32,6 +36,11 @@ before('Connect to Database and create mock data', async function () {
     expect(team).to.contain.property('_id');
     nonAdminUser = await createUser(team._id);
   });
+
+	it('create a table', async () => {
+		table = await createTable(team._id);
+		this.table = table;
+	});
 
   it('generate a token for testing', async () => {
     expect(user).to.contain.property('_id');
@@ -52,5 +61,8 @@ after('Clean up', async function () {
   await deleteUser(user._id);
 
   expect(nonAdminUser).to.contain.property('_id');
-  await deleteUser(nonAdminUser._id);
+	await deleteUser(nonAdminUser._id);
+	
+	expect(table).to.contain.property('_id');
+	await deleteTable(table._id);
 });
