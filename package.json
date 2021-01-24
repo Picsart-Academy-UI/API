@@ -33,6 +33,8 @@
     "mocha": "^8.2.1",
     "moment-timezone": "^0.5.32",
     "nodemailer": "^6.4.17",
+    "rate-limit-redis": "^2.0.0",
+    "redis": "^3.0.2",
     "supertest": "^6.1.1",
     "web-push": "^3.4.4"
   },
