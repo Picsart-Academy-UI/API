@@ -1,4 +1,4 @@
-const {User, Reservation} = require('booking-db');
+const {User} = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 
@@ -50,12 +50,11 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit', 'first_name'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndChairs'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
-    || property === 'gt' || property === 'gte'
-    || property === 'in' || false);
+    || property === 'gt' || property === 'gte' || false);
 }
 
 function formatQuery(query) {
@@ -79,6 +78,12 @@ function formatQuery(query) {
 exports.buildQuery = (query) => {
   const result = {...query};
   excluded_fields.forEach((field) => delete result[field]);
+  Object.keys(result).forEach((k) => {
+    // eslint-disable-next-line no-bitwise
+    if (~result[k].indexOf(',')){
+      result[k] = {$in: result[k].split(',')};
+    }
+  });
   return formatQuery(result);
 };
 
