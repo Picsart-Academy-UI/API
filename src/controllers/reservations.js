@@ -1,21 +1,21 @@
-const { Reservation } = require('booking-db');
+const {Reservation} = require('booking-db');
 
-const { NotFound } = require('../utils/errorResponse');
-const { asyncHandler } = require('../middlewares/asyncHandler');
+const {NotFound} = require('../utils/errorResponse');
+const {asyncHandler} = require('../middlewares/asyncHandler');
 
 const {
-  buildQuery,
-  getPagination,
+    buildQuery,
+    getPagination,
 } = require('../utils/util');
 
 const {
-  findOneReservation,
-  deleteOneReservation
+    findOneReservation,
+    deleteOneReservation
 } = require('../utils/reservation-helpers');
 
 const {
-  updateReservation,
-  createReservation
+    updateReservation,
+    createReservation
 } = require('../utils/reservation-helpers');
 
 
@@ -23,8 +23,8 @@ const {
 // @route POST => /api/v1/reservations
 // @access Private (User/Admin)
 exports.create = asyncHandler(async (req, res) => {
-  const reservation = await createReservation(req);
-  return res.status(201).json({data: reservation});
+    const reservation = await createReservation(req);
+    return res.status(201).json({data: reservation});
 });
 
 
@@ -32,10 +32,10 @@ exports.create = asyncHandler(async (req, res) => {
 // @route PUT => /api/v1/reservations/:reservation_id
 // @access Private (User/Admin)
 exports.update = asyncHandler(async (req, res) => {
-  const reservation = await updateReservation(req);
-  return res.status(202).json({
-    data: reservation
-  });
+    const reservation = await updateReservation(req);
+    return res.status(202).json({
+        data: reservation
+    });
 });
 
 
@@ -43,34 +43,41 @@ exports.update = asyncHandler(async (req, res) => {
 // @route GET => /api/v1/reservations
 // @access Private (Admin)
 exports.getAll = asyncHandler(async (req, res) => {
-  const queryObject = buildQuery(req.query);
-  const initialQuery = Reservation.find(queryObject);
+    let initialQuery;
+    const queryObject = buildQuery(req.query);
+    if (req.query.include_usersAndChairs) {
+        initialQuery = Reservation.find(queryObject).populate({
+            path: 'user_id',
+            select: 'first_name last_name is_admin email position profile_picture position'})
+            .populate({path: 'chair_id', select: 'number'});
+    } else {
+        initialQuery = Reservation.find(queryObject);
+    }
+    const count = await Reservation.countDocuments(queryObject);
 
-  const count = await Reservation.countDocuments(queryObject);
+    const {pagination, query} = getPagination(
+        req.query.page, req.query.limit, count, req, initialQuery
+    );
 
-  const { pagination, query } = getPagination(
-    req.query.page, req.query.limit, count, req, initialQuery
-  );
+    const reservations = await query.lean().exec();
 
-  const reservations = await query.lean().exec();
-
-  return res.status(200).json({data: reservations, count, pagination});
+    return res.status(200).json({data: reservations, count, pagination});
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
-  const reservation = await findOneReservation(req);
+    const reservation = await findOneReservation(req);
 
-  if (!reservation) next(new NotFound());
+    if (!reservation) next(new NotFound());
 
-  return res.status(200).json({ data: reservation });
+    return res.status(200).json({data: reservation});
 });
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
-  const reservation = await deleteOneReservation(req);
+    const reservation = await deleteOneReservation(req);
 
-  if (!reservation) next(new NotFound());
+    if (!reservation) next(new NotFound());
 
-  return res.status(200).json({
-      message: 'Reservation was deleted.',
-  });
+    return res.status(200).json({
+        message: 'Reservation was deleted.',
+    });
 });
