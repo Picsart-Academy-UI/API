@@ -110,6 +110,7 @@ const divideReservation = (reservation) => {
 // Create Reservation
 
 exports.createReservation = async (req) => {
+
   const plainReservation = getPlainReservation(req);
   if (!checkReservationDates(plainReservation)) {
     throw new ErrorResponse('Reservations should have appropriate dates', 400);

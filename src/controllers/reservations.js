@@ -64,6 +64,10 @@ exports.getAll = asyncHandler(async (req, res) => {
     return res.status(200).json({data: reservations, count, pagination});
 });
 
+// @desc  get reservation
+// @route GET => /api/v1/reservations/reservation_id
+// @access Private (Admin/User)
+
 exports.getOne = asyncHandler(async (req, res, next) => {
     const reservation = await findOneReservation(req);
 
@@ -71,6 +75,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 
     return res.status(200).json({data: reservation});
 });
+// @desc  delete reservation
+// @route GET => /api/v1/reservations/reservation_id
+// @access Private (Admin/User)
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
     const reservation = await deleteOneReservation(req);
