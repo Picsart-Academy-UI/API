@@ -1,3 +1,6 @@
+const path = require('path');
+
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const jwt = require('jsonwebtoken');
 const { User: UserModel } = require('booking-db');
 const {connectDB} = require('booking-db');
@@ -22,7 +25,7 @@ async function generateToken(){
     email: foundUser.email,
     team_id: foundUser.team_id,
     is_admin: foundUser.is_admin
-  }, 'Picsart2020');
+  }, process.env.JWT_SECRET);
   return token;
 }
 
