@@ -1,12 +1,17 @@
-const { ErrorResponse, NotFound, BadRequest } = require('../utils/errorResponse');
+const {
+  ErrorResponse, NotFound, BadRequest, Unauthorized,
+  MethodNotAllowed, Forbidden, Conflict, NotAcceptable
+} = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
+  console.log(err);
   let error = { ...err };
   error.message = err.message;
+
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
-    const message = `The requested URL: ${req.path} was not found on this server`;
-    // const { message } = err;
+    // const message = `The requested URL: ${req.path} was not found on this server`;
+    const { message } = err;
     error = new ErrorResponse(message, 404);
   }
 
@@ -20,17 +25,25 @@ const errorHandler = (err, req, res, next) => {
   if (err.code === 11000) {
     const errValStr = JSON.stringify(err.keyValue);
     const message = `Duplicate ${errValStr} field value entered.`;
-    error = new ErrorResponse(message, 400);
+    // const { message } = err;
+    error = new BadRequest(message, 400);
   }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values(err.errors).map((val) => val.message);
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message[0], 400);
   }
-  if (err.name === 'SyntaxError') {
-    const message = 'Unauthorized';
-    error = new ErrorResponse(message, 401);
+  // Bad Request error
+  if (err.name === 'BadRequest') {
+    const message = err.message || 'Bad Request';
+    error = new BadRequest(message, 400);
+  }
+
+  // Unauthorized error
+  if (err.name === 'Unauthorized') {
+    const message = err.message || 'Unauthorized';
+    error = new Unauthorized(message, 401);
   }
 
   // Not Found error
@@ -39,10 +52,34 @@ const errorHandler = (err, req, res, next) => {
     error = new NotFound(message, 404);
   }
 
-  // Bad Request error
-  if (err.name === 'BadRequest') {
-    const message = err.message || 'Bad Request';
-    error = new NotFound(message, 400);
+  // Forbidden error
+  if (err.name === 'Forbidden') {
+    const message = err.message || 'Forbidden';
+    error = new Forbidden(message, 403);
+  }
+
+  // MethodNotAllowed error
+  if (err.name === 'MethodNotAllowed') {
+    const message = err.message || 'Method Not Allowed';
+    error = new MethodNotAllowed(message, 405);
+  }
+
+  // NotAcceptable error
+  if (err.name === 'NotAcceptable') {
+    const message = err.message || 'Not Acceptable';
+    error = new NotAcceptable(message, 406);
+  }
+
+  // Conflict error
+  if (err.name === 'Conflict') {
+    const message = err.message || 'Conflict';
+    error = new Conflict(message, 409);
+  }
+
+  if (err.message.startsWith('Unexpected token')){
+    const message = err.message || 'Invalid token';
+    error = new Unauthorized(message);
+
   }
 
   res.status(error.statusCode || 500).json({

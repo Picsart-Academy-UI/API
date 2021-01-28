@@ -1,8 +1,10 @@
 const router = require('express').Router();
 
 const {
-  create, getAll, getOne, update, deleteOne
-} = require('../contollers').teams;
+  create, getAll, getOne, update, deleteOne, search
+} = require('../controllers').teams;
+
+router.get('/search', search);
 
 router
   .post('/', create)
