@@ -4,6 +4,7 @@ const {
 } = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
+  console.log(err);
   let error = { ...err };
   error.message = err.message;
 
@@ -25,13 +26,13 @@ const errorHandler = (err, req, res, next) => {
     const errValStr = JSON.stringify(err.keyValue);
     const message = `Duplicate ${errValStr} field value entered.`;
     // const { message } = err;
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message, 400);
   }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values(err.errors).map((val) => val.message);
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message[0], 400);
   }
   // Bad Request error
   if (err.name === 'BadRequest') {

@@ -6,7 +6,7 @@ const adminAuth = require('../middlewares/auth-admin');
 
 const {
   getAll, getOne, create, update, deleteOne,
-} = require('../contollers').reservations;
+} = require('../controllers').reservations;
 
 router
   .get('/', adminAuth, getAll)

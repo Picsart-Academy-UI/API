@@ -20,13 +20,13 @@ const notificationsRouter = require('./notifications');
 
 router.use(authRouter);
 
-router.use('/teams', authenticate, teamsRouter);
+router.use('/teams', teamsRouter);
 
 router.use('/chairs', chairsRouter);
 
 router.use('/tables', tablesRouter);
 
-router.use('/reservations', authenticate, reservationsRouter);
+router.use('/reservations', reservationsRouter);
 
 router.use('/users', authenticate, usersRouter);
 
