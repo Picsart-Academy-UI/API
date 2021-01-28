@@ -4,8 +4,8 @@ const JWT_SECRET_KEY = 'Picsart2020';
 const user = {
   first_name: 'Test First Name User',
   last_name: 'Test Last Name User',
-  email: 'testingUser28@gmail.com',
-  position_id: 'fs3rnaEE2399',
+  email: 'testingUser281@gmail.com',
+  position: 'tester',
   phone: 37477112233,
   birthdate: 'date',
   is_admin: false,
@@ -14,8 +14,8 @@ const user = {
 const userUpdated = {
   first_name: 'Test First Name User Updated',
   last_name: 'Test Last Name User Updated',
-  email: 'testingUserUpdated28@gmail.com',
-  position_id: 'fs3rnaEE23d9',
+  email: 'testingUserUpdated281@gmail.com',
+  position: 'test QA',
   phone: 37477112233,
   birthdate: 'date',
   is_admin: false,
@@ -23,9 +23,9 @@ const userUpdated = {
 
 const admin = {
   first_name: 'Test First Name',
-  email: 'testing9528@gmail.com',
+  email: 'testing95281@gmail.com',
   last_name: 'Test Last Name',
-  position_id: 'fs3rnaEE2399',
+  position: 'tester admin',
   phone: 37477112233,
   birthdate: 'date',
   is_admin: true,
@@ -34,15 +34,15 @@ const admin = {
 const adminUpdated = {
   first_name: 'Test First Name Updated',
   last_name: 'Test Last Name Updated',
-  email: 'testing.updated28@gmail.com',
-  position_id: 'fs3rnaEE2398',
+  email: 'testing.updated281@gmail.com',
+  position: 'tester admin',
   birthdate: 'dateUpdated',
   phone: 37477112233,
   is_admin: true,
 };
 
 const team = {
-  team_name: 'Team Test 48',
+  team_name: 'Team Test 4',
 };
 
 const table = {
