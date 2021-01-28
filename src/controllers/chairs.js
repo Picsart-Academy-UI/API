@@ -14,6 +14,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 });
 
 exports.getOne = asyncHandler(async (req, res, next) => {
+
   const chair = await Chair
     .findById(req.params.chair_id)
     .lean()

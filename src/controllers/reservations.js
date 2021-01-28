@@ -44,7 +44,8 @@ exports.update = asyncHandler(async (req, res) => {
 // @access Private (Admin)
 exports.getAll = asyncHandler(async (req, res) => {
     let initialQuery;
-    const queryObject = buildQuery(req.query);
+    let queryObject = buildQuery(req.query);
+    if (!req.user.is_admin) queryObject = {...queryObject, team_id: req.user.team_id};
     if (req.query.include_usersAndChairs) {
         initialQuery = Reservation.find(queryObject).populate({
             path: 'user_id',
@@ -64,6 +65,10 @@ exports.getAll = asyncHandler(async (req, res) => {
     return res.status(200).json({data: reservations, count, pagination});
 });
 
+// @desc  get reservation
+// @route GET => /api/v1/reservations/reservation_id
+// @access Private (Admin/User)
+
 exports.getOne = asyncHandler(async (req, res, next) => {
     const reservation = await findOneReservation(req);
 
@@ -71,11 +76,14 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 
     return res.status(200).json({data: reservation});
 });
+// @desc  delete reservation
+// @route GET => /api/v1/reservations/reservation_id
+// @access Private (Admin/User)
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
     const reservation = await deleteOneReservation(req);
 
-    if (!reservation) next(new NotFound());
+    if (!reservation) throw new NotFound('Reservation was not found');
 
     return res.status(200).json({
         message: 'Reservation was deleted.',
