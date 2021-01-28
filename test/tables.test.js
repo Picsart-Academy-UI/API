@@ -22,12 +22,40 @@ describe('tables', async () => {
             done();
           });
       });
+
+      it('should get all tables data table_name field only', function (done) {
+        request(app)
+          .get('/api/v1/tables?select=table_name')
+          .set('Authorization', `Bearer ${this.adminToken}`)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err);
+            res.body.data.forEach((table) => {
+              expect(table).to.not.include.all.keys('team_id', 'chairs_count');
+            });
+            done();
+          });
+      });
+      it('should get the table with table_name = Search', function (done) {
+        const queryTableName = 'Search';
+        request(app)
+          .get(`/api/v1/tables?table_name=${queryTableName}`)
+          .set('Authorization', `Bearer ${this.adminToken}`)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err);
+            res.body.data.forEach((table) => {
+                expect(table.table_name).to.be.equal(queryTableName);
+            });
+            done();
+          });
+      });
   
-      it('non-admin user should not get tables data', function (done) {
+      it('should get tables data with user token', function (done) {
         request(app)
           .get('/api/v1/tables')
           .set('Authorization', `Bearer ${this.userToken}`)
-          .expect(401)
+          .expect(200)
           .end((err, res) => {
             if (err) return done(err);
             done();
@@ -43,6 +71,8 @@ describe('tables', async () => {
           .expect(401)
           .end((err, res) => {
             if (err) return done(err);
+            expect(res.body).to.have.property('data');
+            expect(res.body.data).to.be.an('array');
             done();
           });
       });
@@ -125,7 +155,6 @@ describe('tables', async () => {
           .expect(201)
           .end((err, res) => {
             if (err) {
-              console.log(res.body);
               return done(err);
             }
             expect(res.body.data.table_name).to.be.equal(testTableName);
