@@ -83,5 +83,5 @@ after('Clean up', async function () {
   await deleteTable(table._id);
 
   expect(chair).to.contain.property('_id');
-  // await deleteChair(chair._id);
+  await deleteChair(chair._id);
 });
