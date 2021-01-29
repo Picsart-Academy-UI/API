@@ -16,11 +16,11 @@ const formatDate = (date) => moment(date).format(format);
 
 const checkWeekends = (reservation) => {
     const {start_date, end_date} = reservation;
-    let d1 = new Date(start_date),
-        d2 = new Date(end_date),
-        isWeekend = false;
+    const d1 = new Date(start_date),
+        d2 = new Date(end_date);
+        let isWeekend = false;
     while (d1 <= d2) {
-        let day = d1.getDay();
+        const day = d1.getDay();
         isWeekend = (day === 6) || (day === 0);
         if (isWeekend) { return true; }
         d1.setDate(d1.getDate() + 1);
@@ -233,7 +233,7 @@ exports.seeLoadReservations = async (req) => {
     if (diff > 32) throw new ErrorResponse('Max range is 31 days', 400);
     const results = await Reservation.find(
         // eslint-disable-next-line max-len
-        {$and: [{start_date: {$gte: new Date(start_date)}}, {start_date: {$lte: new Date(end_date)}}], team_id, status: 'approved'}
+        {$and: [{start_date: {$gte: new Date(start_date)}}, {end_date: {$lte: new Date(end_date)}}], team_id, status: 'approved'}
     ).select('start_date end_date').lean().exec();
     const arr = [];
     // eslint-disable-next-line no-plusplus
