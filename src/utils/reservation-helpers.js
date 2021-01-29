@@ -229,7 +229,7 @@ exports.seeLoadReservations = async (req) => {
     const a = moment1(start_date);
     const b = moment1(end_date);
     if (a > b) throw new ErrorResponse('Start date cannot be bigger than end date ');
-    const diff = b.diff(a, 'days');
+    const diff = b.diff(a, 'days') + 1;
     if (diff > 32) throw new ErrorResponse('Max range is 31 days', 400);
     const results = await Reservation.find(
         // eslint-disable-next-line max-len
