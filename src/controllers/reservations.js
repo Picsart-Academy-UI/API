@@ -1,5 +1,6 @@
 const {Reservation} = require('booking-db');
 
+
 const {NotFound} = require('../utils/errorResponse');
 const {asyncHandler} = require('../middlewares/asyncHandler');
 
@@ -10,7 +11,8 @@ const {
 
 const {
     findOneReservation,
-    deleteOneReservation
+    deleteOneReservation,
+    seeLoadReservations
 } = require('../utils/reservation-helpers');
 
 const {
@@ -89,3 +91,18 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
         message: 'Reservation was deleted.',
     });
 });
+
+
+// @desc  get approved reservations count for specified team_id
+// @route GET => /api/v1/reservations/seeload
+// @access Private (Admin/User)
+
+exports.seeLoad = asyncHandler(async (req, res, next) => {
+    const result = await seeLoadReservations(req);
+    return res.status(200).json({
+        data: result
+    });
+});
+
+
+

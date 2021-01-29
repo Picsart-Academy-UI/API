@@ -31,6 +31,7 @@
     "google-auth-library": "^6.1.4",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^8.2.1",
+    "moment": "^2.29.1",
     "moment-timezone": "^0.5.32",
     "nodemailer": "^6.4.17",
     "rate-limit-redis": "^2.0.0",

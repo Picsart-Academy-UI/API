@@ -1,5 +1,10 @@
 const moment = require('moment-timezone');
 const {Reservation} = require('booking-db');
+
+
+const moment1 = require('moment');
+const momentTimezone = require('moment-timezone');
+
 const {ErrorResponse} = require('./errorResponse');
 
 const format = 'YYYY-MM-DD';
@@ -86,9 +91,7 @@ const getConflictingReservations = (reservation) => {
                 end_date: {$lte: end_date},
             },
             {
-                start_date: {
-                    $eq: end_date
-                }
+                start_date: {$eq: end_date}
             }
         ],
         chair_id
@@ -218,6 +221,32 @@ exports.getTodayReservations = () => {
 
 exports.getFormattedDate = (date) => {
     return moment(date).format(format);
+};
+
+exports.seeLoadReservations = async (req) => {
+    const {start_date, end_date, team_id} = req.query;
+    const results = await Reservation.find(
+        // eslint-disable-next-line max-len
+        {$and: [{start_date: {$gte: new Date(start_date)}}, {start_date: {$lte: new Date(end_date)}}], team_id}
+    ).select('start_date end_date').lean().exec();
+    const a = moment1(start_date);
+    const b = moment1(end_date);
+    const diff = b.diff(a, 'days');
+    if (diff > 32) throw new ErrorResponse('Max range is 31 days', 400);
+    const arr = [];
+    // eslint-disable-next-line no-plusplus
+    let acc = momentTimezone(start_date);
+    for (let i = 0; i < diff; i++) {
+        const start = acc.format(format);
+        const count = results.filter( (i) => {
+            const momentStart = momentTimezone(i.start_date).format(format);
+            const momentEnd = momentTimezone(i.end_date).format(format);
+            return start >= momentStart && momentEnd >= start;
+        }).length;
+        arr.push({[start]: count});
+        acc = acc.add(1, 'day');
+    }
+    return arr;
 };
 
 exports.getToday = getToday;
