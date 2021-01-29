@@ -234,6 +234,7 @@ exports.seeLoadReservations = async (req) => {
     const results = await Reservation.find(
         // eslint-disable-next-line max-len
         {$and: [{end_date: {$gte: new Date(start_date)}}, {start_date: {$lte: new Date(end_date)}}], team_id, status: 'approved'}
+
     ).select('start_date end_date').lean().exec();
     const arr = [];
     // eslint-disable-next-line no-plusplus
