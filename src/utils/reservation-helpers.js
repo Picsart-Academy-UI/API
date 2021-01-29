@@ -226,14 +226,15 @@ exports.getFormattedDate = (date) => {
 
 exports.seeLoadReservations = async (req) => {
     const {start_date, end_date, team_id} = req.query;
-    const results = await Reservation.find(
-        // eslint-disable-next-line max-len
-        {$and: [{start_date: {$gte: new Date(start_date)}}, {start_date: {$lte: new Date(end_date)}}], team_id}
-    ).select('start_date end_date').lean().exec();
     const a = moment1(start_date);
     const b = moment1(end_date);
+    if (a > b) throw new ErrorResponse('Start date cannot be bigger than end date ');
     const diff = b.diff(a, 'days');
     if (diff > 32) throw new ErrorResponse('Max range is 31 days', 400);
+    const results = await Reservation.find(
+        // eslint-disable-next-line max-len
+        {$and: [{start_date: {$gte: new Date(start_date)}}, {start_date: {$lte: new Date(end_date)}}], team_id, status: 'approved'}
+    ).select('start_date end_date').lean().exec();
     const arr = [];
     // eslint-disable-next-line no-plusplus
     let acc = momentTimezone(start_date);
