@@ -1,4 +1,5 @@
 # API
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Picsart-Academy-UI_API&metric=alert_status)](https://sonarcloud.io/dashboard?id=Picsart-Academy-UI_API)
 
 ## First Launch
  Create a `.env` file and add the following variables in it
@@ -14,6 +15,8 @@
     PUBLIC_VAPID_KEY=[[Your generated public vapid key]]
     PRIVATE_VAPID_KEY=[[Your generated private vapid key]]
     WEBPUSH_MAILTO=[[Whatever email you want]]
+    REDIS_HOST=[[Your Redis DB host]]
+    REDIS_PORT=[[Your Redis DB port]]
   </pre>
   
 ## Run tests

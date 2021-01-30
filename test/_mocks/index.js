@@ -4,6 +4,14 @@ const { JWT_SECRET_KEY } = require('../_config');
 
 const { admin, user, team, table } = require('./data');
 
+async function deleteAllDataFromDb() {
+  await Team.deleteOne({ team_name: team.team_name});
+  await User.deleteOne({ email: user.email});
+  await User.deleteOne({ email: admin.email});
+  await Table.deleteOne({ table_name: table.table_name});
+  await Chair.deleteOne({number: 1});
+}
+
 async function createUser(team_id) {
   const createdUser = await User.create({ ...user, team_id });
   return createdUser;
@@ -68,6 +76,7 @@ async function decodeToken(token) {
 }
 
 module.exports = {
+  deleteAllDataFromDb,
   createTeam,
   deleteTeam,
   getTeam,
