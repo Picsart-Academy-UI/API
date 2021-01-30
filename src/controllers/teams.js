@@ -33,7 +33,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
       .lean()
       .exec();
 
-  if (!team) next(new NotFound());
+  if (!team) {
+    next(new NotFound());
+  }
 
   return res.status(200).json({ data: team });
 });
@@ -45,7 +47,9 @@ exports.update = asyncHandler(async (req, res, next) => {
       { new: true, runValidators: true },
   );
 
-  if (!team) next(new NotFound());
+  if (!team) {
+    next(new NotFound());
+  }
 
   return res.status(200).json({ data: team });
 });
@@ -57,8 +61,10 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
       .lean()
       .exec();
 
-  if (!team) next(new NotFound());
-
+  if (!team) {
+    next(new NotFound());
+  }
+  
   if (team.members_count !== 0) {
     return next(new BadRequest(
         `The ${team.team_name} team cannot be deleted because it has employees.`

@@ -38,7 +38,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!table) next(new NotFound());
+  if (!table) {
+    next(new NotFound());
+  }
 
   return res.status(200).json({ data: table });
 });
@@ -50,7 +52,9 @@ exports.update = asyncHandler(async (req, res, next) => {
     { new: true, runValidators: true },
   );
 
-  if (!table) next(new NotFound());
+  if (!table) {
+    next(new NotFound());
+  }
 
   return res.status(200).json({ data: table });
 });
@@ -61,7 +65,9 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!table) next(new NotFound());
+  if (!table) {
+    next(new NotFound());
+  }
 
   await Table.deleteOne({ _id: req.params.table_id });
 

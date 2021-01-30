@@ -7,6 +7,7 @@ const {
 const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
+const error_message = 'User not found.';
 
 // @desc  get users from the same team
 // @route GET /api/v1/users
@@ -17,7 +18,9 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!users) next(new NotFound('User not found.'));
+  if (!users) {
+    next(new NotFound(error_message));
+  }
 
   return res.status(200).json({
     data: users
@@ -65,7 +68,9 @@ exports.getUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) {
+    next(new NotFound(error_message));
+  }
 
   return res.status(200).json({
     data: user
@@ -81,7 +86,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) {
+    next(new NotFound(error_message));
+  }
 
   return res.status(200).json({
     data: user
@@ -98,7 +105,9 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) {
+    next(new NotFound(error_message));
+  }
 
   return res.status(200).json({
     message: 'User has successfully been deleted.'
@@ -115,7 +124,9 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) {
+    next(new NotFound(error_message));
+  }
 
   return res.status(200).json({
     data: user

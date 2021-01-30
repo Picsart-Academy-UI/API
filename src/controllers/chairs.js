@@ -20,7 +20,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!chair) next(new NotFound());
+  if (!chair) {
+    next(new NotFound());
+  }
 
   return res.status(200).json({ data: chair });
 });
@@ -32,7 +34,9 @@ exports.update = asyncHandler(async (req, res, next) => {
     { new: true, runValidators: true },
   );
 
-  if (!chair) next(new NotFound());
+  if (!chair) {
+    next(new NotFound());
+  }
 
   return res.status(200).json({ data: chair });
 });
@@ -43,7 +47,9 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!chair) next(new NotFound());
+  if (!chair) {
+    next(new NotFound());
+  }
 
   await Chair.deleteOne({ _id: req.params.chair_id });
   return res.status(200).json({

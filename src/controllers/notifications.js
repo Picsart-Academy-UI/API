@@ -16,14 +16,11 @@ webpush.setVapidDetails(
   PRIVATE_VAPID_KEY
 );
 
-// eslint-disable-next-line
 exports.subscribe = asyncHandler(async (req, res, next) => {
   const { _id } = req.user;
 
   const subscription = req.body;
 
-  // UGLY: Used '.lean()' here, because mongo gave me error
-  // but I can't use this instance to save after that
   const user = await User.findById(_id).lean().exec();
   const { push_subscriptions } = user;
 
@@ -35,13 +32,13 @@ exports.subscribe = asyncHandler(async (req, res, next) => {
     return next(new Conflict('Subscribtion with given endpoint already exists'));
   }
 
-  const updated_user = await User.findByIdAndUpdate(_id,
+  await User.findByIdAndUpdate(_id,
     {
       $push: {
         push_subscriptions: subscription
       }
     },
-    { new: true }).lean().exec();
+    { new: true }).exec();
 
   res.status(201).json(JSON.stringify(subscription));
 
@@ -52,29 +49,7 @@ exports.subscribe = asyncHandler(async (req, res, next) => {
     icon: 'https://seeklogo.com/images/P/picsart-icon-logo-EE8CEAAED8-seeklogo.com.png'
   });
 
-  webpush.sendNotification(subscription, payload)
+  return webpush.sendNotification(subscription, payload)
     .catch((err) => next(new ErrorResponse(err.message)));
-
-});
-
-// The following controller is just for example
-
-exports.another_one = asyncHandler(async (req, res, next) => {
-  const { _id } = req.user;
-
-  const user = await User.findById(_id).lean().exec();
-  const { push_subscriptions } = user;
-
-  res.status(201).json({});
-
-  const payload = JSON.stringify({
-    title: 'Another One',
-    body: 'Another One',
-    icon: 'https://www.dictionary.com/e/wp-content/uploads/2018/04/another-one.jpg'
-  });
-
-  for (const sub of push_subscriptions) {
-    await webpush.sendNotification(sub, payload);
-  }
 
 });
