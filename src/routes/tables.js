@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {
-  create, getAll, getOne, update, deleteOne, deleteAll
+  create, getAll, getOne, update, deleteOne
 } = require('../controllers').tables;
 
 router

@@ -16,7 +16,6 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 
   const tables = await Table
     .find()
-    .populate({ path: 'chairs_count' })
     .lean()
     .exec();
 

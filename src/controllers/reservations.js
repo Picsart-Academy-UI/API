@@ -103,6 +103,3 @@ exports.seeLoad = asyncHandler(async (req, res, next) => {
         data: result
     });
 });
-
-
-
