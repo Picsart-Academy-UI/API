@@ -2,12 +2,13 @@ const DB_URI = 'mongodb+srv://armen:chairs123@chairs-app-test.qduod.mongodb.net/
 const JWT_SECRET_KEY = 'Picsart2020';
 
 const user = {
-  first_name: 'Test First Name User',
-  last_name: 'Test Last Name User',
-  email: 'testingUser281@gmail.com',
-  position: 'tester',
+  first_name: 'Test First Name User 2',
+  last_name: 'Test Last Name User 2',
+  email: 'testingUser228@gmail.com',
+  position_id: 'fs3rnaEE23992',
   phone: 37477112233,
   birthdate: 'date',
+  position: 'developer',
   is_admin: false,
 };
 
@@ -18,48 +19,51 @@ const userUpdated = {
   position: 'test QA',
   phone: 37477112233,
   birthdate: 'date',
+  position: 'developer',
   is_admin: false,
 };
 
 const admin = {
-  first_name: 'Test First Name',
+  first_name: 'Test First Name 1',
   email: 'testing95281@gmail.com',
-  last_name: 'Test Last Name',
-  position: 'tester admin',
-  phone: 37477112233,
+  last_name: 'Test Last Name 2',
+  position_id: 'fs3rnaEE23993',
+  phone: 374771122333,
   birthdate: 'date',
+  position: 'developer',
   is_admin: true,
 };
 
 const adminUpdated = {
-  first_name: 'Test First Name Updated',
-  last_name: 'Test Last Name Updated',
-  email: 'testing.updated281@gmail.com',
-  position: 'tester admin',
+  first_name: 'Test First Name Updated 2',
+  last_name: 'Test Last Name Updated 2',
+  email: 'testing.updated228@gmail.com',
+  position_id: 'fs3rnaEE23982',
   birthdate: 'dateUpdated',
-  phone: 37477112233,
+  phone: 374771122333,
+  position: 'developer',
   is_admin: true,
 };
 
 const team = {
-  team_name: 'Team Test 4',
+  team_name: 'Team 0001',
 };
 
 const table = {
-  table_name: 'A',
+  table_name: 'C',
   chairs_count: 6,
   table_config: {}
 };
 
 const reservation = {
-  start_date: '16165416',
-  end_date: '561516451',
+  start_date: '2021-02-21',
+  end_date: '2021-02-22',
   status: 'pending',
 };
 
 const reservationUpdated = {
-  start_date: '16165419',
-  end_date: '561516452',
+  start_date: '1616541933',
+  end_date: '56151645244',
   status: 'pending',
 };
 
@@ -67,11 +71,9 @@ const hack = '[][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[])[+[]
 
 module.exports = {
   reservationUpdated,
-  JWT_SECRET_KEY,
   adminUpdated,
   userUpdated,
   reservation,
-  DB_URI,
   table,
   admin,
   user,
