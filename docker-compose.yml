@@ -37,6 +37,7 @@ services:
         max_replicas_per_node: 2
     depends_on:
       - mongo
+      - redis
     secrets: 
       - API_VERSION
       - PORT
