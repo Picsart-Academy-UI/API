@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const { before, after, it } = require('mocha');
 const { connectDB: connect } = require('booking-db');
+
 const {
   generateToken,
   createAdmin,
@@ -12,6 +13,7 @@ const {
   deleteTeam,
   createUser,
   deleteUser,
+  deleteAllDataFromDb
 } = require('./_mocks');
 const { DB_URI } = require('./_config');
 
@@ -24,6 +26,11 @@ let user = {};
 before('Connect to Database and create mock data', async function () {
   this.timeout(5000);
   await connect(DB_URI);
+
+  // deleting data
+  deleteAllDataFromDb();
+
+
   it('create new a team', async () => {
     team = await createTeam();
     this.team = team;
@@ -46,7 +53,7 @@ before('Connect to Database and create mock data', async function () {
   });
 
   it('create a chair', async () => {
-    chair = await createChair(this.table._id);
+    chair = await createChair(1, this.table._id);
     this.chair = chair;
   });
 
@@ -58,8 +65,6 @@ before('Connect to Database and create mock data', async function () {
     this.adminToken = await generateToken(user);
     this.userToken = await generateToken(nonAdminUser);
   });
-
-  // if process
 });
 
 after('Clean up', async function () {

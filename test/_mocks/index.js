@@ -3,6 +3,14 @@ const { User, Team, Table, Chair } = require('booking-db');
 
 const { admin, user, team, table } = require('./data');
 
+async function deleteAllDataFromDb() {
+  await Team.deleteOne({ team_name: team.team_name});
+  await User.deleteOne({ email: user.email});
+  await User.deleteOne({ email: admin.email});
+  await Table.deleteOne({ table_name: table.table_name});
+  await Chair.deleteOne({number: 1});
+}
+
 async function createUser(team_id) {
   const createdUser = await User.create({ ...user, team_id });
   return createdUser;
@@ -32,7 +40,7 @@ async function getTeam(name) {
   const foundTeam = await Team.findOne({team_name: name}).exec();
   return foundTeam;
 }
-async function createChair(table_id, number = 1) {
+async function createChair(number = 1, table_id) {
   const createdChair = await Chair.create({ number, table_id });
   return createdChair;
 }
@@ -69,6 +77,7 @@ async function decodeToken(token) {
 }
 
 module.exports = {
+  deleteAllDataFromDb,
   createTeam,
   deleteTeam,
   createUser,

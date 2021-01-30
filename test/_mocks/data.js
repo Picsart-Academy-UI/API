@@ -1,3 +1,6 @@
+const DB_URI = 'mongodb+srv://armen:chairs123@chairs-app-test.qduod.mongodb.net/chairs?retryWrites=true&w=majority';
+const JWT_SECRET_KEY = 'Picsart2020';
+
 const user = {
   first_name: 'Test First Name User 2',
   last_name: 'Test Last Name User 2',
@@ -12,8 +15,8 @@ const user = {
 const userUpdated = {
   first_name: 'Test First Name User Updated',
   last_name: 'Test Last Name User Updated',
-  email: 'testingUserUpdated28@gmail.com',
-  position_id: 'fs3rnaEE23d9',
+  email: 'testingUserUpdated281@gmail.com',
+  position: 'test QA',
   phone: 37477112233,
   birthdate: 'date',
   position: 'developer',
