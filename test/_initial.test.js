@@ -46,7 +46,7 @@ before('Connect to Database and create mock data', async function () {
   });
 
   it('create a chair', async () => {
-    chair = await createChair();
+    chair = await createChair(this.table._id);
     this.chair = chair;
   });
 
