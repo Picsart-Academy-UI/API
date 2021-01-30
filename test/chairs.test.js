@@ -123,7 +123,7 @@ describe('chairs', () => {
     });
     it('non-admin user shouldn\'t be able to delete a chair', async function () {
       const { _id } = this.table;
-      chair3 = await createChair(_id, 2);
+      chair3 = await createChair(2, _id);
       await request(app).delete(`/api/v1/chairs/${chair3._id}`)
         .set('Authorization', `Bearer ${this.userToken}`)
         .then((res) => {

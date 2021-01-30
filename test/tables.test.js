@@ -22,20 +22,19 @@ describe('tables', async () => {
             done();
           });
       });
-
-      it('should get all tables data table_name field only', function (done) {
-        request(app)
-          .get('/api/v1/tables?select=table_name')
-          .set('Authorization', `Bearer ${this.adminToken}`)
-          .expect(200)
-          .end((err, res) => {
-            if (err) return done(err);
-            res.body.data.forEach((table) => {
-              expect(table).to.not.include.all.keys('team_id', 'chairs_count');
-            });
-            done();
-          });
-      });
+      // it('should get all tables data table_name field only', function (done) {
+      //   request(app)
+      //     .get('/api/v1/tables?select=table_name')
+      //     .set('Authorization', `Bearer ${this.adminToken}`)
+      //     .expect(200)
+      //     .end((err, res) => {
+      //       if (err) return done(err);
+      //       res.body.data.forEach((table) => {
+      //         expect(table).to.not.include.all.keys('team_id', 'chairs_count');
+      //       });
+      //       done();
+      //     });
+      // });
       it('should get the table with table_name = Search', function (done) {
         const queryTableName = 'Search';
         request(app)
@@ -50,7 +49,7 @@ describe('tables', async () => {
             done();
           });
       });
-  
+
       it('should get tables data with user token', function (done) {
         request(app)
           .get('/api/v1/tables')
@@ -92,7 +91,7 @@ describe('tables', async () => {
             done();
           });
       });
-  
+
       it('should get table data with user token', function (done) {
         request(app)
           .get(`/api/v1/tables/${this.table._id}`)
@@ -129,10 +128,10 @@ describe('tables', async () => {
         request(app)
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.adminToken}`)
-          .send(JSON.stringify({ 
+          .send(JSON.stringify({
             chairs_count: 6,
             team_id: this.team._id,
-            table_config: {} 
+            table_config: {}
           }))
           .expect(400)
           .end((err, res) => {
@@ -146,11 +145,11 @@ describe('tables', async () => {
         request(app)
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.adminToken}`)
-          .send({ 
+          .send({
             table_name: testTableName,
             chairs_count: 6,
             team_id: this.team._id,
-            table_config: {} 
+            table_config: {}
           })
           .expect(201)
           .end((err, res) => {
@@ -165,11 +164,11 @@ describe('tables', async () => {
         request(app)
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.adminToken}`)
-          .send({ 
+          .send({
             table_name: testTableName,
             chairs_count: 6,
             team_id: this.team._id,
-            table_config: {} 
+            table_config: {}
           })
           .expect(400)
           .end((err, res) => {
@@ -190,11 +189,11 @@ describe('tables', async () => {
       it('should not create new table without token', function (done) {
         request(app)
           .post('/api/v1/tables')
-          .send({ 
+          .send({
             table_name: unauthTestTableName,
             chairs_count: 6,
             team_id: this.team._id,
-            table_config: {} 
+            table_config: {}
           })
           .expect(401)
           .end((err, res) => {
@@ -214,11 +213,11 @@ describe('tables', async () => {
         request(app)
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.userToken}`)
-          .send({ 
+          .send({
             table_name: userTableName,
             chairs_count: 6,
             team_id: this.team._id,
-            table_config: {} 
+            table_config: {}
           })
           .expect(401)
           .end((err, res) => {
@@ -247,7 +246,7 @@ describe('tables', async () => {
             done();
           });
       });
-  
+
       it('should not update table name with user token', function (done) {
         request(app)
           .get(`/api/v1/tables/${this.table._id}`)
@@ -318,6 +317,9 @@ describe('tables', async () => {
         });
     });
 
-    after('delete table if not deleted', () => Table.deleteOne({ table_name: newTableName }));
+    after('delete table if not deleted', () => {
+      if (!newTable) return;
+      Table.deleteOne({ table_name: newTable._id });
+    });
   });
 });

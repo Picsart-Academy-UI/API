@@ -36,10 +36,6 @@ async function createTeam() {
   return createdTeam;
 }
 
-async function getTeam(name) {
-  const foundTeam = await Team.findOne({team_name: name}).exec();
-  return foundTeam;
-}
 async function createChair(number = 1, table_id) {
   const createdChair = await Chair.create({ number, table_id });
   return createdChair;
