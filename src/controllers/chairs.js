@@ -26,7 +26,7 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 });
 
 exports.update = asyncHandler(async (req, res, next) => {
-  const chair = await Chair.findOneAndUpdate(
+  const chair = await Chair.findByIdAndUpdate(
     { _id: req.params.chair_id },
     { $set: req.body },
     { new: true, runValidators: true },
