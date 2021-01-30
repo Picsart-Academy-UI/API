@@ -19,7 +19,6 @@ const userUpdated = {
   position: 'test QA',
   phone: 37477112233,
   birthdate: 'date',
-  position: 'developer',
   is_admin: false,
 };
 
