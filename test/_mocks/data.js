@@ -53,8 +53,8 @@ const table = {
 };
 
 const reservation = {
-  start_date: '161654162',
-  end_date: '5615164512',
+  start_date: '2021-02-21',
+  end_date: '2021-02-22',
   status: 'pending',
 };
 
