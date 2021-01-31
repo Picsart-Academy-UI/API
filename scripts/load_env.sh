@@ -1,25 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-set -e
+SECRET_DIR="/run/secrets/" 
+for FILE in $(ls $SECRET_DIR); do export "$FILE"=$(cat "$SECRET_DIR/$FILE"); done
 
-file_env() {
-   local var="$1"
-   local fileVar="${var}"
-   local def="${2:-}"
-
-   if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
-      echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
-      exit 1
-   fi
-   local val="$def"
-   if [ "${!var:-}" ]; then
-      val="${!var}"
-   elif [ "${!fileVar:-}" ]; then
-      val="$(< "${!fileVar}")"
-   fi
-   export "$var"="$val"
-   unset "$fileVar"
-}
-
-cd /run/secrets/
-for FILE in *; do file_env $FILE; done
