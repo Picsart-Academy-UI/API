@@ -10,6 +10,4 @@ COPY . .
 
 EXPOSE 3001
 
-ENTRYPOINT [ "./scripts/load_env.sh" ]
-
 CMD ["npm", "start"]
