@@ -12,7 +12,7 @@ services:
           - node.role == manager
       resources:
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 20M
     ports:
       - "27017:27017"
@@ -38,7 +38,7 @@ services:
     depends_on:
       - mongo
       - redis
-    secrets: 
+    secrets:
       - API_VERSION
       - PORT
       - MONGO_URI
@@ -250,12 +250,16 @@ services:
       - backend_net
   visualizer:
     image: dockersamples/visualizer
+    ports:
+      - "5000:8080" 
     networks:
       - backend_net
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "5000:8080"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 networks:
   frontend:
     external:
