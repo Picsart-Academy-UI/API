@@ -50,7 +50,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndChairs'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndChairs', 'from', 'to'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'

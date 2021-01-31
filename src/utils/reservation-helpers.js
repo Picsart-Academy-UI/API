@@ -257,12 +257,13 @@ exports.seeLoadReservations = async (req, next) => {
     const a = moment1(start_date);
     const b = moment1(end_date);
 
+
     if (a > b) return next(new BadRequest('Start date cannot be bigger than end date '));
-    const diff = b.diff(a, 'days');
+    const diff = b.diff(a, 'days') + 1;
     if (diff > 32) return next(new BadRequest('Max range is 31 days'));
     const results = await Reservation.find({
         $and: [
-          { start_date: { $gte: new Date(start_date) } },
+          { end_date: { $gte: new Date(start_date) } },
           { start_date: { $lte: new Date(end_date) } }
         ],
         team_id,
