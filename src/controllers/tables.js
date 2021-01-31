@@ -1,15 +1,13 @@
-const { Table, Chair } = require('booking-db');
+const { Table } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
+const { createChairs } = require('../utils/createChairs');
 const { buildQuery, getPagination } = require('../utils/util');
-
-const {createChairs} = require('../utils/createChairs');
-
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
 exports.create = asyncHandler(async (req, res, next) => {
   const table = await Table.create(req.body);
-  const createdChairs = await createChairs(table);
+  await createChairs(table);
   return res.status(201).json({ data: table });
 });
 
@@ -19,6 +17,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 
   const tables = await Table
     .find()
+    .populate({ path: 'chairs', select: '_id number -table_id' })
     .lean()
     .exec();
 
