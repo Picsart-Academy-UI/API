@@ -2,7 +2,6 @@ const moment = require('moment-timezone');
 const { Reservation } = require('booking-db');
 
 const moment1 = require('moment');
-const momentTimezone = require('moment-timezone');
 
 const { Conflict, NotFound, MethodNotAllowed, BadRequest } = require('./errorResponse');
 
@@ -11,6 +10,9 @@ const format = 'YYYY-MM-DD';
 const getToday = () => moment().tz('Asia/Yerevan').format(format);
 
 const formatDate = (date) => moment(date).format(format);
+
+const addOneDay = (date) => moment(date).add(1, 'day').format(format);
+
 
 const checkWeekends = (reservation) => {
     const {start_date, end_date} = reservation;
@@ -272,12 +274,12 @@ exports.seeLoadReservations = async (req, next) => {
 
     const arr = [];
     // eslint-disable-next-line no-plusplus
-    let acc = momentTimezone(start_date);
+    let acc = moment(start_date);
     for (let i = 0; i < diff; i++) {
         const start = acc.format(format);
         const count = results.filter((i) => {
-            const momentStart = momentTimezone(i.start_date).format(format);
-            const momentEnd = momentTimezone(i.end_date).format(format);
+            const momentStart = moment(i.start_date).format(format);
+            const momentEnd = moment(i.end_date).format(format);
             return start >= momentStart && momentEnd >= start;
         }).length;
         arr.push({[start]: count});
@@ -288,3 +290,5 @@ exports.seeLoadReservations = async (req, next) => {
 
 exports.getToday = getToday;
 exports.formatDate = formatDate;
+exports.addOneDay = addOneDay;
+exports.getPlainReservation = getPlainReservation;
