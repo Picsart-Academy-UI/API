@@ -12,7 +12,7 @@ services:
           - node.role == manager
       resources:
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 20M
     ports:
       - "27017:27017"
@@ -38,7 +38,7 @@ services:
     depends_on:
       - mongo
       - redis
-    secrets: 
+    secrets:
       - API_VERSION
       - PORT
       - MONGO_URI
