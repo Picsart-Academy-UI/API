@@ -8,7 +8,7 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js ./src",
     "lint:fix": "node ./node_modules/eslint/bin/eslint.js ./src --fix",
     "precommit": "node ./node_modules/eslint/bin/eslint.js ./src",
-    "test": "mocha test --exit",
+    "test": "MONGO_URI='mongodb+srv://armen:chairs123@chairs-app-test.qduod.mongodb.net/chairs?retryWrites=true&w=majority' mocha test --exit",
     "test:only": "mocha ./test/_initial.test.js ./test/$npm_config_file.test.js --exit"
   },
   "repository": {

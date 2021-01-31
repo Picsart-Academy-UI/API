@@ -9,6 +9,7 @@ const {
   deleteTable,
   createChair,
   deleteChair,
+  deleteAllChairs,
   createTeam,
   deleteTeam,
   createUser,
@@ -53,7 +54,7 @@ before('Connect to Database and create mock data', async function () {
   });
 
   it('create a chair', async () => {
-    chair = await createChair(1, this.table._id);
+    chair = await createChair(11, this.table._id);
     this.chair = chair;
   });
 
@@ -64,6 +65,7 @@ before('Connect to Database and create mock data', async function () {
     expect(user).to.contain.property('is_admin');
     this.adminToken = await generateToken(user);
     this.userToken = await generateToken(nonAdminUser);
+    // console.log(this.adminToken);
   });
 });
 
@@ -83,5 +85,5 @@ after('Clean up', async function () {
   await deleteTable(table._id);
 
   expect(chair).to.contain.property('_id');
-  await deleteChair(chair._id);
+  await deleteAllChairs();
 });
