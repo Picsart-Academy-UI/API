@@ -35,7 +35,8 @@ connectDB(process.env.MONGO_URI).then( async (connection) => {
 }).catch((err) => {
   console.error(err);
   process.exit(1);
-} );
+});
+
 
 
 
