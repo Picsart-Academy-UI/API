@@ -42,7 +42,6 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
   const count = await User.countDocuments(queryObject);
 
   // Pagination Logic & dynamic select of fields
-  // eslint-disable-next-line max-len
   const { pagination, query } = getPagination(
     req.query.page, req.query.limit, count, req, initialQuery
   );
@@ -98,7 +97,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) return next(new NotFound('User not found.'));
 
   return res.status(200).json({
     message: 'User has successfully been deleted.'
@@ -115,7 +114,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) return next(new NotFound('User not found.'));
 
   return res.status(200).json({
     data: user

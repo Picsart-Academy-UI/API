@@ -1,11 +1,11 @@
-const {User: UserModel} = require('booking-db');
+const { User: UserModel } = require('booking-db');
 
-const {asyncHandler} = require('./asyncHandler');
-const {ErrorResponse} = require('../utils/errorResponse');
-const {decodeToken} = require('../utils/util');
+const { asyncHandler } = require('./asyncHandler');
+const { ErrorResponse } = require('../utils/errorResponse');
+const { decodeToken } = require('../utils/util');
 
 module.exports = asyncHandler(async (req, res, next) => {
-  const {authorization} = req.headers;
+  const { authorization } = req.headers;
   let token;
   if (authorization && authorization.startsWith('Bearer')) {
     token = authorization.split(' ')[1];

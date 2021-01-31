@@ -1,6 +1,6 @@
-const {User} = require('booking-db');
-const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
+const { User } = require('booking-db');
+const { OAuth2Client } = require('google-auth-library');
 
 const mailer = require('./mailer');
 
@@ -50,7 +50,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndChairs'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndChairs', 'from', 'to'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
@@ -76,11 +76,11 @@ function formatQuery(query) {
 }
 
 exports.buildQuery = (query) => {
-  const result = {...query};
+  const result = { ...query };
   excluded_fields.forEach((field) => delete result[field]);
   Object.keys(result).forEach((k) => {
     // eslint-disable-next-line no-bitwise
-    if (~result[k].indexOf(',')){
+    if (~result[k].indexOf(',')) {
       result[k] = {$in: result[k].split(',')};
     }
   });
@@ -126,14 +126,14 @@ exports.createUserAndSendEmail = async (userProperties) => {
 };
 
 exports.verifyIdToken = (idToken) => {
-  return client.verifyIdToken({idToken, audience: process.env.GOOGLE_CLIENT_ID});
+  return client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID });
 };
 
 exports.findUserByEmailAndUpdate = async (email, photo_url) => {
-  return User.findOneAndUpdate({email}, {
+  return User.findOneAndUpdate({ email }, {
     profile_picture: photo_url,
     accepted: true
-  }, {new: true, runValidators: true}).lean().exec();
+  }, { new: true, runValidators: true }).lean().exec();
 };
 
 exports.findUserByIdAndUpdate = (id, req) => {
@@ -148,7 +148,7 @@ exports.getJwt = (user) => {
     email: user.email,
     team_id: user.team_id,
     is_admin: user.is_admin
-  }, process.env.JWT_SECRET, {expiresIn: process.env.JWTEXPIERYTIME || '5h'});
+  }, process.env.JWT_SECRET, { expiresIn: process.env.JWTEXPIERYTIME || '5h' });
 };
 
 exports.decodeToken = (token) => {

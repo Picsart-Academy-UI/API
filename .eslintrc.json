@@ -34,6 +34,7 @@
       "object": true,
       "array": false
     }],
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "no-mixed-operators": "off"
   }
 }
