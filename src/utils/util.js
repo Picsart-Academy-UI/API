@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('booking-db');
+const { User, Chair } = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
+
 
 const mailer = require('./mailer');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
   let queryRef = query;
@@ -154,5 +157,8 @@ exports.getJwt = (user) => {
 exports.decodeToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
+
+
+
 
 exports.getUserProperties = getUserProperties;
