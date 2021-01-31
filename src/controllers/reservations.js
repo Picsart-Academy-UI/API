@@ -47,24 +47,24 @@ exports.update = asyncHandler(async (req, res) => {
 exports.getAll = asyncHandler(async (req, res) => {
     let initialQuery;
     let queryObject = buildQuery(req.query);
-    if (!req.user.is_admin) queryObject = {...queryObject, team_id: req.user.team_id};
+    if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
     if (req.query.include_usersAndChairs) {
         initialQuery = Reservation.find(queryObject).populate({
             path: 'user_id',
-            select: 'first_name last_name is_admin email position profile_picture position'})
-            .populate({path: 'chair_id', select: 'number'});
+            select: 'first_name last_name is_admin email position profile_picture position'
+        }).populate({ path: 'chair_id', select: 'number' });
     } else {
         initialQuery = Reservation.find(queryObject);
     }
     const count = await Reservation.countDocuments(queryObject);
 
-    const {pagination, query} = getPagination(
+    const { pagination, query } = getPagination(
         req.query.page, req.query.limit, count, req, initialQuery
     );
 
     const reservations = await query.lean().exec();
 
-    return res.status(200).json({data: reservations, count, pagination});
+    return res.status(200).json({ data: reservations, count, pagination });
 });
 
 // @desc  get reservation
