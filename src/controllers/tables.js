@@ -1,4 +1,4 @@
-const { Table } = require('booking-db');
+const { Table, Chair } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
 const { buildQuery, getPagination } = require('../utils/util');
