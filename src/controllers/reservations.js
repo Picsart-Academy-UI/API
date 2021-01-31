@@ -53,6 +53,7 @@ exports.getAll = asyncHandler(async (req, res) => {
     if (req.query.to){
         // eslint-disable-next-line max-len
         queryObject = {...queryObject, $and: [...queryObject.$and || [], { start_date: { $lte: new Date(req.query.to)}}]}
+
     }
     if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
     if (req.query.include_usersAndChairs) {
