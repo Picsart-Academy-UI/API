@@ -60,7 +60,7 @@ exports.getAll = asyncHandler(async (req, res) => {
             path: 'user_id',
             select: 'first_name last_name is_admin email position profile_picture position'
         }).populate({ path: 'chair_id', select: 'number' })
-            .populate({path: 'table_id', select: 'table_name'});
+            .populate({path: 'table_id', select: 'table_number'});
     } else {
         initialQuery = Reservation.find(queryObject);
     }
