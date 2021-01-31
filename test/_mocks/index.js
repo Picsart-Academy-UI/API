@@ -7,8 +7,8 @@ async function deleteAllDataFromDb() {
   await Team.deleteOne({ team_name: team.team_name});
   await User.deleteOne({ email: user.email});
   await User.deleteOne({ email: admin.email});
-  await Table.deleteOne({ table_name: table.table_name});
-  await Chair.deleteOne({number: 1});
+  await Table.deleteOne({table_number: table.table_number});
+  await Chair.deleteMany({});
 }
 
 async function createUser(team_id) {
@@ -37,13 +37,17 @@ async function createTeam() {
 }
 
 async function createChair(number = 1, table_id) {
-  const createdChair = await Chair.create({ number, table_id });
+  const createdChair = await Chair.create({ number, table_id});
   return createdChair;
 }
 
 async function deleteChair(id) {
   const deletedChair = await Chair.deleteOne({ _id: id });
   return deletedChair;
+}
+async function deleteAllChairs() {
+  const deletedChairs = await Chair.deleteMany({});
+  return deletedChairs;
 }
 
 async function deleteTeam(id) {
@@ -83,6 +87,7 @@ module.exports = {
   createChair,
   deleteTable,
   deleteChair,
+  deleteAllChairs,
   decodeToken,
   generateToken,
 };

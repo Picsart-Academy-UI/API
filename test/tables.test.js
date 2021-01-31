@@ -22,34 +22,19 @@ describe('tables', async () => {
             done();
           });
       });
-      // it('should get all tables data table_name field only', function (done) {
-      //   request(app)
-      //     .get('/api/v1/tables?select=table_name')
-      //     .set('Authorization', `Bearer ${this.adminToken}`)
-      //     .expect(200)
-      //     .end((err, res) => {
-      //       if (err) return done(err);
-      //       res.body.data.forEach((table) => {
-      //         expect(table).to.not.include.all.keys('team_id', 'chairs_count');
-      //       });
-      //       done();
-      //     });
-      // });
-      it('should get the table with table_name = Search', function (done) {
-        const queryTableName = 'Search';
+      it('should get all tables data table_number field only', function (done) {
         request(app)
-          .get(`/api/v1/tables?table_name=${queryTableName}`)
+          .get('/api/v1/tables?select=table_number')
           .set('Authorization', `Bearer ${this.adminToken}`)
           .expect(200)
           .end((err, res) => {
             if (err) return done(err);
             res.body.data.forEach((table) => {
-                expect(table.table_name).to.be.equal(queryTableName);
+              expect(table).to.not.include.all.keys('team_id', 'chairs_count');
             });
             done();
           });
       });
-
       it('should get tables data with user token', function (done) {
         request(app)
           .get('/api/v1/tables')
@@ -122,9 +107,9 @@ describe('tables', async () => {
 
   describe('POST /api/v1/tables', () => {
     describe('Authorized', () => {
-      const testTableName = 'Test table 5';
+      const testTableName = 22;
 
-      it('should not create new table without table_name', function (done) {
+      it('should not create new table without table_number', function (done) {
         request(app)
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.adminToken}`)
@@ -141,12 +126,12 @@ describe('tables', async () => {
           });
       });
 
-      it('should create new table with the given name', function (done) {
+      it('should create new table with the given number', function (done) {
         request(app)
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.adminToken}`)
           .send({
-            table_name: testTableName,
+            table_number: 22,
             chairs_count: 6,
             team_id: this.team._id,
             table_config: {}
@@ -156,41 +141,22 @@ describe('tables', async () => {
             if (err) {
               return done(err);
             }
-            expect(res.body.data.table_name).to.be.equal(testTableName);
-            done();
-          });
-      });
-      it('should get error 400 when creating table with same name', function (done) {
-        request(app)
-          .post('/api/v1/tables')
-          .set('Authorization', `Bearer ${this.adminToken}`)
-          .send({
-            table_name: testTableName,
-            chairs_count: 6,
-            team_id: this.team._id,
-            table_config: {}
-          })
-          .expect(400)
-          .end((err, res) => {
-            if (err) {
-              expect(res.body.err).to.be.equal(`Duplicate {"table_name":"${testTableName}"} field value entered.`);
-              return done(err);
-            }
+            expect(res.body.data.table_number).to.be.equal(testTableName);
             done();
           });
       });
 
-      after('delete created table', () => Table.deleteOne({ table_name: testTableName }));
+      after('delete created table', () => Table.deleteOne({ table_number: testTableName }));
     });
 
     describe('Unauthorized', () => {
-      const unauthTestTableName = 'unauth test table 12';
+      const unauthTestTableName = 23;
 
       it('should not create new table without token', function (done) {
         request(app)
           .post('/api/v1/tables')
           .send({
-            table_name: unauthTestTableName,
+            table_number: unauthTestTableName,
             chairs_count: 6,
             team_id: this.team._id,
             table_config: {}
@@ -202,11 +168,11 @@ describe('tables', async () => {
           });
       });
 
-      after('delete the table if created', () => Table.deleteOne({ table_name: unauthTestTableName }));
+      after('delete the table if created', () => Table.deleteOne({ table_number: unauthTestTableName }));
     });
 
     describe('', () => {
-      const userTableName = 'unauth test table 12';
+      const userTableName = 24;
 
       it('should not create table with user token', function (done) {
         this.timeout(5000);
@@ -214,7 +180,7 @@ describe('tables', async () => {
           .post('/api/v1/tables')
           .set('Authorization', `Bearer ${this.userToken}`)
           .send({
-            table_name: userTableName,
+            table_number: userTableName,
             chairs_count: 6,
             team_id: this.team._id,
             table_config: {}
@@ -226,19 +192,19 @@ describe('tables', async () => {
           });
       });
 
-      after('delete the table if created', () => Table.deleteOne({ table_name: userTableName }));
+      after('delete the table if created', () => Table.deleteOne({ table_number: userTableName }));
     });
   });
 
   describe('PUT /api/v1/tables/:table_id', () => {
-    const newTableName = 'test new table name';
+    const newTableName = 25;
 
     describe('Authorized', () => {
-      it('should update table name', function (done) {
+      it('should update table chairs count', function (done) {
         request(app)
           .get(`/api/v1/tables/${this.table._id}`)
           .set('Authorization', `Bearer ${this.adminToken}`)
-          .send(JSON.stringify({ table_name: newTableName }))
+          .send(JSON.stringify({ chairs_count: 5 }))
           .expect(200)
           .end((err, res) => {
             if (err) return done(err);
@@ -247,11 +213,11 @@ describe('tables', async () => {
           });
       });
 
-      it('should not update table name with user token', function (done) {
+      it('should not update table data with user token', function (done) {
         request(app)
           .get(`/api/v1/tables/${this.table._id}`)
           .set('Authorization', `Bearer ${this.userToken}`)
-          .send(JSON.stringify({ table_name: 'newTableName2' }))
+          .send(JSON.stringify({ chairs_count: 4 }))
           .expect(401)
           .end((err, res) => {
             if (err) return done(err);
@@ -261,10 +227,10 @@ describe('tables', async () => {
     });
 
     describe('Unauthorized', () => {
-      it('should not update table name without token', function (done) {
+      it('should not update table data without token', function (done) {
         request(app)
           .get(`/api/v1/tables/${this.table._id}`)
-          .send(JSON.stringify({ table_name: 'newTableName3' }))
+          .send(JSON.stringify({ chairs_count: 7 }))
           .expect(401)
           .end((err, res) => {
             if (err) return done(err);
@@ -277,10 +243,11 @@ describe('tables', async () => {
 
   describe('DELETE /api/v1/tables/:table_id', () => {
     let newTable;
-    const newTableName = 'Table delete Test 2';
-    beforeEach('creating team to delete', async () => {
+    const newTableName = 30;
+    beforeEach('creating team to delete', async function () {
       newTable = await Table.create({
-        table_name: newTableName,
+        table_number: newTableName,
+        team_id: this.team._id
       });
     });
 
@@ -319,7 +286,7 @@ describe('tables', async () => {
 
     after('delete table if not deleted', () => {
       if (!newTable) return;
-      Table.deleteOne({ table_name: newTable._id });
+      Table.deleteOne({ _id: newTable._id });
     });
   });
 });

@@ -17,7 +17,7 @@ describe('chairs', () => {
       it('admin user creates a chair', async function () {
         await request(app).post('/api/v1/chairs')
           .set('Authorization', `Bearer ${this.adminToken}`)
-          .send({ number: 2, table_id: this.table._id })
+          .send({ number: 12, table_id: this.table._id, prop: 'test' })
           .expect('Content-Type', /json/)
           .then((res) => {
             expect(res.body).to.have.property('data');
@@ -27,7 +27,7 @@ describe('chairs', () => {
       it('non-admin user shouldn\'t create a chair', async function () {
         await request(app).post('/api/v1/chairs')
           .set('Authorization', `Bearer ${this.userToken}`)
-          .send({ number: 3, table_id: this.table._id })
+          .send({ number: 13, table_id: this.table._id, prop: 'test' })
           .expect('Content-Type', /json/)
           .then((res) => {
             chair2 = res.body.data;
@@ -50,7 +50,6 @@ describe('chairs', () => {
     describe('Authorized', () => {
       it('admin user gets created chair', async function () {
         const { _id } = chair;
-        console.log('this.table._id', this.table._id);
         await request(app).get(`/api/v1/chairs/${_id}`)
           .set('Authorization', `Bearer ${this.adminToken}`)
           .expect('Content-Type', /json/)
@@ -97,7 +96,7 @@ describe('chairs', () => {
       const { _id } = chair;
       await request(app).put(`/api/v1/chairs/${_id}`)
         .set('Authorization', `Bearer ${this.adminToken}`)
-        .send({ number: 6 })
+        .send({ number: 26 })
         .then((res) => {
           expect(res.body).to.have.property('data');
         });
@@ -106,7 +105,7 @@ describe('chairs', () => {
       const { _id } = chair;
       await request(app).put(`/api/v1/chairs/${_id}`)
         .set('Authorization', `Bearer ${this.userToken}`)
-        .send({ number: 6 })
+        .send({ number: 36 })
         .then((res) => {
           expect(res.body).to.have.property('error');
         });
@@ -123,17 +122,12 @@ describe('chairs', () => {
     });
     it('non-admin user shouldn\'t be able to delete a chair', async function () {
       const { _id } = this.table;
-      chair3 = await createChair(2, _id);
+      chair3 = await createChair(14, _id);
       await request(app).delete(`/api/v1/chairs/${chair3._id}`)
         .set('Authorization', `Bearer ${this.userToken}`)
         .then((res) => {
           expect(res.body).to.have.property('error');
         });
     });
-  });
-  after(async () => {
-    await deleteChair(chair.id);
-    await deleteChair(chair2.id);
-    await deleteChair(chair3.id);
   });
 });
