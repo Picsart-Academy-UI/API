@@ -14,9 +14,9 @@ const formatDate = (date) => moment(date).format(format);
 
 const checkWeekends = (reservation) => {
     const {start_date, end_date} = reservation;
-    let d1 = new Date(start_date),
-        d2 = new Date(end_date),
-        isWeekend = false;
+    const d1 = new Date(start_date),
+        d2 = new Date(end_date);
+        let isWeekend = false;
     while (d1 <= d2) {
         const day = d1.getDay();
         isWeekend = (day === 6) || (day === 0);
@@ -256,6 +256,7 @@ exports.seeLoadReservations = async (req, next) => {
     const {start_date, end_date, team_id} = req.query;
     const a = moment1(start_date);
     const b = moment1(end_date);
+
     if (a > b) return next(new BadRequest('Start date cannot be bigger than end date '));
     const diff = b.diff(a, 'days');
     if (diff > 32) return next(new BadRequest('Max range is 31 days'));
@@ -267,6 +268,7 @@ exports.seeLoadReservations = async (req, next) => {
         team_id,
         status: 'approved'
     }).select('start_date end_date').lean().exec();
+
     const arr = [];
     // eslint-disable-next-line no-plusplus
     let acc = momentTimezone(start_date);
