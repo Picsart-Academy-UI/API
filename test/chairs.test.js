@@ -1,6 +1,7 @@
 const { describe, it, after } = require('mocha');
 const request = require('supertest');
 const { expect } = require('chai');
+const { ErrorResponse } = require('../src/utils/errorResponse');
 
 const { createChair, deleteChair } = require('./_mocks');
 
@@ -16,7 +17,7 @@ describe('chairs', () => {
       it('admin user creates a chair', async function () {
         await request(app).post('/api/v1/chairs')
           .set('Authorization', `Bearer ${this.adminToken}`)
-          .send({ number: 2 })
+          .send({ number: 2, table_id: this.table._id })
           .expect('Content-Type', /json/)
           .then((res) => {
             expect(res.body).to.have.property('data');
@@ -26,11 +27,11 @@ describe('chairs', () => {
       it('non-admin user shouldn\'t create a chair', async function () {
         await request(app).post('/api/v1/chairs')
           .set('Authorization', `Bearer ${this.userToken}`)
-          .send({ number: 3 })
+          .send({ number: 3, table_id: this.table._id })
           .expect('Content-Type', /json/)
           .then((res) => {
             chair2 = res.body.data;
-            expect(res.body).to.have.property('error');
+            expect(res.body).not.to.have.property('data');
           });
       });
     });
@@ -49,6 +50,7 @@ describe('chairs', () => {
     describe('Authorized', () => {
       it('admin user gets created chair', async function () {
         const { _id } = chair;
+        console.log('this.table._id', this.table._id);
         await request(app).get(`/api/v1/chairs/${_id}`)
           .set('Authorization', `Bearer ${this.adminToken}`)
           .expect('Content-Type', /json/)
@@ -120,9 +122,9 @@ describe('chairs', () => {
         });
     });
     it('non-admin user shouldn\'t be able to delete a chair', async function () {
-      chair3 = await createChair(4);
-      const { _id } = chair3;
-      await request(app).delete(`/api/v1/chairs/${_id}`)
+      const { _id } = this.table;
+      chair3 = await createChair(2, _id);
+      await request(app).delete(`/api/v1/chairs/${chair3._id}`)
         .set('Authorization', `Bearer ${this.userToken}`)
         .then((res) => {
           expect(res.body).to.have.property('error');
@@ -130,8 +132,8 @@ describe('chairs', () => {
     });
   });
   after(async () => {
-    await deleteChair(chair._id);
-    await deleteChair(chair2._id);
-    await deleteChair(chair3._id);
+    await deleteChair(chair.id);
+    await deleteChair(chair2.id);
+    await deleteChair(chair3.id);
   });
 });

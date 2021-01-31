@@ -4,13 +4,14 @@ const {
 } = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
+  console.log(err);
   let error = { ...err };
   error.message = err.message;
 
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
-    const message = `The requested URL: ${req.path} was not found on this server`;
-    // const { message } = err;
+    // const message = `The requested URL: ${req.path} was not found on this server`;
+    const { message } = err;
     error = new ErrorResponse(message, 404);
   }
 
@@ -25,13 +26,13 @@ const errorHandler = (err, req, res, next) => {
     const errValStr = JSON.stringify(err.keyValue);
     const message = `Duplicate ${errValStr} field value entered.`;
     // const { message } = err;
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message, 400);
   }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values(err.errors).map((val) => val.message);
-    error = new ErrorResponse(message, 400);
+    error = new BadRequest(message[0], 400);
   }
   // Bad Request error
   if (err.name === 'BadRequest') {
@@ -73,6 +74,12 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'Conflict') {
     const message = err.message || 'Conflict';
     error = new Conflict(message, 409);
+  }
+
+  if (err.message.startsWith('Unexpected token')){
+    const message = err.message || 'Invalid token';
+    error = new Unauthorized(message);
+
   }
 
   res.status(error.statusCode || 500).json({

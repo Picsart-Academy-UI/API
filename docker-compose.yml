@@ -1,7 +1,6 @@
-version: "3"
+version: "3.8"
 services:
   mongo:
-    container_name: mongo
     image: mongo
     networks:
       backend_net:
@@ -9,29 +8,52 @@ services:
           - mongo
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.role == manager
+      resources:
+        reservations:
+          cpus: "0.25"
+          memory: 20M
     ports:
       - "27017:27017"
     volumes:
       - "db:/data/db"
   api:
-    container_name: api
-    image: lilitkarapetyan/academy-node:test
+    image: lilitkarapetyan/academy-node
     networks:
       - backend_net
     ports:
       - "3001:3001"
+    env_file: .env
     deploy:
       replicas: 4
       update_config:
         parallelism: 1
         delay: 10s
+        order: stop-first
       restart_policy:
         condition: on-failure
-    links:
-      - mongo
+      placement:
+        max_replicas_per_node: 2
     depends_on:
       - mongo
+      - redis
+    secrets:
+      - API_VERSION
+      - PORT
+      - MONGO_URI
+      - SMTP_HOST
+      - SMTP_PORT
+      - MAIL_USER
+      - MAIL_PASSWORD
+      - JWT_SECRET
+      - PUBLIC_VAPID_KEY
+      - PRIVATE_VAPID_KEY
+      - WEBPUSH_MAILTO
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+      - REDIS_HOST
+      - REDIS_PORT
 
   prometheus:
     image: prom/prometheus
@@ -41,10 +63,30 @@ services:
       - 9090:9090
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.role == manager
     networks:
       - backend_net
       - frontend
+
+  alertmanager:
+    image: prom/alertmanager
+    volumes:
+      - /etc/alertmanager:/etc/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/config.yml"
+      - "--storage.path=/alertmanager"
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - backend_net
+      - frontend
+
   manager-001:
     image: prom/node-exporter
     volumes:
@@ -163,7 +205,49 @@ services:
     networks:
       - frontend
       - backend_net
+  swarm-cronjob:
+    image: crazymax/swarm-cronjob
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - "TZ=Asia/Yerevan"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
 
+  reservationchecker:
+    image: lilitkarapetyan/academy-node
+    networks:
+      - backend_net
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false
+    command: bash -c 'cd scripts && node check-reservations.script.js'
+    depends_on:
+      - swarm-cronjob
+    deploy:
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=0 6 * * *"
+        - "swarm.cronjob.skip-running=true"
+      replicas: 0
+      restart_policy:
+        condition: none
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdb:/data/redis
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    command: redis-server --appendonly yes
+    networks:
+      - backend_net
 networks:
   frontend:
     external:
@@ -172,4 +256,37 @@ networks:
 
 volumes:
   db:
+  redisdb:
   grafana-data:
+
+secrets:
+  API_VERSION:
+    file: ./secrets/API_VERSION
+  PORT:
+    file: ./secrets/PORT
+  MONGO_URI:
+    file: ./secrets/MONGO_URI
+  SMTP_HOST:
+    file: ./secrets/SMTP_HOST
+  SMTP_PORT:
+    file: ./secrets/SMTP_PORT
+  MAIL_USER:
+    file: ./secrets/MAIL_USER
+  MAIL_PASSWORD:
+    file: ./secrets/MAIL_PASSWORD
+  JWT_SECRET:
+    file: ./secrets/JWT_SECRET
+  PUBLIC_VAPID_KEY:
+    file: ./secrets/PUBLIC_VAPID_KEY
+  PRIVATE_VAPID_KEY:
+    file: ./secrets/PRIVATE_VAPID_KEY
+  WEBPUSH_MAILTO:
+    file: ./secrets/WEBPUSH_MAILTO
+  GOOGLE_CLIENT_ID:
+    file: ./secrets/GOOGLE_CLIENT_ID
+  GOOGLE_CLIENT_SECRET:
+    file: ./secrets/GOOGLE_CLIENT_SECRET
+  REDIS_HOST:
+    file: ./secrets/REDIS_HOST
+  REDIS_PORT:
+    file: ./secrets/REDIS_PORT
