@@ -23,7 +23,7 @@ describe('users', () => {
         await request(app).get('/api/v1/users/all')
           .set('Authorization', `Bearer ${this.userToken}`)
           .expect('Content-Type', /json/)
-          .expect(500)
+          .expect(401)
           .then((res) => {
             expect(res.body).to.have.property('error');
           });

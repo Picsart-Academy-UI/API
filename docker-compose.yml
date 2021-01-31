@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 services:
   mongo:
     image: mongo
@@ -8,7 +8,12 @@ services:
           - mongo
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.role == manager
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 20M
     ports:
       - "27017:27017"
     volumes:
@@ -19,15 +24,36 @@ services:
       - backend_net
     ports:
       - "3001:3001"
+    env_file: .env
     deploy:
       replicas: 4
       update_config:
         parallelism: 1
         delay: 10s
+        order: stop-first
       restart_policy:
         condition: on-failure
+      placement:
+        max_replicas_per_node: 2
     depends_on:
       - mongo
+      - redis
+    secrets: 
+      - API_VERSION
+      - PORT
+      - MONGO_URI
+      - SMTP_HOST
+      - SMTP_PORT
+      - MAIL_USER
+      - MAIL_PASSWORD
+      - JWT_SECRET
+      - PUBLIC_VAPID_KEY
+      - PRIVATE_VAPID_KEY
+      - WEBPUSH_MAILTO
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+      - REDIS_HOST
+      - REDIS_PORT
 
   prometheus:
     image: prom/prometheus
@@ -217,7 +243,8 @@ services:
       - redisdb:/data/redis
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.role == manager
     command: redis-server --appendonly yes
     networks:
       - backend_net
@@ -231,3 +258,35 @@ volumes:
   db:
   redisdb:
   grafana-data:
+
+secrets:
+  API_VERSION:
+    file: ./secrets/API_VERSION
+  PORT:
+    file: ./secrets/PORT
+  MONGO_URI:
+    file: ./secrets/MONGO_URI
+  SMTP_HOST:
+    file: ./secrets/SMTP_HOST
+  SMTP_PORT:
+    file: ./secrets/SMTP_PORT
+  MAIL_USER:
+    file: ./secrets/MAIL_USER
+  MAIL_PASSWORD:
+    file: ./secrets/MAIL_PASSWORD
+  JWT_SECRET:
+    file: ./secrets/JWT_SECRET
+  PUBLIC_VAPID_KEY:
+    file: ./secrets/PUBLIC_VAPID_KEY
+  PRIVATE_VAPID_KEY:
+    file: ./secrets/PRIVATE_VAPID_KEY
+  WEBPUSH_MAILTO:
+    file: ./secrets/WEBPUSH_MAILTO
+  GOOGLE_CLIENT_ID:
+    file: ./secrets/GOOGLE_CLIENT_ID
+  GOOGLE_CLIENT_SECRET:
+    file: ./secrets/GOOGLE_CLIENT_SECRET
+  REDIS_HOST:
+    file: ./secrets/REDIS_HOST
+  REDIS_PORT:
+    file: ./secrets/REDIS_PORT
