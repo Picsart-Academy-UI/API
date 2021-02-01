@@ -2,12 +2,6 @@ const { Table } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
 const { buildQuery, getPagination } = require('../utils/util');
-<<<<<<< HEAD
-
-const {createChairs} = require('../utils/createChairs');
-
-=======
->>>>>>> 3801004d64cfa52b3ef3d161b443968fbddb9582
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { createChairs, deleteAllChairsInTable } = require('../utils/chairs-helper');
 
@@ -16,11 +10,8 @@ const { createChairs, deleteAllChairsInTable } = require('../utils/chairs-helper
 // @access Private (Admin)
 exports.create = asyncHandler(async (req, res, next) => {
   const table = await Table.create(req.body);
-<<<<<<< HEAD
   const createdChairs = await createChairs(table);
-=======
   await createChairs(table);
->>>>>>> 3801004d64cfa52b3ef3d161b443968fbddb9582
   return res.status(201).json({ data: table });
 });
 
