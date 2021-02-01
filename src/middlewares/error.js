@@ -71,8 +71,7 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.message && err.message.startsWith('Unexpected token')){
     const message = err.message || 'Invalid token';
-    error = new Unauthorized(message);
-
+    error = new Unauthorized(message, 401);
   }
 
   res.status(error.statusCode || 500).json({

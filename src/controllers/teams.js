@@ -4,11 +4,13 @@ const { buildQuery, getPagination } = require('../utils/util');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { NotFound, BadRequest } = require('../utils/errorResponse');
 
+// @desc create team
+// @route POST /api/v1/teams
+// @access Private (Admin)
 exports.create = asyncHandler(async (req, res, next) => {
   const team = await Team.create(req.body);
   return res.status(201).json({ data: team });
 });
-
 
 // @desc  get all teams
 // @route GET -> /api/vi/teams
@@ -16,7 +18,7 @@ exports.create = asyncHandler(async (req, res, next) => {
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
   const initialQuery = Team
-      .find()
+      .find(queryObject)
       .populate({ path: 'members_count' })
       .populate({ path: 'tables', select: '_id -team_id' });
 
@@ -35,6 +37,9 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc get requested team
+// @route GET /api/v1/teams/:team_id
+// @access Private (Admin)
 exports.getOne = asyncHandler(async (req, res, next) => {
   const team = await Team
       .findById(req.params.team_id)
@@ -46,6 +51,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ data: team });
 });
 
+// @desc update requested team
+// @route PUT /api/v1/teams/:team_id
+// @access Private (Admin)
 exports.update = asyncHandler(async (req, res, next) => {
   const team = await Team.findByIdAndUpdate(
       { _id: req.params.team_id },
@@ -58,6 +66,9 @@ exports.update = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ data: team });
 });
 
+// @desc delete requested team
+// @route DELETE /api/v1/teams/:team_id
+// @access Private (Admin)
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const team = await Team
       .findById(req.params.team_id)

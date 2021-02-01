@@ -16,9 +16,9 @@ const authenticate = require('../middlewares/auth');
 
 router.use(authRouter);
 
-router.use('/teams', teamsRouter);
+router.use('/teams', authenticate, teamsRouter);
 
-router.use('/tables', tablesRouter);
+router.use('/tables', authenticate, tablesRouter);
 
 router.use('/reservations', reservationsRouter);
 

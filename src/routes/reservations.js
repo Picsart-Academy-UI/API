@@ -10,7 +10,7 @@ const {
 
 router.use(authenticate)
     .get('/', getAll)
-    .get('/seeload',adminAuth, seeLoad)
+    .get('/seeload', adminAuth, seeLoad)
     .get('/:reservation_id', getOne)
     .post('/', create)
     .put('/:reservation_id', update)
