@@ -1,10 +1,13 @@
-const {User, Reservation} = require('booking-db');
-const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
+const { User, Chair } = require('booking-db');
+const { OAuth2Client } = require('google-auth-library');
+
 
 const mailer = require('./mailer');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
   let queryRef = query;
@@ -25,20 +28,20 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
   if (select) {
     const fields = select.split(',')
-      .join(' ');
+        .join(' ');
     queryRef = queryRef.select(fields);
   }
 
   // sorting
   if (sort) {
     const sort_by = sort.split(',')
-      .join(' ');
+        .join(' ');
     queryRef = queryRef.sort(sort_by);
   } else {
     queryRef = queryRef.sort('createdAt');
   }
   queryRef = queryRef.skip(start_index)
-    .limit(limit);
+      .limit(limit);
 
   return {
     pagination,
@@ -50,35 +53,40 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
 // Querying
 
-const excluded_fields = ['select', 'sort', 'page', 'limit', 'first_name'];
+const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndChairs', 'from', 'to'];
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
-    || property === 'gt' || property === 'gte'
-    || property === 'in' || false);
+      || property === 'gt' || property === 'gte' || false);
 }
 
 function formatQuery(query) {
   Object.keys(query)
-    .forEach((objKey) => {
-      const assumedAsObject = query[objKey];
-      if (typeof assumedAsObject === 'object') {
-        Object.keys(assumedAsObject)
-          .forEach((key) => {
-            if (checkMatching(key)) {
-              const value = assumedAsObject[key];
-              delete assumedAsObject[key];
-              assumedAsObject[`$${key}`] = value;
-            }
-          });
-      }
-    });
+      .forEach((objKey) => {
+        const assumedAsObject = query[objKey];
+        if (typeof assumedAsObject === 'object') {
+          Object.keys(assumedAsObject)
+              .forEach((key) => {
+                if (checkMatching(key)) {
+                  const value = assumedAsObject[key];
+                  delete assumedAsObject[key];
+                  assumedAsObject[`$${key}`] = value;
+                }
+              });
+        }
+      });
   return query;
 }
 
 exports.buildQuery = (query) => {
-  const result = {...query};
+  const result = { ...query };
   excluded_fields.forEach((field) => delete result[field]);
+  Object.keys(result).forEach((k) => {
+    // eslint-disable-next-line no-bitwise
+    if (~result[k].indexOf(',')) {
+      result[k] = {$in: result[k].split(',')};
+    }
+  });
   return formatQuery(result);
 };
 
@@ -87,15 +95,15 @@ exports.buildQuery = (query) => {
 const excludeUndefinedFields = (obj) => {
   let toBeReturned = {};
   Object.keys(obj)
-    .forEach((p) => {
-      if (typeof obj[p] === 'undefined') {
-        return;
-      }
-      toBeReturned = {
-        ...toBeReturned,
-        [p]: obj[p]
-      };
-    });
+      .forEach((p) => {
+        if (typeof obj[p] === 'undefined') {
+          return;
+        }
+        toBeReturned = {
+          ...toBeReturned,
+          [p]: obj[p]
+        };
+      });
   return toBeReturned;
 };
 
@@ -121,14 +129,14 @@ exports.createUserAndSendEmail = async (userProperties) => {
 };
 
 exports.verifyIdToken = (idToken) => {
-  return client.verifyIdToken({idToken, audience: process.env.GOOGLE_CLIENT_ID});
+  return client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID });
 };
 
 exports.findUserByEmailAndUpdate = async (email, photo_url) => {
-  return User.findOneAndUpdate({email}, {
+  return User.findOneAndUpdate({ email }, {
     profile_picture: photo_url,
     accepted: true
-  }, {new: true, runValidators: true}).lean().exec();
+  }, { new: true, runValidators: true }).lean().exec();
 };
 
 exports.findUserByIdAndUpdate = (id, req) => {
@@ -143,11 +151,14 @@ exports.getJwt = (user) => {
     email: user.email,
     team_id: user.team_id,
     is_admin: user.is_admin
-  }, process.env.JWT_SECRET, {expiresIn: process.env.JWTEXPIERYTIME || '5h'});
+  }, process.env.JWT_SECRET, { expiresIn: process.env.JWTEXPIERYTIME || '5h' });
 };
 
 exports.decodeToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
+
+
+
 
 exports.getUserProperties = getUserProperties;

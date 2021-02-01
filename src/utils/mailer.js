@@ -16,7 +16,7 @@ module.exports = (email) => {
     from: process.env.MAIL_USER,
     to: email, // list of receivers
     subject: 'Invitation to join the Picsart booking', // Subject line
-    text: 'Hello world?', // plain text body
-    html: '<b>Hello world?</b>', // html body
+    text: '', // plain text bodya
+    html: '<div><b>Hey! you have been invited to join Picsart booking app please follow the link below </b><br/><a href="https://picsart-academy-ui.herokuapp.com/signin" >Click here<a/></div>', // html body
   });
 };

@@ -2,17 +2,18 @@ const router = require('express').Router();
 
 const adminAuth = require('../middlewares/auth-admin');
 
-// const checkReservation = require('../middlewares/check-reservation');
+const authenticate = require('../middlewares/auth');
 
 const {
-  getAll, getOne, create, update, deleteOne,
+    getAll, getOne, create, update, deleteOne, seeLoad
 } = require('../controllers').reservations;
 
-router
-  .get('/', adminAuth, getAll)
-  .get('/:reservation_id', getOne)
-  .post('/', create)
-  .put('/:reservation_id', update)
-  .delete('/:reservation_id', deleteOne);
+router.use(authenticate)
+    .get('/', getAll)
+    .get('/seeload', adminAuth, seeLoad)
+    .get('/:reservation_id', getOne)
+    .post('/', create)
+    .put('/:reservation_id', update)
+    .delete('/:reservation_id', deleteOne);
 
 module.exports = router;

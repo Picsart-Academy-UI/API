@@ -251,7 +251,7 @@ services:
   visualizer:
     image: dockersamples/visualizer
     ports:
-      - "5000:8080" 
+      - "5000:8080"
     networks:
       - backend_net
     deploy:
