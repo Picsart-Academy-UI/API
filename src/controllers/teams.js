@@ -1,6 +1,6 @@
 const { Team } = require('booking-db');
 
-const { getPagination } = require('../utils/util');
+const { buildQuery, getPagination } = require('../utils/util');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { NotFound, BadRequest } = require('../utils/errorResponse');
 
@@ -14,16 +14,24 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @route GET -> /api/vi/teams
 // @access  Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
-
-  const TeamsMembersCountTables = await Team
+  const queryObject = buildQuery(req.query);
+  const initialQuery = Team
       .find()
       .populate({ path: 'members_count' })
-      .populate({ path: 'tables', select: '_id -team_id table_number' })
-      .lean()
-      .exec();
+      .populate({ path: 'tables', select: '_id -team_id' });
+
+  const count = await Team.countDocuments(queryObject);
+
+  const { pagination, query } = getPagination(
+    req.query.page, req.query.limit, count, req, initialQuery
+  );
+
+  const TeamsMembersCountTables = await query.lean().exec();
 
   return res.status(200).json({
     data: TeamsMembersCountTables,
+    count,
+    pagination
   });
 });
 
