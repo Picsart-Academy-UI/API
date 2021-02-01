@@ -9,9 +9,11 @@ const {createChairs} = require('../utils/createChairs');
 =======
 >>>>>>> 3801004d64cfa52b3ef3d161b443968fbddb9582
 const { asyncHandler } = require('../middlewares/asyncHandler');
-const { createChairs, deleteAllChairsInTable } = require('../utils/createChairs');
+const { createChairs, deleteAllChairsInTable } = require('../utils/chairs-helper');
 
-
+// @desc create table
+// @route POST /api/v1/tables
+// @access Private (Admin)
 exports.create = asyncHandler(async (req, res, next) => {
   const table = await Table.create(req.body);
 <<<<<<< HEAD
@@ -22,6 +24,9 @@ exports.create = asyncHandler(async (req, res, next) => {
   return res.status(201).json({ data: table });
 });
 
+// @desc get all tables query
+// @route GET /api/v1/tables/all
+// @access Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
   const queryObject = buildQuery(req.query);
   const initialQuery = Table
@@ -46,6 +51,22 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc get tables from the same team
+// @route GET /api/v1/tables
+// @access Private (User)
+exports.getTables = asyncHandler(async (req, res, next) => {
+  const tables = await Table
+    .find({ team_id: req.user.team_id })
+    .lean().exec();
+
+  return res.status(200).json({
+    data: tables,
+  });
+});
+
+// @desc get requested table
+// @route GET /api/v1/tables/:table_id
+// @access Private (Admin)
 exports.getOne = asyncHandler(async (req, res, next) => {
   const table = await Table
     .findById(req.params.table_id)
@@ -57,6 +78,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ data: table });
 });
 
+// @desc update requested table
+// @route PUT /api/v1/tables/:table_id
+// @access Private (Admin)
 exports.update = asyncHandler(async (req, res, next) => {
   const table = await Table.findByIdAndUpdate(
     { _id: req.params.table_id },
@@ -72,6 +96,9 @@ exports.update = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ data: table });
 });
 
+// @desc delete requested table
+// @route DELETE /api/v1/tables/:table_id
+// @access Private (Admin)
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const table = await Table
     .findById(req.params.table_id)
