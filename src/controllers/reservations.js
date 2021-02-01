@@ -1,8 +1,9 @@
-const {Reservation} = require('booking-db');
+const {Reservation, User} = require('booking-db');
 
 
 const {NotFound} = require('../utils/errorResponse');
 const {asyncHandler} = require('../middlewares/asyncHandler');
+const { reservationNotification } = require('../utils/generateNotifications');
 
 const {
     buildQuery,
@@ -26,6 +27,10 @@ const {
 // @access Private (User/Admin)
 exports.create = asyncHandler(async (req, res) => {
     const reservation = await createReservation(req);
+    const { user_id } = reservation;
+    const user = await User.findById(user_id);
+    const { push_subscriptions } = user;
+    reservationNotification('approved', reservation, push_subscriptions);
     return res.status(201).json({data: reservation});
 });
 
@@ -35,6 +40,10 @@ exports.create = asyncHandler(async (req, res) => {
 // @access Private (User/Admin)
 exports.update = asyncHandler(async (req, res) => {
     const reservation = await updateReservation(req);
+    const { user_id } = reservation;
+    const user = await User.findById(user_id);
+    const { push_subscriptions } = user;
+    reservationNotification('updated', reservation, push_subscriptions);
     return res.status(202).json({
         data: reservation
     });
@@ -60,7 +69,7 @@ exports.getAll = asyncHandler(async (req, res) => {
         initialQuery = Reservation.find(queryObject).populate({
             path: 'user_id',
             select: 'first_name last_name is_admin email position profile_picture position'
-        }).populate({ path: 'chair_id', select: 'number' })
+        }).populate({ path: 'chair_id', select: 'chair_number' })
             .populate({path: 'table_id', select: 'table_number'});
 
     } else {
