@@ -30,10 +30,7 @@ exports.create = asyncHandler(async (req, res) => {
     const { user_id } = reservation;
     const user = await User.findById(user_id);
     const { push_subscriptions } = user;
-
-    if (reservation.status === 'approved') {
-        reservationNotification('approved', reservation, push_subscriptions);
-    }
+    reservationNotification('approved', reservation, push_subscriptions);
     return res.status(201).json({data: reservation});
 });
 

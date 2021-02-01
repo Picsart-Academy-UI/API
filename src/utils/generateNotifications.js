@@ -10,7 +10,8 @@ const payload_template = {
 };
 
 exports.reservationNotification = asyncHandler(async (message, reservation, subscriptions) => {
-    const { start_date, end_date, table_id, chair_id } = reservation;
+    const { start_date, end_date, table_id, chair_id, status } = reservation;
+    if (status === 'pending') return;
     const table = await Table.findById(table_id);
     const chair = await Chair.findById(chair_id);
 
@@ -23,7 +24,8 @@ exports.reservationNotification = asyncHandler(async (message, reservation, subs
          Start date: ${start_date_formated}\n
          End date: ${end_date_formated}\n
          Table: ${table.table_name}\n
-         Chair: ${chair.number}`
+         Chair: ${chair.number}\n
+         Status: ${status}`
     });
 
     for (const sub of subscriptions) {
