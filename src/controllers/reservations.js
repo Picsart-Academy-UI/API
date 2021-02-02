@@ -27,10 +27,7 @@ const {
 // @access Private (User/Admin)
 exports.create = asyncHandler(async (req, res) => {
     const reservation = await createReservation(req);
-    const { user_id } = reservation;
-    const user = await User.findById(user_id);
-    const { push_subscriptions } = user;
-    reservationNotification('approved', reservation, push_subscriptions);
+    reservationNotifixcation(reservation);
     return res.status(201).json({data: reservation});
 });
 
@@ -40,10 +37,7 @@ exports.create = asyncHandler(async (req, res) => {
 // @access Private (User/Admin)
 exports.update = asyncHandler(async (req, res) => {
     const reservation = await updateReservation(req);
-    const { user_id } = reservation;
-    const user = await User.findById(user_id);
-    const { push_subscriptions } = user;
-    reservationNotification('updated', reservation, push_subscriptions);
+    reservationNotification(reservation);
     return res.status(202).json({
         data: reservation
     });

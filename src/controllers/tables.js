@@ -2,6 +2,7 @@ const { Table } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
 const { buildQuery, getPagination } = require('../utils/util');
+
 const { asyncHandler } = require('../middlewares/asyncHandler');
 const { createChairs, deleteAllChairsInTable } = require('../utils/chairs-helper');
 
@@ -10,18 +11,17 @@ const { createChairs, deleteAllChairsInTable } = require('../utils/chairs-helper
 // @access Private (Admin)
 exports.create = asyncHandler(async (req, res, next) => {
   const table = await Table.create(req.body);
-  const createdChairs = await createChairs(table);
   await createChairs(table);
   return res.status(201).json({ data: table });
 });
 
 // @desc get all tables query
-// @route GET /api/v1/tables/all
+// @route GET /api/v1/tables/
 // @access Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const queryObject = buildQuery(req.query);
-  const initialQuery = Table
-    .find(queryObject)
+  let queryObject = buildQuery(req.query);
+  if (!req.user.is_admin) queryObject = {...queryObject, team_id: req.user.team_id};
+  const initialQuery = Table.find(queryObject)
     .populate({
       path: 'chairs',
       select: '_id chair_number -table_id'
@@ -39,19 +39,6 @@ exports.getAll = asyncHandler(async (req, res, next) => {
     data: tables,
     count,
     pagination,
-  });
-});
-
-// @desc get tables from the same team
-// @route GET /api/v1/tables
-// @access Private (User)
-exports.getTables = asyncHandler(async (req, res, next) => {
-  const tables = await Table
-    .find({ team_id: req.user.team_id })
-    .lean().exec();
-
-  return res.status(200).json({
-    data: tables,
   });
 });
 

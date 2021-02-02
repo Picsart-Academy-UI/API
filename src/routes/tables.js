@@ -6,11 +6,10 @@ const {
 } = require('../controllers').tables;
 
 router
-  .post('/',create)
-  .get('/all', getAll)
-  .get('/', getTables)
-  .get('/:table_id', getOne)
-  .put('/:table_id', update)
-  .delete('/:table_id', deleteOne);
+  .post('/', adminAuth, create)
+  .get('/', getAll)
+  .get('/:table_id',adminAuth, getOne)
+  .put('/:table_id', adminAuth,update)
+  .delete('/:table_id', adminAuth, deleteOne);
 
 module.exports = router;
