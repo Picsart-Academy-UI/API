@@ -19,11 +19,10 @@ const checkWeekends = (reservation) => {
     const d1 = new Date(start_date),
         d2 = new Date(end_date);
         let isWeekend = false;
-    while (d1 <= d2) {
+    for (d1; d1 <= d2; d1.setDate(d1.getDate() + 1)) {
         const day = d1.getDay();
         isWeekend = (day === 6) || (day === 0);
         if (isWeekend) { return true; }
-        d1.setDate(d1.getDate() + 1);
     }
     return false;
 };

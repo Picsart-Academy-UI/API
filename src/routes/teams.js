@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const adminAuth = require('../middlewares/auth-admin');
 
 const {
   create, getAll, getOne, update, deleteOne, search
@@ -7,8 +8,8 @@ const {
 router.get('/search', search);
 
 router
-  .post('/', create)
-  .get('/', getAll)
+  .post('/',create)
+  .get('/',getAll)
   .get('/:team_id', getOne)
   .put('/:team_id', update)
   .delete('/:team_id', deleteOne);
