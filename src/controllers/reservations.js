@@ -27,7 +27,7 @@ const {
 // @access Private (User/Admin)
 exports.create = asyncHandler(async (req, res) => {
     const reservation = await createReservation(req);
-    reservationNotifixcation(reservation);
+    reservationNotification(reservation);
     return res.status(201).json({data: reservation});
 });
 

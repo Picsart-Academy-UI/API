@@ -13,20 +13,6 @@ const formatDate = (date) => moment(date).format(format);
 
 const addOneDay = (date) => moment(date).add(1, 'day').format(format);
 
-
-const checkWeekends = (reservation) => {
-    const {start_date, end_date} = reservation;
-    const d1 = new Date(start_date),
-        d2 = new Date(end_date);
-        let isWeekend = false;
-    for (d1; d1 <= d2; d1.setDate(d1.getDate() + 1)) {
-        const day = d1.getDay();
-        isWeekend = (day === 6) || (day === 0);
-        if (isWeekend) { return true; }
-    }
-    return false;
-};
-
 const attachMissingFields = (reservation, foundReservation) => {
     return {
         start_date: reservation.start_date || foundReservation.start_date,
@@ -198,7 +184,6 @@ exports.updateReservation = async (req, next) => {
       attachMissingFields({ start_date, end_date }, found)
     );
     if (!checkReservationDates(toBeInserted)) return next(new BadRequest('Incorrect dates'));
-    if (checkWeekends(toBeInserted)) return next(new BadRequest('Reservation cannot contain weekends'));
     const conflictingReservations = await getConflictingReservations(toBeInserted);
 
     if (
@@ -260,7 +245,6 @@ exports.seeLoadReservations = async (req, next) => {
     const {start_date, end_date, team_id} = req.query;
     const a = moment1(start_date);
     const b = moment1(end_date);
-
 
     if (a > b) return next(new BadRequest('Start date cannot be bigger than end date '));
     const diff = b.diff(a, 'days') + 1;

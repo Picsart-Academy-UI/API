@@ -25,7 +25,7 @@ exports.reservationNotification = async (reservation) => {
          Start date: ${start_date_formated}\n
          End date: ${end_date_formated}\n
          Table: ${table.table_number}\n
-         Chair: ${chair.number}\n
+         Chair: ${chair.chair_number}\n
          Status: ${status}`
     });
 
