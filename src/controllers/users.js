@@ -64,7 +64,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) throw new NotFound('User not found.');
 
   return res.status(200).json({
     data: user
@@ -97,7 +97,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) return next(new NotFound('User not found.'));
+  if (!user) throw new NotFound('User not found.');
 
   return res.status(200).json({
     message: 'User has successfully been deleted.'

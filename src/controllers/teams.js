@@ -16,7 +16,10 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @route GET -> /api/vi/teams
 // @access  Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const queryObject = buildQuery(req.query);
+  let queryObject = buildQuery(req.query);
+
+  if (!req.user.is_admin) queryObject = {...queryObject, team_id: req.user.team_id};
+
   const initialQuery = Team
       .find(queryObject)
       .populate({ path: 'members_count' })
@@ -46,7 +49,7 @@ exports.getOne = asyncHandler(async (req, res, next) => {
       .lean()
       .exec();
 
-  if (!team) next(new NotFound());
+  if (!team) throw new NotFound();
 
   return res.status(200).json({ data: team });
 });
@@ -72,17 +75,10 @@ exports.update = asyncHandler(async (req, res, next) => {
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const team = await Team
       .findById(req.params.team_id)
-      .populate({ path: 'members_count' })
       .lean()
       .exec();
 
   if (!team) next(new NotFound());
-
-  if (team.members_count !== 0) {
-    return next(new BadRequest(
-        `The ${team.team_name} team cannot be deleted because it has employees.`
-    ));
-  }
 
   await Team.deleteOne({ _id: req.params.team_id });
   return res.status(200).json({
