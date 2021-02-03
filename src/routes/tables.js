@@ -8,8 +8,8 @@ const {
 router
   .post('/', adminAuth, create)
   .get('/', getAll)
-  .get('/:table_id',adminAuth, getOne)
-  .put('/:table_id', adminAuth,update)
+  .get('/:table_id', adminAuth, getOne)
+  .put('/:table_id', adminAuth, update)
   .delete('/:table_id', adminAuth, deleteOne);
 
 module.exports = router;
