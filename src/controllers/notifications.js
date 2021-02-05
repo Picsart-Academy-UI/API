@@ -16,7 +16,6 @@ webpush.setVapidDetails(
   PRIVATE_VAPID_KEY
 );
 
-// eslint-disable-next-line
 exports.subscribe = asyncHandler(async (req, res, next) => {
   const { _id } = req.user;
 
@@ -54,7 +53,6 @@ exports.subscribe = asyncHandler(async (req, res, next) => {
 
   webpush.sendNotification(subscription, payload)
     .catch((err) => next(new ErrorResponse(err.message)));
-
 });
 
 // The following controller is just for example
@@ -76,5 +74,4 @@ exports.another_one = asyncHandler(async (req, res, next) => {
   for (const sub of push_subscriptions) {
     await webpush.sendNotification(sub, payload);
   }
-
 });

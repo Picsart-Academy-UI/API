@@ -7,7 +7,6 @@ const {
 const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
-
 // @desc  get users from the same team
 // @route GET /api/v1/users
 // @access Private (admin/user)
@@ -24,7 +23,6 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 // @desc get all users query select sort etc
 // @route GET /api/v1/users/all
 // @access Private (Admin)
@@ -32,7 +30,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
   let queryObject = buildQuery(req.query);
 
   // searching by first_name
-  if (req.query.first_name){
+  if (req.query.first_name) {
     const regexp = new RegExp(`^${req.query.first_name}`, 'i');
     queryObject = { ...queryObject, first_name: regexp };
   }
@@ -54,7 +52,6 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
   });
 });
 
-
 // @desc  get requested user
 // @route GET /api/v1/user/:user_id
 // @access  Private (Admin)
@@ -71,7 +68,6 @@ exports.getUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 // @desc  update requested user
 // @route  PUT /api/v1/:user_id
 // @access  Private (Admin)
@@ -86,7 +82,6 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
-
 
 // @desc  delete requested user
 // @route DELETE /api/v1/users/:user_id
@@ -104,7 +99,6 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 // @desc  get yourself
 // @route /api/v1/users/me
 // @access Private (User)
@@ -120,7 +114,6 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
-
 
 // @desc search users by given field
 // @route /api/v1/users/search

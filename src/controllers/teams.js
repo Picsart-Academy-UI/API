@@ -18,12 +18,12 @@ exports.create = asyncHandler(async (req, res, next) => {
 exports.getAll = asyncHandler(async (req, res, next) => {
   let queryObject = buildQuery(req.query);
 
-  if (!req.user.is_admin) queryObject = {...queryObject, team_id: req.user.team_id};
+  if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
 
   const initialQuery = Team
-      .find(queryObject)
-      .populate({ path: 'members_count' })
-      .populate({ path: 'tables', select: '_id -team_id' });
+    .find(queryObject)
+    .populate({ path: 'members_count' })
+    .populate({ path: 'tables', select: '_id -team_id' });
 
   const count = await Team.countDocuments(queryObject);
 
@@ -45,9 +45,9 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getOne = asyncHandler(async (req, res, next) => {
   const team = await Team
-      .findById(req.params.team_id)
-      .lean()
-      .exec();
+    .findById(req.params.team_id)
+    .lean()
+    .exec();
 
   if (!team) throw new NotFound();
 
@@ -59,9 +59,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.update = asyncHandler(async (req, res, next) => {
   const team = await Team.findByIdAndUpdate(
-      { _id: req.params.team_id },
-      { $set: req.body },
-      { new: true, runValidators: true },
+    { _id: req.params.team_id },
+    { $set: req.body },
+    { new: true, runValidators: true },
   );
 
   if (!team) next(new NotFound());
@@ -74,9 +74,9 @@ exports.update = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const team = await Team
-      .findById(req.params.team_id)
-      .lean()
-      .exec();
+    .findById(req.params.team_id)
+    .lean()
+    .exec();
 
   if (!team) next(new NotFound());
 
@@ -85,7 +85,6 @@ exports.deleteOne = asyncHandler(async (req, res, next) => {
     message: 'Team was deleted.',
   });
 });
-
 
 // @desc search teams by given field
 // @route /api/v1/teams/search

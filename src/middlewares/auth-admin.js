@@ -8,4 +8,3 @@ module.exports = asyncHandler(async (req, res, next) => {
   }
   return next(new Unauthorized('Not authorized'));
 });
-

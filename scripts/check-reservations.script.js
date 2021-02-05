@@ -16,14 +16,16 @@ const updateReservations = async () => {
     } else {
       const nextReservation = getPlainReservation(reservation);
       await reservation.update({end_date: reservation.start_date});
-      // eslint-disable-next-line max-len
-      await Reservation.create({...nextReservation, start_date: addOneDay(nextReservation.start_date)});
+      await Reservation.create({
+        ...nextReservation,
+        start_date: addOneDay(nextReservation.start_date)
+      });
     }
   }
 };
 
 
-connectDB(process.env.MONGO_URI).then( async (connection) => {
+connectDB(process.env.MONGO_URI).then(async (connection) => {
   try {
     await updateReservations();
     console.log('Job was done successfully');
@@ -36,9 +38,3 @@ connectDB(process.env.MONGO_URI).then( async (connection) => {
   console.error(err);
   process.exit(1);
 });
-
-
-
-
-
-
