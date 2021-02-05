@@ -64,7 +64,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) throw new NotFound('User not found.');
 
   return res.status(200).json({
     data: user

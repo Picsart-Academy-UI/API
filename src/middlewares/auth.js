@@ -10,14 +10,10 @@ module.exports = asyncHandler(async (req, res, next) => {
   if (authorization && authorization.startsWith('Bearer')) {
     token = authorization.split(' ')[1];
   }
-  if (!token) {
-    return next(new Unauthorized('Token was not provided'));
-  }
+  if (!token) throw new Unauthorized('Token was not provided');
   const decoded = await decodeToken(token);
   const user = await UserModel.findById(decoded._id).exec();
-  if (!user) {
-    return next(new Unauthorized('Not authorized'));
-  }
+  if (!user) throw new Unauthorized('Not authorized');
   req.user = user;
   return next();
 });
