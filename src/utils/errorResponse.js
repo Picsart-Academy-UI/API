@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 class ErrorResponse extends Error {
   constructor(message, statusCode) {
     super(message);

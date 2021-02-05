@@ -2,12 +2,9 @@ const jwt = require('jsonwebtoken');
 const { User, Chair } = require('booking-db');
 const { OAuth2Client } = require('google-auth-library');
 
-
 const mailer = require('./mailer');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-
 
 exports.getPagination = (givenPage, givenLimit, count, req, query) => {
   let queryRef = query;
@@ -24,7 +21,7 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
     pagination.prev_page = page - 1;
   }
 
-  const {select, sort} = req.query;
+  const { select, sort } = req.query;
 
   if (select) {
     const fields = select.split(',')
@@ -82,9 +79,8 @@ exports.buildQuery = (query) => {
   const result = { ...query };
   excluded_fields.forEach((field) => delete result[field]);
   Object.keys(result).forEach((k) => {
-    // eslint-disable-next-line no-bitwise
     if (~result[k].indexOf(',')) {
-      result[k] = {$in: result[k].split(',')};
+      result[k] = { $in: result[k].split(',') };
     }
   });
   return formatQuery(result);
@@ -108,7 +104,6 @@ const excludeUndefinedFields = (obj) => {
 };
 
 const getUserProperties = (req) => {
-
   const userProperties = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
@@ -128,37 +123,29 @@ exports.createUserAndSendEmail = async (userProperties) => {
   return createdUser;
 };
 
-exports.verifyIdToken = (idToken) => {
-  return client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID });
-};
+exports.verifyIdToken = (idToken) => client.verifyIdToken({
+  idToken,
+  audience: process.env.GOOGLE_CLIENT_ID
+});
 
-exports.findUserByEmailAndUpdate = async (email, photo_url) => {
-  return User.findOneAndUpdate({ email }, {
-    profile_picture: photo_url,
-    accepted: true
-  }, { new: true, runValidators: true }).lean().exec();
-};
+exports.findUserByEmailAndUpdate = async (email, photo_url) => User.findOneAndUpdate({ email }, {
+  profile_picture: photo_url,
+  accepted: true
+}, { new: true, runValidators: true }).lean().exec();
 
 exports.findUserByIdAndUpdate = (id, req) => {
   const userProperties = getUserProperties(req);
   return User.findByIdAndUpdate(id, excludeUndefinedFields(userProperties),
-      {new: true, runValidators: true});
+    { new: true, runValidators: true });
 };
 
-exports.getJwt = (user) => {
-  return jwt.sign({
-    _id: user._id,
-    email: user.email,
-    team_id: user.team_id,
-    is_admin: user.is_admin
-  }, process.env.JWT_SECRET, { expiresIn: process.env.JWTEXPIERYTIME || '5h' });
-};
+exports.getJwt = (user) => jwt.sign({
+  _id: user._id,
+  email: user.email,
+  team_id: user.team_id,
+  is_admin: user.is_admin
+}, process.env.JWT_SECRET, { expiresIn: process.env.JWTEXPIERYTIME || '5h' });
 
-exports.decodeToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
-};
-
-
-
+exports.decodeToken = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
 exports.getUserProperties = getUserProperties;
