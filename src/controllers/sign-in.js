@@ -7,20 +7,12 @@ const { verifyIdToken, findUserByEmailAndUpdate, getJwt } = require('../utils/ut
 // @access  Public
 module.exports = asyncHandler(async (req, res, next) => {
   const { token: idToken } = req.body;
-
-  if (!idToken) {
-    return next(new BadRequest('Token was not provided'));
-  }
+  if (!idToken) throw new BadRequest('Token was not provided');
   const ticket = await verifyIdToken(idToken);
-
   const payload = ticket.getPayload();
   const { email, picture } = payload;
   const user = await findUserByEmailAndUpdate(email, picture);
-
-  if (!user) {
-    return next(new Unauthorized('User has not been invited'));
-  }
-
+  if (!user) throw new Unauthorized('User has not been invited');
   const token = await getJwt(user);
   return res.status(202).json({
     data: user,

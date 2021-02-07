@@ -13,7 +13,7 @@ router.use(authenticate)
   .get('/seeload', adminAuth, seeLoad)
   .get('/:reservation_id', getOne)
   .post('/', create)
-  .put('/:reservation_id', update)
+  .put('/:reservation_id', adminAuth, update)
   .delete('/:reservation_id', deleteOne);
 
 module.exports = router;

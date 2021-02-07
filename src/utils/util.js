@@ -149,3 +149,4 @@ exports.getJwt = (user) => jwt.sign({
 exports.decodeToken = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
 exports.getUserProperties = getUserProperties;
+exports.excludeUndefinedFields = excludeUndefinedFields;

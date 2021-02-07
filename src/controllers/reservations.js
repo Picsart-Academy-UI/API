@@ -1,4 +1,4 @@
-const { Reservation, User } = require('booking-db');
+const { Reservation } = require('booking-db');
 
 const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
@@ -12,10 +12,7 @@ const {
 const {
   findOneReservation,
   deleteOneReservation,
-  seeLoadReservations
-} = require('../utils/reservation-helpers');
-
-const {
+  seeLoadReservations,
   updateReservation,
   createReservation
 } = require('../utils/reservation-helpers');
@@ -34,6 +31,7 @@ exports.create = asyncHandler(async (req, res) => {
 // @access Private (User/Admin)
 exports.update = asyncHandler(async (req, res) => {
   const reservation = await updateReservation(req);
+  if (!reservation) throw new NotFound('Reservation was not found');
   reservationNotification(reservation);
   return res.status(202).json({
     data: reservation
@@ -50,10 +48,8 @@ exports.getAll = asyncHandler(async (req, res) => {
     queryObject = { ...queryObject, $and: [{ end_date: { $gte: new Date(req.query.from) } }] };
   }
   if (req.query.to) {
-    queryObject = {
-      ...queryObject,
-      $and: [...queryObject.$and || [], { start_date: { $lte: new Date(req.query.to) } }]
-    };
+    // eslint-disable-next-line max-len
+    queryObject = { ...queryObject, $and: [...queryObject.$and || [], { start_date: { $lte: new Date(req.query.to) } }] };
   }
   if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
   if (req.query.include_usersAndChairs) {
@@ -82,9 +78,7 @@ exports.getAll = asyncHandler(async (req, res) => {
 
 exports.getOne = asyncHandler(async (req, res, next) => {
   const reservation = await findOneReservation(req);
-
   if (!reservation) next(new NotFound());
-
   return res.status(200).json({ data: reservation });
 });
 // @desc  delete reservation
@@ -93,9 +87,7 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const reservation = await deleteOneReservation(req);
-
   if (!reservation) throw new NotFound('Reservation was not found');
-
   return res.status(200).json({
     message: 'Reservation was deleted.',
   });

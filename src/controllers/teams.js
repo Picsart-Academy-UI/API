@@ -18,12 +18,12 @@ exports.create = asyncHandler(async (req, res, next) => {
 exports.getAll = asyncHandler(async (req, res, next) => {
   let queryObject = buildQuery(req.query);
 
-  if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
+  if (!req.user.is_admin) queryObject = { ...queryObject, _id: req.user.team_id };
 
   const initialQuery = Team
     .find(queryObject)
     .populate({ path: 'members_count' })
-    .populate({ path: 'tables', select: '_id -team_id' });
+    .populate({ path: 'tables', select: '_id team_name -team_id' });
 
   const count = await Team.countDocuments(queryObject);
 
@@ -48,7 +48,6 @@ exports.getOne = asyncHandler(async (req, res, next) => {
     .findById(req.params.team_id)
     .lean()
     .exec();
-
   if (!team) throw new NotFound();
 
   return res.status(200).json({ data: team });

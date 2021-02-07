@@ -13,8 +13,7 @@ module.exports = asyncHandler(async (req, res, next) => {
     .lean()
     .exec();
 
-  if (user) next(new Conflict('User has already been invited'));
-
+  if (user) throw new Conflict('User has already been invited');
   const created_user = await createUserAndSendEmail(userProperties);
   return res.status(201).json({ data: created_user.toJSON() });
 });
