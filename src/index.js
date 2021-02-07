@@ -28,13 +28,15 @@ app.use(process.env.API_VERSION, router);
 
 app.use(errorHandler);
 
+app.use((req, res, next) => res.status(404).send({ error: '404: Not found' }));
+
 const PORT = process.env.PORT || 6788;
 
 // TODO : configure the DB connection so the future server js file is testable
 
 DB(process.env.MONGO_URI).then(async (conn) => {
   app.listen(PORT, () => {
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line
     console.log(`App is running on port ${PORT}`);
   });
 });

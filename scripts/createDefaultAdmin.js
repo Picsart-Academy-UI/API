@@ -10,7 +10,6 @@ if (!email || !team_name){
   process.exit(1);
 }
 
-
 const createDefaultAdmin = async () => {
   const team = await Team.create({
     team_name: team_name || 'Admin'
@@ -40,10 +39,3 @@ connectDB(process.env.MONGO_URI).then(async (connection) => {
   console.log('Error occurred while connecting to DB', err);
   process.exit(1);
 });
-
-
-
-
-
-
-

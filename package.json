@@ -4,7 +4,7 @@
   "description": "API for PicsArt Booking",
   "main": "app.js",
   "scripts": {
-    "start": ". scripts/load_env.sh && nodemon ./src/index.js",
+    "start": ". scripts/load_env.sh && node ./src/index.js",
     "lint": "node ./node_modules/eslint/bin/eslint.js ./src",
     "lint:fix": "node ./node_modules/eslint/bin/eslint.js ./src --fix",
     "precommit": "node ./node_modules/eslint/bin/eslint.js ./src",
@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/Picsart-Academy-UI/API#readme",
   "dependencies": {
-    "booking-db": "^1.5.7",
-    "chai": "^4.2.0",
+    "booking-db": "^1.5.8",
+    "chai": "^4.3.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

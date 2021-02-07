@@ -9,7 +9,7 @@ router.get('/search', search);
 
 router
   .post('/', adminAuth, create)
-  .get('/', adminAuth, getAll)
+  .get('/', getAll)
   .get('/:team_id', adminAuth, getOne)
   .put('/:team_id', adminAuth, update)
   .delete('/:team_id', adminAuth, deleteOne);

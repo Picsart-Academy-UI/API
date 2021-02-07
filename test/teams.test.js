@@ -48,7 +48,7 @@ describe('teams', async () => {
             done();
           });
       });
-  
+
       it('non-admin user should not get teams data', function (done) {
         request(app)
           .get('/api/v1/teams')
@@ -202,7 +202,7 @@ describe('teams', async () => {
             done();
           });
       });
-  
+
       it('non-admin user should not update team name', function (done) {
         request(app)
           .get(`/api/v1/teams/${teamId}`)
@@ -235,7 +235,7 @@ describe('teams', async () => {
   describe('DELETE /api/v1/teams/:team_id', () => {
     let newTeam;
     const newTeamName = 'Team delete Test 48';
-    
+
     describe('Authorized', () => {
       beforeEach('creating team to delete', async () => {
         newTeam = await Team.create({
@@ -254,7 +254,7 @@ describe('teams', async () => {
             done();
           });
       });
-  
+
       it('non-admin user should not delete team', function (done) {
         request(app)
           .delete(`/api/v1/teams/${newTeam._id}`)
@@ -269,7 +269,7 @@ describe('teams', async () => {
 
       after('delete team if not deleted', () => Team.deleteOne({ team_name: newTeamName }));
     });
-    
+
     describe('Unauthorized', () => {
       const newTeamName2 = 'Team delete Test 49';
 
