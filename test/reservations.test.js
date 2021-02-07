@@ -1,94 +1,137 @@
 const { describe, it } = require('mocha');
 const { expect } = require('chai');
 const request = require('supertest');
-const { reservation, reservationUpdated } = require('./_mocks/data');
+const { reservationPending, reservationPendingUpdated, reservationApproved } = require('./_mocks/data');
 
 const app = require('../src');
 
 let createdReservation = {};
 
 describe('reservations', () => {
+  describe('GET /api/v1/reservations', () => {
+    describe('Authorized', () => {
+      it('should get reservations', function (done) {
+        request(app).get('/api/v1/reservations')
+          .set('Authorization', `Bearer ${this.adminToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err);
+            
+            expect(res.body).to.have.property('data');
+            done();
+          });
+      });
+    });
+  });
   describe('POST /api/v1/reservations', () => {
     describe('Authorized', () => {
-      it('user creates a reservation', async function () {
-        await request(app).post('/api/v1/reservations')
+      it('should create a reservation', function (done) {
+        request(app).post('/api/v1/reservations')
           .set('Authorization', `Bearer ${this.userToken}`)
           .send({
-            ...reservation,
+            ...reservationPending,
+            team_id: this.team._id,
+            chair_id: this.chair._id,
+            table_id: this.table._id,
+            user: this.nonAdminUser,
+          })
+          .expect('Content-Type', /json/)
+          .expect(201)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body).to.have.property('data');
+            createdReservation = res.body.data;
+            done();
+          });
+      });
+      it('should get an error if the chair is already reserved', function (done) {
+        request(app).post('/api/v1/reservations')
+          .set('Authorization', `Bearer ${this.userToken}`)
+          .send({
+            ...reservationPending,
             team_id: this.team._id,
             chair_id: this.chair._id,
             table_id: this.table._id,
             user_id: this.nonAdminUser._id,
           })
           .expect('Content-Type', /json/)
-          .expect(201)
-          .then((res) => {
-            expect(res.body).to.have.property('data');
-            createdReservation = res.body.data;
+          .expect(400)
+          .end((err, res) => {
+            if (err) return done(err);
+            done();
           });
       });
     });
     describe('Unauthorized', () => {
-      it('should get an error with status code 401', async () => {
-        await request(app).get('/api/v1/users/all')
+      it('should not create reservation without token', (done) => {
+        request(app).post('/api/v1/reservations')
           .expect('Content-Type', /json/)
           .expect(401)
-          .then((res) => {
-            expect(res.body).to.have.property('error');
+          .end((err, res) => {
+            if (err) return done(err);
+            done();
           });
       });
     });
   });
   describe('PUT /api/v1/reservations', () => {
     describe('Authorized', () => {
-      it('user updates a reservation', async function () {
+      it('user updates a reservation', function (done) {
         const { _id } = createdReservation;
-        await request(app).put(`/api/v1/reservations/${_id}`)
+        request(app).put(`/api/v1/reservations/${_id}`)
           .set('Authorization', `Bearer ${this.userToken}`)
           .send({
-            ...reservationUpdated,
+            ...reservationPendingUpdated,
             team_id: this.team._id,
             chair_id: this.chair._id,
             table_id: this.table._id,
           })
           .expect('Content-Type', /json/)
           .expect(200)
-          .then((res) => {
+          .end((err, res) => {
+            if (err) return done(err);
             expect(res.body).to.have.property('data');
+            done();
           });
       });
     });
     describe('Unauthorized', () => {
-      it('should get an error with status code 401', async () => {
-        await request(app).get('/api/v1/users/all')
+      it('should get an error with status code 401 when updating reservation without token', (done) => {
+        const { _id } = createdReservation;
+        request(app).put(`/api/v1/reservations/${_id}`)
           .expect('Content-Type', /json/)
           .expect(401)
-          .then((res) => {
-            expect(res.body).to.have.property('error');
+          .end((err, res) => {
+            if (err) return done(err);
+            done();
           });
       });
     });
   });
   describe('DELETE /api/v1/reservations', () => {
     describe('Authorized', () => {
-      it('user deletes the reservation', async function () {
-        const { _id } = this.reservation;
-        await request(app).delete(`/api/v1/reservations/${_id}`)
+      it('should delete the reservation', function (done) {
+        const { _id } = createdReservation;
+        request(app).delete(`/api/v1/reservations/${_id}`)
           .set('Authorization', `Bearer ${this.userToken}`)
           .expect('Content-Type', /json/)
           .expect(200)
-          .then((res) => {
-            expect(res.body).to.have.property('message');
+          .end((err, res) => {
+            if (err) return done(err);
+            done();
           });
       });
     });
     describe('Unauthorized', () => {
-      it('should get an error with status code 401', async () => {
-        await request(app).get('/api/v1/users/all')
+      it('should get an error with status code 401', (done) => {
+        const { _id } = createdReservation;
+        request(app).delete(`/api/v1/reservations/${_id}`)
           .expect('Content-Type', /json/)
           .expect(401)
-          .then((res) => {
-            expect(res.body).to.have.property('error');
+          .end((err, res) => {
+            if (err) return done(err);
+            done();
           });
       });
     });

@@ -4,12 +4,12 @@
   "description": "API for PicsArt Booking",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./src/index.js",
+    "start": ". scripts/load_env.sh && node ./src/index.js",
     "lint": "node ./node_modules/eslint/bin/eslint.js ./src",
     "lint:fix": "node ./node_modules/eslint/bin/eslint.js ./src --fix",
     "precommit": "node ./node_modules/eslint/bin/eslint.js ./src",
-    "test": "mocha test --exit",
-    "test:only": "mocha ./test/_initial.test.js mocha ./test/$npm_config_file.test.js --exit"
+    "test": "MONGO_URI='mongodb+srv://armen:chairs123@chairs-app-test.qduod.mongodb.net/chairs?retryWrites=true&w=majority' mocha test --exit",
+    "test:only": "mocha ./test/_initial.test.js ./test/$npm_config_file.test.js --exit"
   },
   "repository": {
     "type": "git",
