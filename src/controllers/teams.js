@@ -44,7 +44,6 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 // @route GET /api/v1/teams/:team_id
 // @access Private (Admin)
 exports.getOne = asyncHandler(async (req, res, next) => {
-
   const team = await Team
     .findById(req.params.team_id)
     .lean()
@@ -58,7 +57,6 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 // @route PUT /api/v1/teams/:team_id
 // @access Private (Admin)
 exports.update = asyncHandler(async (req, res, next) => {
-
   const team = await Team.findByIdAndUpdate(
     { _id: req.params.team_id },
     { $set: req.body },
