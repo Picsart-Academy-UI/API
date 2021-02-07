@@ -1,4 +1,3 @@
-/* eslint-disable prefer-arrow-callback */
 const { describe, it, beforeEach, after } = require('mocha');
 const { expect } = require('chai');
 const request = require('supertest');

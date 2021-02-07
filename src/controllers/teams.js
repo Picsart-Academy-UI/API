@@ -16,11 +16,14 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @route GET -> /api/vi/teams
 // @access  Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const queryObject = buildQuery(req.query);
+  let queryObject = buildQuery(req.query);
+
+  if (!req.user.is_admin) queryObject = { ...queryObject, _id: req.user.team_id };
+
   const initialQuery = Team
-      .find(queryObject)
-      .populate({ path: 'members_count' })
-      .populate({ path: 'tables', select: '_id -team_id' });
+    .find(queryObject)
+    .populate({ path: 'members_count' })
+    .populate({ path: 'tables', select: '_id team_name -team_id' });
 
   const count = await Team.countDocuments(queryObject);
 
@@ -42,11 +45,10 @@ exports.getAll = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getOne = asyncHandler(async (req, res, next) => {
   const team = await Team
-      .findById(req.params.team_id)
-      .lean()
-      .exec();
-
-  if (!team) next(new NotFound());
+    .findById(req.params.team_id)
+    .lean()
+    .exec();
+  if (!team) throw new NotFound();
 
   return res.status(200).json({ data: team });
 });
@@ -56,9 +58,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.update = asyncHandler(async (req, res, next) => {
   const team = await Team.findByIdAndUpdate(
-      { _id: req.params.team_id },
-      { $set: req.body },
-      { new: true, runValidators: true },
+    { _id: req.params.team_id },
+    { $set: req.body },
+    { new: true, runValidators: true },
   );
 
   if (!team) next(new NotFound());
@@ -71,25 +73,17 @@ exports.update = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.deleteOne = asyncHandler(async (req, res, next) => {
   const team = await Team
-      .findById(req.params.team_id)
-      .populate({ path: 'members_count' })
-      .lean()
-      .exec();
+    .findById(req.params.team_id)
+    .lean()
+    .exec();
 
   if (!team) next(new NotFound());
-
-  if (team.members_count !== 0) {
-    return next(new BadRequest(
-        `The ${team.team_name} team cannot be deleted because it has employees.`
-    ));
-  }
 
   await Team.deleteOne({ _id: req.params.team_id });
   return res.status(200).json({
     message: 'Team was deleted.',
   });
 });
-
 
 // @desc search teams by given field
 // @route /api/v1/teams/search

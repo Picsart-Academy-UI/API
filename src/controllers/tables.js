@@ -20,7 +20,9 @@ exports.create = asyncHandler(async (req, res, next) => {
 // @access Private (Admin)
 exports.getAll = asyncHandler(async (req, res, next) => {
   let queryObject = buildQuery(req.query);
-  if (!req.user.is_admin) queryObject = {...queryObject, team_id: req.user.team_id};
+
+  if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
+
   const initialQuery = Table.find(queryObject)
     .populate({
       path: 'chairs',
