@@ -28,7 +28,7 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   const count = await Team.countDocuments(queryObject);
 
   const { pagination, query } = getPagination(
-      req.query.page, req.query.limit, count, req, initialQuery
+    req.query.page, req.query.limit, count, req, initialQuery
   );
 
   const TeamsMembersCountTables = await query.lean().exec();
