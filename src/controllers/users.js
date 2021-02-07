@@ -7,27 +7,13 @@ const {
 const { NotFound } = require('../utils/errorResponse');
 const { asyncHandler } = require('../middlewares/asyncHandler');
 
-// @desc  get users from the same team
-// @route GET /api/v1/users
-// @access Private (admin/user)
-exports.getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User
-      .find({ team_id: req.user.team_id })
-      .lean()
-      .exec();
-
-  if (!users) next(new NotFound('User not found.'));
-
-  return res.status(200).json({
-    data: users
-  });
-});
-
 // @desc get all users query select sort etc
-// @route GET /api/v1/users/all
-// @access Private (Admin)
+// @route GET /api/v1/users
+// @access Private (Admin/User)
 exports.getAllUsers = asyncHandler(async (req, res) => {
   let queryObject = buildQuery(req.query);
+
+  if (!req.user.is_admin) queryObject = { ...queryObject, team_id: req.user.team_id };
 
   // searching by first_name
   if (req.query.first_name) {
@@ -35,13 +21,12 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
     queryObject = { ...queryObject, first_name: regexp };
   }
 
-  // searching by first_name
   const initialQuery = User.find(queryObject);
   const count = await User.countDocuments(queryObject);
 
   // Pagination Logic & dynamic select of fields
   const { pagination, query } = getPagination(
-      req.query.page, req.query.limit, count, req, initialQuery
+    req.query.page, req.query.limit, count, req, initialQuery
   );
 
   const users = await query.lean().exec();
@@ -57,9 +42,9 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 // @access  Private (Admin)
 exports.getUser = asyncHandler(async (req, res, next) => {
   const user = await User
-      .findById(req.params.user_id)
-      .lean()
-      .exec();
+    .findById(req.params.user_id)
+    .lean()
+    .exec();
 
   if (!user) throw new NotFound('User not found.');
 
@@ -73,10 +58,10 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await findUserByIdAndUpdate(req.params.user_id, req)
-      .lean()
-      .exec();
+    .lean()
+    .exec();
 
-  if (!user) next(new NotFound('User not found.'));
+  if (!user) throw new NotFound('User not found.');
 
   return res.status(200).json({
     data: user
@@ -88,9 +73,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.deleteUser = asyncHandler(async (req, res, next) => {
   const user = await User
-      .findByIdAndDelete(req.params.user_id)
-      .lean()
-      .exec();
+    .findByIdAndDelete(req.params.user_id)
+    .lean()
+    .exec();
 
   if (!user) throw new NotFound('User not found.');
 
@@ -104,11 +89,11 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @access Private (User)
 exports.getMe = asyncHandler(async (req, res, next) => {
   const user = await User
-      .findById(req.user._id)
-      .lean()
-      .exec();
+    .findById(req.user._id)
+    .lean()
+    .exec();
 
-  if (!user) return next(new NotFound('User not found.'));
+  if (!user) throw new NotFound('User not found.');
 
   return res.status(200).json({
     data: user

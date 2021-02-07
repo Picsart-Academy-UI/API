@@ -78,7 +78,7 @@ exports.getAll = asyncHandler(async (req, res) => {
 
 exports.getOne = asyncHandler(async (req, res, next) => {
   const reservation = await findOneReservation(req);
-  if (!reservation) next(new NotFound());
+  if (!reservation) throw new NotFound('Reservation was not found');
   return res.status(200).json({ data: reservation });
 });
 // @desc  delete reservation
