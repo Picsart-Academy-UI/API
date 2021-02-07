@@ -12,9 +12,9 @@ const { asyncHandler } = require('../middlewares/asyncHandler');
 // @access Private (admin/user)
 exports.getUsers = asyncHandler(async (req, res, next) => {
   const users = await User
-    .find({ team_id: req.user.team_id })
-    .lean()
-    .exec();
+      .find({ team_id: req.user.team_id })
+      .lean()
+      .exec();
 
   if (!users) next(new NotFound('User not found.'));
 
@@ -41,7 +41,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 
   // Pagination Logic & dynamic select of fields
   const { pagination, query } = getPagination(
-    req.query.page, req.query.limit, count, req, initialQuery
+      req.query.page, req.query.limit, count, req, initialQuery
   );
 
   const users = await query.lean().exec();
@@ -57,9 +57,9 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 // @access  Private (Admin)
 exports.getUser = asyncHandler(async (req, res, next) => {
   const user = await User
-    .findById(req.params.user_id)
-    .lean()
-    .exec();
+      .findById(req.params.user_id)
+      .lean()
+      .exec();
 
   if (!user) throw new NotFound('User not found.');
 
@@ -73,8 +73,8 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await findUserByIdAndUpdate(req.params.user_id, req)
-    .lean()
-    .exec();
+      .lean()
+      .exec();
 
   if (!user) next(new NotFound('User not found.'));
 
@@ -88,9 +88,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @access  Private (Admin)
 exports.deleteUser = asyncHandler(async (req, res, next) => {
   const user = await User
-    .findByIdAndDelete(req.params.user_id)
-    .lean()
-    .exec();
+      .findByIdAndDelete(req.params.user_id)
+      .lean()
+      .exec();
 
   if (!user) throw new NotFound('User not found.');
 
@@ -104,9 +104,9 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @access Private (User)
 exports.getMe = asyncHandler(async (req, res, next) => {
   const user = await User
-    .findById(req.user._id)
-    .lean()
-    .exec();
+      .findById(req.user._id)
+      .lean()
+      .exec();
 
   if (!user) return next(new NotFound('User not found.'));
 

@@ -25,20 +25,20 @@ exports.getPagination = (givenPage, givenLimit, count, req, query) => {
 
   if (select) {
     const fields = select.split(',')
-      .join(' ');
+        .join(' ');
     queryRef = queryRef.select(fields);
   }
 
   // sorting
   if (sort) {
     const sort_by = sort.split(',')
-      .join(' ');
+        .join(' ');
     queryRef = queryRef.sort(sort_by);
   } else {
     queryRef = queryRef.sort('createdAt');
   }
   queryRef = queryRef.skip(start_index)
-    .limit(limit);
+      .limit(limit);
 
   return {
     pagination,
@@ -54,24 +54,24 @@ const excluded_fields = ['select', 'sort', 'page', 'limit', 'include_usersAndCha
 
 function checkMatching(property) {
   return (property === 'lt' || property === 'lte'
-    || property === 'gt' || property === 'gte' || false);
+      || property === 'gt' || property === 'gte' || false);
 }
 
 function formatQuery(query) {
   Object.keys(query)
-    .forEach((objKey) => {
-      const assumedAsObject = query[objKey];
-      if (typeof assumedAsObject === 'object') {
-        Object.keys(assumedAsObject)
-          .forEach((key) => {
-            if (checkMatching(key)) {
-              const value = assumedAsObject[key];
-              delete assumedAsObject[key];
-              assumedAsObject[`$${key}`] = value;
-            }
-          });
-      }
-    });
+      .forEach((objKey) => {
+        const assumedAsObject = query[objKey];
+        if (typeof assumedAsObject === 'object') {
+          Object.keys(assumedAsObject)
+              .forEach((key) => {
+                if (checkMatching(key)) {
+                  const value = assumedAsObject[key];
+                  delete assumedAsObject[key];
+                  assumedAsObject[`$${key}`] = value;
+                }
+              });
+        }
+      });
   return query;
 }
 
@@ -91,15 +91,15 @@ exports.buildQuery = (query) => {
 const excludeUndefinedFields = (obj) => {
   let toBeReturned = {};
   Object.keys(obj)
-    .forEach((p) => {
-      if (typeof obj[p] === 'undefined') {
-        return;
-      }
-      toBeReturned = {
-        ...toBeReturned,
-        [p]: obj[p]
-      };
-    });
+      .forEach((p) => {
+        if (typeof obj[p] === 'undefined') {
+          return;
+        }
+        toBeReturned = {
+          ...toBeReturned,
+          [p]: obj[p]
+        };
+      });
   return toBeReturned;
 };
 

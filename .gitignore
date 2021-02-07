@@ -106,3 +106,5 @@ dist
 # .idea and stuff
 .idea
 .DS_Store
+
+secrets/
