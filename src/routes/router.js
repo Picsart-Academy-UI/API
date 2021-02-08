@@ -18,7 +18,7 @@ router.use(authRouter);
 
 router.use('/teams', authenticate, teamsRouter);
 
-router.use('/tables', authenticate, tablesRouter);
+router.use('/tables', tablesRouter);
 
 router.use('/reservations', reservationsRouter);
 

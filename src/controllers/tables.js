@@ -12,6 +12,7 @@ const { createChairs, deleteAllChairsInTable } = require('../utils/chairs-helper
 exports.create = asyncHandler(async (req, res, next) => {
   const table = await Table.create(req.body);
   await createChairs(table);
+  console.log(table);
   return res.status(201).json({ data: table });
 });
 

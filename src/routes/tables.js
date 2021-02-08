@@ -6,7 +6,7 @@ const {
 } = require('../controllers').tables;
 
 router
-  .post('/', adminAuth, create)
+  .post('/', create)
   .get('/', getAll)
   .get('/:table_id', adminAuth, getOne)
   .put('/:table_id', adminAuth, update)

@@ -1,6 +1,6 @@
 const {
   ErrorResponse, NotFound, BadRequest, Unauthorized,
-  MethodNotAllowed, Forbidden, Conflict, NotAcceptable
+  MethodNotAllowed, Forbidden, Conflict, NotAcceptable, MongoAuthFailed
 } = require('../utils/errorResponse');
 
 const errorHandler = (err, req, res, next) => {
@@ -10,7 +10,7 @@ const errorHandler = (err, req, res, next) => {
   switch (err.name) {
     case 'MongoError':
       if (err.code === 11000) {
-        const { message } = err;
+        const message = `${err.keyValue.toString()} already exists`;
         error = new BadRequest(message, 400);
       }
       break;
