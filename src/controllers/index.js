@@ -6,3 +6,4 @@ exports.logout = require('./logout');
 exports.tables = require('./tables');
 exports.reservations = require('./reservations');
 exports.notifications = require('./notifications');
+exports.analytics = require('./analytics');
