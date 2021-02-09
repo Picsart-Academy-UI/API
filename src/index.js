@@ -2,7 +2,7 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 
-const { connectDB: DB } = require('booking-db');
+const { connectDB, mongoClose } = require('booking-db');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
@@ -10,13 +10,12 @@ const { router } = require('./routes');
 
 const errorHandler = require('./middlewares/error');
 
-const rateLimiter = require('./utils/rateLimiter');
+// const rateLimiter = require('./utils/rateLimiter');
 
 const app = express();
 
 // Middlewares
-
-app.use(rateLimiter);
+// app.use(rateLimiter);
 
 app.use(cors());
 
@@ -30,15 +29,24 @@ app.use(errorHandler);
 
 app.use((req, res, next) => res.status(404).send({ error: '404: Not found' }));
 
-const PORT = process.env.PORT || 6788;
-
-// TODO : configure the DB connection so the future server js file is testable
-
-DB(process.env.MONGO_URI).then(async (conn) => {
-  app.listen(PORT, () => {
-    // eslint-disable-next-line
-    console.log(`App is running on port ${PORT}`);
+const server = () => app
+  .listen(process.env.PORT, console.log('running...'))
+  .on('error', (err) => {
+    if (err) throw err;
   });
+
+connectDB(process.env.MONGO_URI).then(() => {
+  server();
 });
 
+process.on('SIGTERM', () => {
+  console.info('\nSIGTERM signal received.');
+  server().close(() => {
+    console.log('Http server closed.');
+    mongoClose(() => {
+      console.log('MongoDb connection closed.');
+      process.exit(0);
+    });
+  });
+});
 module.exports = app;
