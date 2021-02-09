@@ -1,7 +1,7 @@
 const path = require('path');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const {connectDB, User, Team} = require('booking-db');
+const { connectDB, User, Team } = require('booking-db');
 
 const [email, team_name] = process.argv.slice(2);
 
